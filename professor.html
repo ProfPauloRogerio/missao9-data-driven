@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Missão 9 — V10.0.2.4 | Professor</title>
+<title>Missão 9 — V10.0.2.5 | Professor</title>
 <style>
 
 :root{
@@ -1507,7 +1507,6 @@ async function confirmFullReset(){
     });
     loadExpected();
 
-    resetPresentationTimer();
     closeResetConfirm();
 
     document.querySelectorAll('[data-view]').forEach(x=>{
@@ -1516,7 +1515,13 @@ async function confirmFullReset(){
     document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));
     document.getElementById('view-control')?.classList.add('active');
 
+    // V10.0.2.5:
+    // primeiro confirma no painel o estado "waiting" devolvido pelo reset;
+    // só depois limpa o cronômetro e os tempos das etapas.
+    // Isso evita que o render ainda enxergue FECHAMENTO como etapa ativa
+    // e recrie seu tempo imediatamente após o primeiro reset.
     await refresh();
+    resetPresentationTimer();
     setSystemHealth('ok','REINICIADO');
   }catch(err){
     console.error('Erro no reset:',err);
