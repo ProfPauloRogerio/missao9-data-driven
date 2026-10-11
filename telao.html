@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Missão 9 — V10.0.2 | Telão</title>
+<title>Missão 9 — V10.0.2.6 | Telão</title>
 <style>
 :root{--petrol:#0a252c;--petrol2:#06191e;--orange:#f18a2a;--white:#f7f8f5;--muted:#9fb1b5}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--petrol2);color:var(--white);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
@@ -12,6 +12,19 @@ main{height:100dvh;display:grid;place-items:center;padding:clamp(18px,3vw,36px) 
 .cloud{display:flex;flex-wrap:wrap;gap:18px 28px;justify-content:center;align-items:center;margin-top:35px}.cloud span{font-weight:900;line-height:1;color:#eaf1ef}
 .note{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#6f888e;font-size:12px}
 @media(max-width:800px){.row{grid-template-columns:150px 1fr 52px}}
+
+
+/* V10.0.2.6 — QR code na tela inicial */
+.waiting-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,360px);gap:28px;align-items:center;text-align:left;width:min(1180px,92vw);margin:0 auto}
+.waiting-copy h1{margin:10px 0 14px}
+.waiting-copy p{margin:12px 0;max-width:760px}
+.waiting-copy .subline{font-size:clamp(15px,1.45vw,22px);color:#dbe5e7;font-weight:700}
+.qr-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;box-shadow:0 18px 40px rgba(0,0,0,.16)}
+.qr-card img{width:min(100%,260px);height:auto;display:block;background:#fff;padding:12px;border-radius:18px}
+.qr-title{color:#fff;font-size:clamp(16px,1.5vw,22px);font-weight:900;text-align:center}
+.qr-sub{color:var(--muted);font-size:clamp(13px,1.1vw,16px);line-height:1.3;text-align:center}
+.qr-link{color:#ffc36f;font-size:12px;line-height:1.35;text-align:center;word-break:break-all}
+@media(max-width:960px){.waiting-hero{grid-template-columns:1fr;justify-items:center;text-align:center}.waiting-copy p,.waiting-copy .subline{margin-left:auto;margin-right:auto}.qr-card{width:min(360px,88vw)}}
 
 
 /* V6.3 — ranking em cartões verticais + gráfico de setores */
@@ -976,7 +989,21 @@ function sceneHtml(d){
  }
  if(st.status==='investigation_preview') return `<div class="kicker">INVESTIGUE · PREPARAÇÃO</div><h2>O tema escolhido pela turma é</h2><h1 class="winner">${st.winning_theme||r[0]?.theme||'—'}</h1><p>Gostar do tema ainda nos diz muito pouco.</p><p style="color:#fff;font-weight:850">Vamos formular novas perguntas antes de liberar as respostas.</p>`;
  if(st.status==='investigation_open') return `<div class="kicker">INVESTIGUE · LIBERADO</div><h2>O tema escolhido pela turma é</h2><h1 class="winner">${st.winning_theme||r[0]?.theme||'—'}</h1><p>A investigação já está disponível nos dispositivos.</p>`;
- if(st.status==='waiting') return `<div class="kicker">MISSÃO 9</div><h1>Do interesse ao dado</h1><p>Aguardando o professor iniciar a experiência.</p>`;
+ if(st.status==='waiting') return `<div class="waiting-hero">
+  <div class="waiting-copy">
+    <div class="kicker">MISSÃO 9</div>
+    <h1>Do interesse ao dado</h1>
+    <p class="subline">Entre no ambiente do aluno para participar da experiência.</p>
+    <p>Use o QR Code ao lado para abrir diretamente a página do aluno, informar seu nome, escolher um avatar e aguardar o professor liberar o feed.</p>
+    <p>A experiência começa quando todos estiverem conectados.</p>
+  </div>
+  <div class="qr-card">
+    <div class="qr-title">Acesse a página do aluno</div>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcIAAAHCAQAAAABUY/ToAAADdklEQVR4nO2cXY6cOhCFv7q01I+NlAVkKbCzWdPdASxlFhAJHkcCnTzYBjM/iRRNa5rRqQcyTfwJLJWqTpVtQvybjf/9IwgmTZo0adKkSZOPR0a2CxHtGtGzBmNEMMaF6OeIdImIiP6L39bkY5GX9E83AMw/EKxobH8Bt4kA0PhTBDQLQLp3tnmavD85l/gyRnar6OcIYA26aQ0NQET537PO0+T9yXiSBPNVdFqQtJAT2t2eafLbkWvQ6SWSI40txNN072eaPDFZUtNNwAyM7aSkgpjXEPNVgLIy+pRnmvyW5BgRES3QPV+gmxpFT6N4miD6+QKwprLs69/W5EORKQ4dFjzWELyExrZBzAC3l9CrUSebp8l7k9GzF2KNGOMqugmANd3LvaE2Dz7nPE3eg0SSpOG2oOEm0U2N4CbBbYFOkjRBupdrNUnDueZp8n5k8ojyo7hPp+JNnSQNANwWpKmRfcjk0bJHQIpDGmgOlxSboPrLPmTyYCUONZKmZlNBkHIZAJ0W0pAh/bQPmaxMtS1IE6k7neKQtmZ11khlqH3IZLEUh7qJ1BVKKWvXPkM1rgQj+5DJg+25rCSvZgs3C8WbymjrIZNvLYeVCUpZX5wmFWdaSoACrIdMvmOVpt7TWK7QSKIoDey0JTn7kMnaqto+txKXTVNTLlsH0nrI5FvLcWiLPpsjZUvN6k1OT9ZDJl9b0UPNsZW4pTZgb1a7T23yHas09V6XbaV+HjKRg1G3tZLsQyaL1bU9VHV8Tm1FGdUJzT5k8n1S0kL0xZvyVpCyszpZtRJy2nma/GSyqstK8mq25bMsgIoeKk0ixyGTB9vXOnIJn/RQo70kO7QcrYdMvrbiE/WSRoo++0a07Z7rMpMfk/NVET9VaR8N8yVdSpJbg7F9iLc1+UhkXZftGSy3HLcQVGnqTR6da54m70ce9w+VXSDZkQ5JznrI5J/I/bsfsJdfz5d0wD76mwTlkNmXv63JxyJLXVYWPFLe2mLOfrgj/3SP0eRHZPnuR0Rct2Mea+wLHulzRJ/6TJPfg/xoL2xeQ9sPfKTBqXvkOGTyT2Q6b/8cUW8AmbNQyr3Iz36myVOTb777AWtobPPnztKlm9oQ8w+i+38Nfd3bmnxE8s0516SfS5+6Sl7HKt+5zGSx0N/HvGv+xrlJkyZNmjRp8puQvwFpq1RaDkznUgAAAABJRU5ErkJggg==" alt="QR Code para a página do aluno">
+    <div class="qr-sub">Aponte a câmera do celular e abra o link.</div>
+    <div class="qr-link">https://profpaulorogerio.github.io/missao9-data-driven/aluno.html</div>
+  </div>
+</div>`;
  if(st.status==='feed_open') return `<div class="kicker">EXPLORE</div><h1>Feed liberado</h1><p>As escolhas da turma estão sendo transformadas em sinais.</p>`;
  if(st.status==='feed_paused') return `<div class="kicker">EXPLORE</div><h1>Feed pausado</h1><p>Aguarde a orientação do professor.</p>`;
  if(st.status==='feed_closed') return `<div class="kicker">EXPLORE · CONCLUÍDO</div><h1>Dados coletados</h1><p>Aguardando a revelação dos padrões da turma.</p>`;
