@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Missão 9 — V10.0.2.1 | Professor</title>
+<title>Missão 9 — V10.0.2.2 | Professor</title>
 <style>
 
 :root{
@@ -626,12 +626,12 @@ body.prof-locked > #resetConfirm{visibility:hidden}
     <div class="login-brand">Missão 9 · Data Driven</div>
     <h2 id="profLoginTitle">Acesso do professor</h2>
     <p>Digite o PIN para abrir o painel de comando.</p>
-    <form id="profLoginForm">
+    <div id="profLoginForm">
       <label for="profPin">PIN</label>
       <input id="profPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="profLoginError">
-      <button type="submit">ENTRAR</button>
+      <button id="profLoginBtn" type="button">ENTRAR</button>
       <div id="profLoginError" class="prof-login-error" aria-live="polite"></div>
-    </form>
+    </div>
   </div>
 </div>
 
@@ -970,15 +970,10 @@ function setProfessorControlKey(pin){
 function professorSessionAuthorized(){
   try{return sessionStorage.getItem('m9_professor_authorized')==='1' && !!getProfessorControlKey()}catch(_){return false}
 }
-async function validateProfessorPin(pin){
-  if(!pin)return false;
-  // V10.0.2.1: validação local para não depender de RPC/rede na abertura do painel.
-  // O valor abaixo é apenas o SHA-256 do PIN, não o PIN em texto claro.
-  const enc=new TextEncoder().encode(pin);
-  if(!crypto?.subtle)throw new Error('Web Crypto indisponível');
-  const digest=await crypto.subtle.digest('SHA-256',enc);
-  const hex=[...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
-  return hex==='e72e270cffeae239b789ca902d449e49705df89c99ea6e2a32b88f721b9019a6';
+function validateProfessorPin(pin){
+  // V10.0.2.2: PIN simples de uso em sala.
+  // Não é autenticação de segurança; serve apenas para evitar acesso casual ao painel.
+  return String(pin||'').trim()==='08121970';
 }
 
 const THEMES=window.M9_DATA.THEMES;
@@ -1901,36 +1896,39 @@ function initializeLocalRun(){
 }
 
 
-async function unlockProfessorFromPin(pin){
-  const form=document.getElementById('profLoginForm');
+function unlockProfessorFromPin(pin){
   const input=document.getElementById('profPin');
   const error=document.getElementById('profLoginError');
-  const button=form?.querySelector('button[type="submit"]');
-  if(button){button.disabled=true;button.textContent='ENTRANDO...'}
+  const button=document.getElementById('profLoginBtn');
+
   if(error)error.textContent='';
-  try{
-    const ok=await validateProfessorPin(pin);
-    if(!ok){
-      if(error)error.textContent='PIN inválido.';
-      if(input){input.value='';input.focus()}
-      return false;
-    }
-    setProfessorControlKey(pin);
-    document.body.classList.remove('prof-locked');
-    document.getElementById('profLoginOverlay')?.classList.add('hidden');
-    bootProfessorPanel();
-    return true;
-  }catch(e){
-    console.error('Falha ao validar PIN:',e);
-    if(error)error.textContent='Não foi possível validar o PIN.';
-    return false;
-  }finally{
+  if(button){button.disabled=true;button.textContent='ENTRANDO...'}
+
+  const ok=validateProfessorPin(pin);
+
+  if(!ok){
+    if(error)error.textContent='PIN inválido.';
+    if(input){input.value='';input.focus()}
     if(button){button.disabled=false;button.textContent='ENTRAR'}
+    return false;
   }
+
+  setProfessorControlKey(String(pin).trim());
+  document.body.classList.remove('prof-locked');
+  document.getElementById('profLoginOverlay')?.classList.add('hidden');
+  if(button){button.disabled=false;button.textContent='ENTRAR'}
+
+  try{
+    bootProfessorPanel();
+  }catch(e){
+    console.error('Falha ao iniciar o painel:',e);
+    if(error)error.textContent='PIN aceito, mas ocorreu uma falha ao iniciar o painel.';
+  }
+  return true;
 }
 
 function bootProfessorAccess(){
-  const form=document.getElementById('profLoginForm');
+  const button=document.getElementById('profLoginBtn');
   const input=document.getElementById('profPin');
 
   if(professorSessionAuthorized()){
@@ -1943,9 +1941,15 @@ function bootProfessorAccess(){
   clearProfessorControlKey();
   document.body.classList.add('prof-locked');
   document.getElementById('profLoginOverlay')?.classList.remove('hidden');
-  form?.addEventListener('submit',e=>{
-    e.preventDefault();
-    unlockProfessorFromPin((input?.value||'').trim());
+
+  const attempt=()=>unlockProfessorFromPin((input?.value||'').trim());
+
+  button?.addEventListener('click',attempt);
+  input?.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      attempt();
+    }
   });
   setTimeout(()=>input?.focus(),50);
 }
