@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Missão 9 — V10.0.1 | Telão</title>
+<style>
+:root{--petrol:#0a252c;--petrol2:#06191e;--orange:#f18a2a;--white:#f7f8f5;--muted:#9fb1b5}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--petrol2);color:var(--white);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
+main{height:100dvh;display:grid;place-items:center;padding:clamp(18px,3vw,36px) clamp(18px,3vw,30px) 38px;position:relative;background:radial-gradient(circle at 75% 18%,rgba(241,138,42,.08),transparent 28%),linear-gradient(135deg,#06191e,#0a2c34)}
+.logo{position:absolute;top:22px;left:30px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;font-size:13px;color:var(--orange)}.class{position:absolute;top:22px;right:30px;color:var(--muted);font-weight:800}
+.scene{width:min(1250px,94vw);max-height:calc(100dvh - 72px);text-align:center;display:flex;flex-direction:column;justify-content:center}.kicker{color:var(--orange);font-size:15px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}h1{font-size:clamp(42px,7vw,96px);line-height:.95;margin:12px 0}h2{font-size:clamp(30px,4.2vw,60px);line-height:1.03;margin:8px 0}p{font-size:clamp(16px,1.8vw,26px);color:var(--muted);max-width:900px;margin:14px auto;line-height:1.28}
+.big{font-size:clamp(92px,18vw,260px);font-weight:950;line-height:.8;margin:34px 0;color:#fff}.unit{font-size:clamp(22px,3vw,42px);color:var(--muted);font-weight:700}
+.ranking{display:grid;gap:12px;text-align:left;margin:28px auto 0;max-width:1000px}.row{display:grid;grid-template-columns:260px 1fr 80px;gap:16px;align-items:center;font-size:clamp(17px,1.7vw,26px);font-weight:850}.track{height:22px;border-radius:999px;background:#183941;overflow:hidden}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#f18a2a,#ffc36f)}.winner{color:#ffc16a}
+.cloud{display:flex;flex-wrap:wrap;gap:18px 28px;justify-content:center;align-items:center;margin-top:35px}.cloud span{font-weight:900;line-height:1;color:#eaf1ef}
+.note{position:absolute;bottom:10px;left:0;right:0;text-align:center;color:#6f888e;font-size:12px}
+@media(max-width:800px){.row{grid-template-columns:150px 1fr 52px}}
+
+
+/* V6.3 — ranking em cartões verticais + gráfico de setores */
+.ranking-scene{
+  width:min(1140px,91vw);
+  margin:0 auto;
+  max-height:calc(100dvh - 120px);
+}
+.ranking-scene h2{
+  font-size:clamp(30px,4.4vw,58px);
+  margin-bottom:4px;
+}
+.ranking-layout{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:18px;
+  align-items:stretch;
+  width:min(1140px,91vw);
+  margin:10px auto 0;
+}
+.top3-stack{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.top3-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:12px 16px;
+  text-align:left;
+  min-height:90px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.top3-pos{
+  color:var(--orange);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.top3-theme{
+  font-size:clamp(20px,1.9vw,28px);
+  font-weight:900;
+  margin-top:6px;
+  line-height:1.02;
+}
+.top3-score{
+  color:#ffc36f;
+  font-size:clamp(22px,2vw,30px);
+  font-weight:950;
+  margin-top:6px;
+}
+.pie-panel{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:22px;
+  padding:14px 16px 8px;
+}
+.pie-flex{
+  display:grid;
+  grid-template-columns:minmax(320px, 420px) 1fr;
+  gap:10px 18px;
+  align-items:center;
+}
+.pie-graphic{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:280px;
+}
+.pie-svg{
+  width:min(100%, 330px);
+  height:auto;
+  overflow:visible;
+}
+.pie-legend{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:6px;
+  align-content:start;
+}
+.legend-item{
+  display:grid;
+  grid-template-columns:14px 1fr auto;
+  gap:10px;
+  align-items:center;
+  min-width:0;
+}
+.legend-swatch{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14) inset;
+}
+.legend-theme{
+  color:#dbe5e7;
+  font-size:clamp(11px,.85vw,14px);
+  line-height:1.1;
+  font-weight:700;
+}
+.legend-value{
+  color:#fff;
+  font-size:clamp(11px,.85vw,14px);
+  font-weight:900;
+}
+.pie-caption{
+  margin-top:8px;
+  text-align:center;
+  color:var(--muted);
+  font-size:clamp(11px,.85vw,14px);
+}
+.slice-pct{
+  font-size:14px;
+  font-weight:900;
+  fill:#0a252c;
+}
+.slice-pct.small{
+  font-size:12px;
+}
+@media(max-width:1100px){
+  .ranking-layout{grid-template-columns:1fr;gap:16px}
+  .top3-stack{display:grid;grid-template-columns:repeat(3,1fr)}
+  .pie-flex{grid-template-columns:1fr}
+  .pie-graphic{min-height:auto}
+}
+
+
+/* V6.3.1a — legenda alinhada à esquerda */
+.pie-legend{
+  justify-items:start;
+}
+.legend-item{
+  width:100%;
+}
+.legend-theme,
+.legend-value{
+  text-align:left;
+  justify-self:start;
+}
+.legend-item{
+  grid-template-columns:14px minmax(0,1fr) auto;
+}
+
+
+/* V6.4 — DECIDA */
+.decide-question{max-width:1080px;margin:0 auto;max-height:calc(100dvh - 110px)}
+.decide-question h2{font-size:clamp(28px,3.6vw,50px);margin:6px 0 10px}
+.vote-bars{display:grid;gap:10px;width:min(1020px,88vw);margin:14px auto 0;text-align:left}
+.vote-row{display:grid;grid-template-columns:1fr 155px;gap:14px;align-items:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:12px 18px}
+.vote-text{font-size:clamp(14px,1.2vw,19px);font-weight:750;line-height:1.22}
+.vote-pct{font-size:clamp(24px,2.6vw,40px);font-weight:950;text-align:right;color:#ffc36f}
+.vote-row.top-choice{border-color:rgba(241,138,42,.58);background:rgba(241,138,42,.08)}
+.vote-row.top-choice .vote-pct{color:#ffc36f}
+.choice-tag{display:inline-block;margin-left:8px;color:#ffc36f;font-size:10px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+
+
+/* V6.4.1 — ajustes de altura, cor e encaixe em projeção */
+.ranking-scene .pie-panel,
+.ranking-scene .top3-card{box-shadow:0 8px 24px rgba(0,0,0,.10)}
+.ranking-scene .legend-value{font-variant-numeric:tabular-nums}
+.vote-bars + p{
+  margin-top:16px;
+  font-size:clamp(16px,1.9vw,24px);
+  max-width:980px;
+  line-height:1.22;
+}
+@media (max-height: 820px){
+  .ranking-scene h2{font-size:clamp(26px,4vw,52px)}
+  .top3-card{min-height:82px}
+  .pie-graphic{min-height:250px}
+  .pie-svg{width:min(100%, 300px)}
+  .vote-row{padding:10px 16px}
+  .vote-bars{gap:8px;margin-top:10px}
+}
+
+
+/* V6.5 — fechamento pedagógico */
+.closing-scene{
+  width:min(1080px,90vw);
+  margin:0 auto;
+  text-align:center;
+}
+.closing-scene h2{
+  font-size:clamp(34px,4.7vw,64px);
+  margin:8px 0 14px;
+}
+.closing-scene p{
+  font-size:clamp(18px,2vw,28px);
+  max-width:880px;
+}
+.concept-chain{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin:28px auto 8px;
+}
+.concept-node{
+  padding:12px 18px;
+  border-radius:16px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.10);
+  font-weight:900;
+  font-size:clamp(15px,1.55vw,22px);
+}
+.concept-arrow{
+  color:var(--orange);
+  font-size:24px;
+  font-weight:950;
+}
+.signal-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:28px auto 0;
+  max-width:900px;
+}
+.signal-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:18px;
+}
+.signal-icon{
+  font-size:34px;
+  margin-bottom:8px;
+}
+.signal-card b{
+  display:block;
+  font-size:clamp(16px,1.5vw,22px);
+}
+.signal-card span{
+  display:block;
+  color:var(--muted);
+  font-size:13px;
+  margin-top:4px;
+}
+.dual-grid{
+  display:grid;
+  grid-template-columns:1fr 70px 1fr;
+  align-items:center;
+  gap:18px;
+  margin:28px auto 0;
+  max-width:940px;
+}
+.dual-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;
+  padding:24px;
+}
+.dual-card strong{
+  display:block;
+  font-size:clamp(22px,2.3vw,34px);
+  margin:8px 0;
+}
+.dual-plus{
+  font-size:42px;
+  color:var(--orange);
+  font-weight:950;
+}
+.profile-box{
+  margin:28px auto 0;
+  max-width:880px;
+  background:linear-gradient(135deg,rgba(241,138,42,.12),rgba(255,255,255,.04));
+  border:1px solid rgba(241,138,42,.30);
+  border-radius:24px;
+  padding:24px;
+}
+.profile-box strong{
+  color:#ffc36f;
+}
+.value-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  max-width:1000px;
+  margin:26px auto 0;
+}
+.value-card{
+  border-radius:18px;
+  padding:18px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+}
+.value-card b{font-size:18px}
+.value-card span{display:block;color:var(--muted);font-size:13px;margin-top:5px}
+.privacy-list{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  max-width:960px;
+  margin:28px auto 0;
+}
+.privacy-card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px;
+  padding:20px;
+}
+.privacy-card .num{
+  color:var(--orange);
+  font-weight:950;
+  font-size:12px;
+  letter-spacing:.12em;
+}
+.privacy-card b{
+  display:block;
+  margin:8px 0;
+  font-size:20px;
+}
+.jobs-wrap{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin:24px auto 0;
+  max-width:1000px;
+  text-align:left;
+}
+.jobs-box{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:22px;
+  padding:22px;
+}
+.jobs-box h3{
+  color:#ffc36f;
+  margin:0 0 12px;
+  font-size:20px;
+}
+.jobs-cloud{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.job-pill{
+  padding:8px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  color:#e6eff0;
+  font-size:13px;
+  font-weight:800;
+}
+.final-definition{
+  font-size:clamp(34px,5vw,70px);
+  line-height:1.04;
+  font-weight:950;
+  max-width:980px;
+  margin:18px auto;
+}
+.final-definition span{color:#ffc36f}
+@media(max-width:800px){
+  .signal-grid,.value-grid,.privacy-list,.jobs-wrap{grid-template-columns:1fr 1fr}
+  .dual-grid{grid-template-columns:1fr}
+  .dual-plus{line-height:1}
+}
+
+
+/* V7.0 — fechamento com área segura para 1366x768 */
+.closing-scene{
+  width:min(1040px,88vw);
+  max-height:calc(100dvh - 92px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.closing-scene h2{font-size:clamp(30px,4vw,54px);margin:5px 0 10px;line-height:1.02}
+.closing-scene p{font-size:clamp(15px,1.55vw,22px);margin:10px auto;line-height:1.25}
+.concept-chain{margin:18px auto 6px;gap:8px}
+.concept-node{padding:10px 15px;font-size:clamp(14px,1.35vw,19px)}
+.signal-grid{gap:10px;margin:18px auto 0}
+.signal-card{padding:13px}.signal-icon{font-size:28px;margin-bottom:5px}
+.signal-card b{font-size:clamp(14px,1.3vw,18px)}.signal-card span{font-size:11px}
+.dual-grid{margin:18px auto 0}.dual-card{padding:17px}.dual-card strong{font-size:clamp(19px,2vw,28px)}
+.profile-box{margin:18px auto 0;padding:17px}
+.value-grid{gap:10px;margin:18px auto 0}.value-card{padding:14px}
+.privacy-list{gap:10px;margin:18px auto 0}.privacy-card{padding:15px}.privacy-card b{font-size:18px}
+.jobs-wrap{gap:12px;margin:16px auto 0}.jobs-box{padding:16px}.job-pill{padding:6px 9px;font-size:11px}
+.final-definition{font-size:clamp(30px,4.5vw,60px);margin:12px auto}
+.bridge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;max-width:940px;margin:18px auto 0}
+.bridge-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px}
+.bridge-card b{display:block;color:#ffc36f;font-size:18px;margin-bottom:5px}.bridge-card span{font-size:12px;color:var(--muted)}
+
+
+/* V8.0 — contexto do DECIDA e desempate */
+.decide-context-telao{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(960px,86vw);margin:14px auto}
+.decide-context-telao div{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:13px 16px;text-align:left}
+.decide-context-telao b{display:block;color:#ffc36f;font-size:10px;letter-spacing:.12em;margin-bottom:4px}
+.decide-context-telao span{font-size:14px;line-height:1.25;color:#e4ecee}
+@media(max-width:720px){.decide-context-telao{grid-template-columns:1fr}}
+
+
+/* V8.1 — área segura de projeção e proporção */
+main{display:flex;align-items:center;justify-content:center;padding:64px 30px 34px}
+.scene{width:min(1250px,94vw);height:calc(100dvh - 104px);max-height:none;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
+.closing-scene{max-height:100%;overflow:hidden}
+@media(max-height:780px){
+  .closing-scene h2{font-size:clamp(26px,3.5vw,46px)}
+  .closing-scene p{font-size:clamp(13px,1.35vw,18px)}
+  .signal-grid,.value-grid,.privacy-list,.jobs-wrap,.bridge-grid{margin-top:12px}
+  .signal-card,.value-card,.privacy-card,.jobs-box,.bridge-card{padding:11px}
+  .concept-chain{margin-top:12px}
+  .profile-box{margin-top:12px;padding:13px}
+}
+.vote-metrics{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.vote-share{font-size:clamp(23px,2.5vw,38px);font-weight:950;color:#ffc36f}
+.support-score{font-size:11px;font-weight:900;color:#9fd6c0;text-transform:uppercase;letter-spacing:.05em}
+.support-explain{font-size:12px!important;color:#93a9ae!important;margin-top:10px!important}
+
+</style></head><body><main><div class="logo">Missão 9 · Data Driven</div><div id="classLabel" class="class">TODAS AS TURMAS</div><div id="scene" class="scene"></div><div class="note">EXPLORE → REVELE → INVESTIGUE → DECIDA</div></main>
+<script>
+// MISSÃO 9 — V10.0.1
+// Configure Supabase apenas quando for usar vários dispositivos.
+window.M9_PUBLIC_CONFIG = {
+  supabaseUrl: 'https://nctevblngdvowonsxhmz.supabase.co',
+  supabasePublishableKey: 'sb_publishable_4fQ50Zegz4SO6mG-g-9g2Q_KwNr439s'
+};
+
+</script>
+<script>
+// MISSÃO 9 — V10.0.1 | Fonte única de dados compartilhados
+window.M9_DATA = {
+  THEMES: ["Games", "Música", "Futebol", "Esportes", "Redes Sociais", "Inteligência Artificial", "Filmes e Séries", "Tecnologia", "Viagens", "Moda e Estilo", "Saúde e Bem-estar", "Dinheiro e Consumo"],
+  THEME_TO_SLUG: {"Games": "games", "Música": "musica", "Futebol": "futebol", "Esportes": "esportes", "Redes Sociais": "redes", "Inteligência Artificial": "ia", "Filmes e Séries": "filmes", "Tecnologia": "tecnologia", "Viagens": "viagens", "Moda e Estilo": "moda", "Saúde e Bem-estar": "saude", "Dinheiro e Consumo": "dinheiro"},
+  POST_META: [{"id": "A01", "theme": "Games", "secondary": null}, {"id": "B01", "theme": "Games", "secondary": "Tecnologia"}, {"id": "B02", "theme": "Música", "secondary": null}, {"id": "A02", "theme": "Música", "secondary": "Viagens"}, {"id": "A03", "theme": "Futebol", "secondary": null}, {"id": "B03", "theme": "Futebol", "secondary": "Dinheiro e Consumo"}, {"id": "B04", "theme": "Esportes", "secondary": null}, {"id": "A04", "theme": "Esportes", "secondary": "Saúde e Bem-estar"}, {"id": "A05", "theme": "Redes Sociais", "secondary": null}, {"id": "C01", "theme": "Redes Sociais", "secondary": "Filmes e Séries"}, {"id": "C02", "theme": "Inteligência Artificial", "secondary": null}, {"id": "A06", "theme": "Inteligência Artificial", "secondary": "Moda e Estilo"}, {"id": "A07", "theme": "Filmes e Séries", "secondary": null}, {"id": "C03", "theme": "Filmes e Séries", "secondary": "Redes Sociais"}, {"id": "C04", "theme": "Tecnologia", "secondary": null}, {"id": "A08", "theme": "Tecnologia", "secondary": "Games"}, {"id": "B05", "theme": "Viagens", "secondary": null}, {"id": "C05", "theme": "Viagens", "secondary": "Música"}, {"id": "C06", "theme": "Moda e Estilo", "secondary": null}, {"id": "B06", "theme": "Moda e Estilo", "secondary": "Inteligência Artificial"}, {"id": "B07", "theme": "Saúde e Bem-estar", "secondary": null}, {"id": "C07", "theme": "Saúde e Bem-estar", "secondary": "Esportes"}, {"id": "C08", "theme": "Dinheiro e Consumo", "secondary": null}, {"id": "B08", "theme": "Dinheiro e Consumo", "secondary": "Futebol"}],
+  DECISION: {"Games": {"title": "Uma desenvolvedora vai lançar um jogo novo para adolescentes e só pode priorizar uma frente nas duas primeiras semanas.", "prompt": "Qual estratégia você defenderia para esta turma? Cada opção atende a um objetivo diferente — use os padrões observados para justificar sua escolha.", "options": [{"code": "strategy_1", "text": "Experiência primeiro — vídeos curtos de gameplay, demonstração gratuita e acesso rápido para testar o jogo."}, {"code": "strategy_2", "text": "Comunidade primeiro — creators, desafios com amigos e ações multiplayer para gerar conversa e participação."}, {"code": "strategy_3", "text": "Decisão informada — reviews, requisitos, desempenho e comparação de custo-benefício antes do download."}], "objective": "Maximizar a experimentação inicial do novo jogo.", "constraint": "A empresa pode priorizar apenas uma frente nas duas primeiras semanas."}, "Música": {"title": "Um festival quer atrair adolescentes, mas o orçamento permite concentrar a campanha em apenas uma estratégia principal.", "prompt": "Qual estratégia você defenderia para esta turma? Considere descoberta, influência social e experiência.", "options": [{"code": "strategy_1", "text": "Descoberta — trechos de músicas, playlists e vídeos curtos para apresentar artistas e lançamentos."}, {"code": "strategy_2", "text": "Experiência — mostrar clima do evento, encontros, momentos ao vivo e a ideia de viver o show com amigos."}, {"code": "strategy_3", "text": "Curadoria — recomendações por estilo, contexto e preferências, ajudando cada pessoa a encontrar artistas de interesse."}], "objective": "Aumentar o interesse e a intenção de participar do festival.", "constraint": "O orçamento permite concentrar a campanha em uma única estratégia principal."}, "Futebol": {"title": "Uma marca esportiva quer lançar uma campanha ligada ao futebol para adolescentes e precisa escolher o foco principal.", "prompt": "Qual estratégia faz mais sentido para esta turma? Nenhuma opção é automaticamente correta: compare os sinais encontrados.", "options": [{"code": "strategy_1", "text": "Paixão pelo time — lances, identidade do clube, jogadores e conteúdos que reforcem pertencimento."}, {"code": "strategy_2", "text": "Desempenho — estatísticas, comparações e dados de jogadores e equipes para sustentar argumentos."}, {"code": "strategy_3", "text": "Consumo e oportunidade — produtos, preços, promoções e avaliações para transformar interesse em compra."}], "objective": "Aumentar o engajamento de adolescentes com a campanha da marca.", "constraint": "A campanha precisa escolher um foco principal para a primeira fase."}, "Esportes": {"title": "A escola vai organizar uma semana de esportes e precisa escolher uma abordagem central para aumentar a participação.", "prompt": "Qual proposta você defenderia para esta turma? Pense em motivação, experiência e acompanhamento.", "options": [{"code": "strategy_1", "text": "Evolução — desafios com acompanhamento de tempo, distância, frequência e progresso individual."}, {"code": "strategy_2", "text": "Participação social — atividades em equipes, desafios entre amigos e metas coletivas."}, {"code": "strategy_3", "text": "Experimentação — estações com diferentes modalidades para que cada estudante teste e descubra afinidades."}], "objective": "Aumentar a participação dos estudantes na semana de esportes.", "constraint": "A escola precisa adotar uma abordagem central para organizar a ação."}, "Redes Sociais": {"title": "Uma equipe vai criar o perfil digital de um evento para adolescentes e precisa escolher uma linha editorial principal.", "prompt": "Qual estratégia você defenderia para esta turma? Considere atenção, retenção e compartilhamento.", "options": [{"code": "strategy_1", "text": "Impacto rápido — vídeos curtos, humor e conteúdos de alta retenção para aumentar alcance."}, {"code": "strategy_2", "text": "Utilidade — conteúdos que expliquem, ensinem ou ajudem, buscando salvamentos e compartilhamentos."}, {"code": "strategy_3", "text": "Comunidade — enquetes, desafios, perguntas e participação do público para aumentar interação."}], "objective": "Aumentar alcance e participação no perfil digital do evento.", "constraint": "A equipe precisa escolher uma linha editorial principal."}, "Inteligência Artificial": {"title": "A escola vai oferecer uma oficina de IA e só há tempo para aprofundar uma linha de trabalho.", "prompt": "Qual formato você defenderia para esta turma? Considere utilidade, interesse e responsabilidade.", "options": [{"code": "strategy_1", "text": "IA para estudar — pesquisa, explicação, organização e verificação das respostas geradas."}, {"code": "strategy_2", "text": "IA para criar — produção de imagens, textos, ideias e protótipos, discutindo autoria e critérios."}, {"code": "strategy_3", "text": "IA para resolver problemas — programação, automação e desafios práticos, incluindo limites e privacidade."}], "objective": "Criar uma oficina de IA útil e relevante para os estudantes.", "constraint": "O tempo disponível permite aprofundar apenas uma linha de trabalho."}, "Filmes e Séries": {"title": "Uma plataforma quer lançar uma nova produção para adolescentes e precisa escolher sua principal estratégia de divulgação.", "prompt": "Qual abordagem você defenderia para esta turma? Pense em descoberta, recomendação e influência social.", "options": [{"code": "strategy_1", "text": "Curiosidade — trailers, cenas marcantes e conteúdos curtos que despertem vontade de assistir."}, {"code": "strategy_2", "text": "Recomendação — destacar gênero, avaliações e semelhanças com produções que o público já aprecia."}, {"code": "strategy_3", "text": "Conversa social — estimular comentários, teorias, memes e experiências compartilhadas entre amigos."}], "objective": "Aumentar a intenção de assistir à nova produção.", "constraint": "A plataforma precisa priorizar uma estratégia principal de divulgação."}, "Tecnologia": {"title": "Uma loja vai destacar um novo produto tecnológico para adolescentes e precisa escolher como apresentá-lo.", "prompt": "Qual estratégia você defenderia para esta turma? Cada uma prioriza um critério de decisão diferente.", "options": [{"code": "strategy_1", "text": "Desempenho — comparativos, especificações, testes e reviews que mostrem diferenças técnicas."}, {"code": "strategy_2", "text": "Experiência — demonstrações práticas e situações de uso que permitam imaginar o produto na rotina."}, {"code": "strategy_3", "text": "Valor — preço, garantia, durabilidade e custo-benefício para apoiar uma compra mais racional."}], "objective": "Ajudar adolescentes a considerar e avaliar o produto.", "constraint": "A loja precisa definir uma forma principal de apresentar o lançamento."}, "Viagens": {"title": "Uma agência quer criar uma campanha de viagem para adolescentes e dispõe de verba para uma única abordagem principal.", "prompt": "Qual estratégia você defenderia para esta turma? Considere inspiração, planejamento e influência social.", "options": [{"code": "strategy_1", "text": "Inspiração — vídeos e imagens fortes de destinos, experiências e paisagens para despertar desejo de viajar."}, {"code": "strategy_2", "text": "Planejamento — comparar custo total, avaliações, atrações e tempo de viagem para apoiar a escolha."}, {"code": "strategy_3", "text": "Experiência social — mostrar viagens com amigos, eventos, música e relatos de outros jovens."}], "objective": "Aumentar o interesse inicial por uma campanha de viagem.", "constraint": "A verba permite investir em apenas uma abordagem principal."}, "Moda e Estilo": {"title": "Uma marca quer lançar uma coleção para adolescentes e precisa definir o foco principal da campanha.", "prompt": "Qual estratégia você defenderia para esta turma? Considere estilo, compra e experimentação.", "options": [{"code": "strategy_1", "text": "Inspiração — looks, combinações, creators e tendências para mostrar possibilidades de estilo."}, {"code": "strategy_2", "text": "Escolha consciente — preço, qualidade, tamanho, avaliações e durabilidade para facilitar a comparação."}, {"code": "strategy_3", "text": "Experimentação — provador virtual, personalização e recursos digitais para testar combinações antes da compra."}], "objective": "Aumentar interesse e consideração pela nova coleção.", "constraint": "A marca precisa definir um foco principal para a campanha de lançamento."}, "Saúde e Bem-estar": {"title": "A escola vai criar uma ação de bem-estar para adolescentes e precisa escolher uma abordagem principal.", "prompt": "Qual proposta você defenderia para esta turma? Pense em adesão, acompanhamento e confiabilidade.", "options": [{"code": "strategy_1", "text": "Acompanhamento de hábitos — metas simples e registros de sono, atividade, hidratação ou rotina."}, {"code": "strategy_2", "text": "Ação coletiva — desafios em grupo, atividades com amigos e experiências presenciais para aumentar adesão."}, {"code": "strategy_3", "text": "Informação confiável — oficinas curtas com fontes seguras, comparação de informações e orientação prática."}], "objective": "Aumentar a adesão dos estudantes à ação de bem-estar.", "constraint": "A escola precisa escolher uma abordagem principal para iniciar o projeto."}, "Dinheiro e Consumo": {"title": "A escola quer criar uma ação sobre consumo consciente e precisa escolher um foco para os estudantes.", "prompt": "Qual abordagem você defenderia para esta turma? Considere como as decisões de compra realmente acontecem.", "options": [{"code": "strategy_1", "text": "Comparação — ferramentas para analisar preço, avaliações, qualidade, prazo e custo total antes da compra."}, {"code": "strategy_2", "text": "Influência — investigar como anúncios, creators, recomendações e repetição de exposição despertam interesse."}, {"code": "strategy_3", "text": "Planejamento — trabalhar prioridades, espera, metas e orçamento para decidir quando comprar ou adiar."}], "objective": "Ajudar estudantes a tomar decisões de consumo mais conscientes.", "constraint": "A ação precisa começar por um único foco de aprendizagem."}}
+};
+
+</script>
+<script>
+// MISSÃO 9 — V10.0.1 | Motor puro e testável
+(function(root,factory){
+  const api=factory();
+  if(typeof module==='object' && module.exports) module.exports=api;
+  root.M9Engine=api;
+})(typeof globalThis!=='undefined'?globalThis:this,function(){
+  function medianValue(values){
+    const a=(values||[]).map(Number).filter(v=>Number.isFinite(v)&&v>0).sort((x,y)=>x-y);
+    if(!a.length)return 0;
+    const m=Math.floor(a.length/2);
+    return a.length%2?a[m]:(a[m-1]+a[m])/2;
+  }
+
+  function reactionScoreMap(reactions,posts){
+    const themes=[...new Set((posts||[]).flatMap(p=>[p.theme,p.secondary].filter(Boolean)))];
+    const score=Object.fromEntries(themes.map(t=>[t,0]));
+    (reactions||[]).forEach(r=>{
+      const p=(posts||[]).find(x=>x.id===r.post_id);
+      if(!p)return;
+      if(r.reaction==='heart'){
+        score[p.theme]=(score[p.theme]||0)+5;
+        if(p.secondary)score[p.secondary]=(score[p.secondary]||0)+2;
+      }
+      if(r.reaction==='thumb'){
+        score[p.theme]=(score[p.theme]||0)+3;
+        if(p.secondary)score[p.secondary]=(score[p.secondary]||0)+1;
+      }
+    });
+    return score;
+  }
+
+  function attentionScoreMap(attention,posts){
+    const themes=[...new Set((posts||[]).flatMap(p=>[p.theme,p.secondary].filter(Boolean)))];
+    const out=Object.fromEntries(themes.map(t=>[t,0]));
+    const bySession={};
+    (attention||[]).forEach(a=>{
+      const ms=Math.max(0,Math.min(Number(a.duration_ms)||0,10000));
+      if(!ms)return;
+      (bySession[a.session_id] ||= []).push({...a,_ms:ms});
+    });
+    Object.values(bySession).forEach(rows=>{
+      const med=medianValue(rows.map(r=>r._ms))||1;
+      rows.forEach(r=>{
+        const p=(posts||[]).find(x=>x.id===r.post_id);
+        if(!p)return;
+        const relative=Math.min(2,r._ms/med);
+        out[p.theme]=(out[p.theme]||0)+relative;
+        if(p.secondary)out[p.secondary]=(out[p.secondary]||0)+relative*.4;
+      });
+    });
+    return out;
+  }
+
+  function ranking(reactions,attention,posts){
+    const scores=reactionScoreMap(reactions,posts);
+    const att=attentionScoreMap(attention,posts);
+    return Object.entries(scores)
+      .map(([theme,score])=>({theme,score,attention:att[theme]||0}))
+      .sort((a,b)=>(b.score-a.score)||(b.attention-a.attention)||a.theme.localeCompare(b.theme,'pt-BR'));
+  }
+
+  function percent(v,total,decimals=1){
+    if(!total)return 0;
+    const f=10**decimals;
+    return Math.round((Number(v)||0)*100*f/total)/f;
+  }
+
+  function supportIndex(rows,choiceCode){
+    const values=(rows||[])
+      .filter(r=>r.choice_code===choiceCode)
+      .flatMap(r=>(Array.isArray(r.evidence_json)?r.evidence_json:[])
+        .map(e=>Number(e.strength)).filter(Number.isFinite));
+    return values.length?Math.round(values.reduce((a,b)=>a+b,0)/values.length):0;
+  }
+
+  function makeRunId(){
+    return (globalThis.crypto&&crypto.randomUUID)
+      ? crypto.randomUUID()
+      : 'run-'+Date.now()+'-'+Math.random().toString(16).slice(2);
+  }
+
+  function filterRun(data,group='ALL'){
+    const runId=data?.state?.run_id;
+    let sessions=(data?.sessions||[]).filter(s=>!runId || !s.run_id || s.run_id===runId);
+    if(group!=='ALL')sessions=sessions.filter(s=>s.class_group===group);
+    const ids=new Set(sessions.map(s=>s.id));
+    const pick=arr=>(arr||[]).filter(x=>ids.has(x.session_id));
+    return {
+      ...data,
+      sessions,
+      reactions:pick(data?.reactions),
+      attention:pick(data?.attention),
+      events:pick(data?.events),
+      investigationAnswers:pick(data?.investigationAnswers),
+      decisionAnswers:pick(data?.decisionAnswers)
+    };
+  }
+
+
+  function stageReadiness(state,metrics,target){
+    state=state||{status:'waiting',reveal_stage:0};
+    metrics=metrics||{};
+    target=Math.max(0,Number(target)||0);
+
+    const total=Number(metrics.total)||0;
+    const feedDone=Number(metrics.feedDone)||0;
+    const reactions=Number(metrics.reactions)||0;
+    const investDone=Number(metrics.investDone)||0;
+    const decisionDone=Number(metrics.decisionDone)||0;
+    const st=state.status||'waiting';
+    const stage=Number(state.reveal_stage)||0;
+
+    const countStatus=(done,hasData=true)=>{
+      if(!hasData || done<=0)return 'no';
+      if(target>0 && done<target)return 'warn';
+      return 'ok';
+    };
+
+    const feed = total<=0 ? 'no' : (target>0 && total<target ? 'warn' : 'ok');
+
+    // REVELE só fica disponível depois de FEED_CLOSED.
+    const reveal = st!=='feed_closed' && st!=='results_reveal' &&
+      !['investigation_preview','investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st)
+        ? 'no'
+        : countStatus(feedDone,reactions>0);
+
+    // Apresentar INVESTIGUE exige a última cena do REVELE.
+    let investigatePreview='no';
+    if(st==='results_reveal'){
+      investigatePreview = stage>=6 ? 'ok' : 'warn';
+    }else if(['investigation_preview','investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st)){
+      investigatePreview='ok';
+    }
+
+    // Liberar respostas somente após a apresentação da investigação.
+    const investigateRelease = st==='investigation_preview' || st==='investigation_open' ? 'ok' : 'no';
+
+    // DECIDA só existe depois de INVESTIGATION_OPEN e conclusão da investigação.
+    let decide='no';
+    if(['investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st)){
+      decide=countStatus(investDone,true);
+    }
+
+    // Revelação das decisões somente em DECIDE_OPEN (ou depois) e com decisões concluídas.
+    let decisionReveal='no';
+    if(['decide_open','decide_reveal','closing_reveal'].includes(st)){
+      decisionReveal=countStatus(decisionDone,true);
+    }
+
+    // Fechamento somente depois da revelação das decisões.
+    let closing='no';
+    if(['decide_reveal','closing_reveal'].includes(st)){
+      closing=countStatus(decisionDone,true);
+    }
+
+    return {feed,reveal,investigatePreview,investigateRelease,decide,decisionReveal,closing};
+  }
+
+  function canAction(action,state,readiness,forceCounts=false){
+    state=state||{status:'waiting',reveal_stage:0};
+    readiness=readiness||{};
+    const st=state.status||'waiting';
+    const stage=Number(state.reveal_stage)||0;
+    const ready=k=>readiness[k]==='ok' || (forceCounts && readiness[k]==='warn');
+
+    switch(action){
+      case 'openFeed':
+        return (st==='waiting' || st==='feed_paused') && ready('feed');
+      case 'pauseFeed':
+        return st==='feed_open';
+      case 'closeFeed':
+        return st==='feed_open' || st==='feed_paused';
+      case 'startReveal':
+        return st==='feed_closed' && ready('reveal');
+      case 'revealPrev':
+      case 'revealNext':
+        return st==='results_reveal';
+      case 'previewInvestigation':
+        return st==='results_reveal' && stage>=6 && ready('investigatePreview');
+      case 'releaseInvestigation':
+        return st==='investigation_preview';
+      case 'previewDecide':
+        return st==='investigation_open' && ready('decide');
+      case 'startDecide':
+        return st==='decide_preview';
+      case 'revealDecide':
+        return st==='decide_open' && ready('decisionReveal');
+      case 'startClosing':
+        return st==='decide_reveal' && ready('closing');
+      case 'closingPrev':
+      case 'closingNext':
+        return st==='closing_reveal';
+      default:
+        return false;
+    }
+  }
+
+  return {medianValue,reactionScoreMap,attentionScoreMap,ranking,percent,supportIndex,makeRunId,filterRun,stageReadiness,canAction};
+});
+
+</script>
+<script>
+
+const CONFIG=window.M9_PUBLIC_CONFIG;
+const THEMES=window.M9_DATA.THEMES;
+const POSTS=window.M9_DATA.POST_META;
+const DECISION=window.M9_DATA.DECISION;
+const channel=('BroadcastChannel' in window)?new BroadcastChannel('m9-data-driven-v5'):null;
+function remoteEnabled(){return location.protocol!=='file:' && CONFIG.supabaseUrl.startsWith('http')&&!CONFIG.supabasePublishableKey.startsWith('COLE_')}
+function headers(extra={}){return {apikey:CONFIG.supabasePublishableKey,'Content-Type':'application/json',...extra}}
+async function sb(path,opts={}){const r=await fetch(CONFIG.supabaseUrl+'/rest/v1/'+path,{...opts,headers:headers(opts.headers||{})});if(!r.ok)throw new Error(await r.text());const t=await r.text();return t?JSON.parse(t):null}
+function dg(k,f){try{return JSON.parse(localStorage.getItem(k)||'null')??f}catch{return f}}
+function ds(k,v){localStorage.setItem(k,JSON.stringify(v));channel?.postMessage({type:'changed',key:k})}
+async function getAll(){
+  if(remoteEnabled()){
+    const [sessions,reactions,attention,events,decisionAnswers,state]=await Promise.all([
+      sb('sessions?select=*'),
+      sb('reactions?select=*'),
+      sb('attention?select=*'),
+      sb('feed_events?select=*'),
+      sb('decision_answers?select=*'),
+      sb('experiment_state?id=eq.main&select=*')
+    ]);
+    return {sessions:sessions||[],reactions:reactions||[],attention:attention||[],events:events||[],decisionAnswers:decisionAnswers||[],state:state?.[0]||{status:'waiting',reveal_stage:0,presentation_group:'ALL'}};
+  }
+  return {
+    sessions:dg('m9_sessions',[]),
+    reactions:Object.values(dg('m9_reactions',{})),
+    attention:Object.values(dg('m9_attention',{})),
+    events:dg('m9_events',[]),
+    decisionAnswers:Object.values(dg('m9_decision_answers',{})),
+    state:dg('m9_state',{status:'waiting',reveal_stage:0,winning_theme:null,winning_group:'ALL',presentation_group:'ALL',closing_stage:1})
+  };
+}
+function filtered(data,group){
+  const base=currentRunData(data);
+  if(!group||group==='ALL')return base;
+  const ids=new Set(base.sessions.filter(s=>s.class_group===group).map(s=>s.id));
+  return {
+    ...base,
+    sessions:base.sessions.filter(s=>ids.has(s.id)),
+    reactions:base.reactions.filter(r=>ids.has(r.session_id)),
+    attention:base.attention.filter(a=>ids.has(a.session_id)),
+    events:base.events.filter(e=>ids.has(e.session_id)),
+    decisionAnswers:(base.decisionAnswers||[]).filter(a=>ids.has(a.session_id))
+  };
+}
+
+function medianValue(values){return M9Engine.medianValue(values)}
+function attentionScoreMap(attention,postMeta){return M9Engine.attentionScoreMap(attention,postMeta)}
+
+function currentRunData(data){
+  const runId=data.state?.run_id;
+  const sessions=(data.sessions||[]).filter(s=>!runId || !s.run_id || s.run_id===runId);
+  const ids=new Set(sessions.map(s=>s.id));
+  return {
+    ...data,
+    sessions,
+    reactions:(data.reactions||[]).filter(x=>ids.has(x.session_id)),
+    attention:(data.attention||[]).filter(x=>ids.has(x.session_id)),
+    events:(data.events||[]).filter(x=>ids.has(x.session_id)),
+    decisionAnswers:(data.decisionAnswers||[]).filter(x=>ids.has(x.session_id))
+  };
+}
+
+function reactionScoreMap(reactions){return M9Engine.reactionScoreMap(reactions,POSTS)}
+function ranking(reactions,attention=[]){return M9Engine.ranking(reactions,attention,POSTS)}
+
+let latest=null,group='ALL';
+
+
+function shortTheme(theme){
+  const map={
+    'Redes Sociais':['Redes','Sociais'],
+    'Filmes e Séries':['Filmes e','Séries'],
+    'Inteligência Artificial':['Inteligência','Artificial'],
+    'Saúde e Bem-estar':['Saúde e','Bem-estar'],
+    'Dinheiro e Consumo':['Dinheiro e','Consumo'],
+    'Moda e Estilo':['Moda e','Estilo']
+  };
+  return map[theme] || [theme];
+}
+function pctText(value,total){
+  if(!total) return '0%';
+  const pct = value*100/total;
+  return (pct >= 10 ? Math.round(pct) : pct.toFixed(1).replace('.', ',')) + '%';
+}
+const PASTELS=['#F1A55B','#72C1C6','#F0C75E','#9E8BE8','#E989A7','#6FA8E6','#A6CF6E','#FF9E7A','#43B3A9','#D8A961','#7B98C2','#A8BAC9'];
+
+function polar(cx,cy,r,angle){
+  const a=(angle-90)*Math.PI/180;
+  return {x:cx+r*Math.cos(a), y:cy+r*Math.sin(a)};
+}
+function arcPath(cx,cy,r,startAngle,endAngle){
+  const start=polar(cx,cy,r,endAngle);
+  const end=polar(cx,cy,r,startAngle);
+  const largeArc=endAngle-startAngle<=180?0:1;
+  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArc} 0 ${end.x} ${end.y} Z`;
+}
+function pieChart(r,total){
+  const cx=180, cy=180, radius=132;
+  let current=-90;
+  const slices=r.map((item,i)=>{
+    const pct = total ? (item.score*100/total) : 0;
+    const sweep = total ? (item.score/total)*360 : 0;
+    const start = current;
+    const end = current + sweep;
+    current = end;
+    const color = PASTELS[i % PASTELS.length];
+    const path = arcPath(cx,cy,radius,start,end);
+    const mid = start + sweep/2;
+    const labelPos = polar(cx,cy,78,mid);
+    const pctLabel = pctText(item.score,total);
+    const showText = pct >= 6;
+    return {
+      ...item,
+      pct,
+      pctLabel,
+      color,
+      path,
+      textX: labelPos.x,
+      textY: labelPos.y,
+      textClass: pct >= 10 ? 'slice-pct' : 'slice-pct small',
+      showText
+    };
+  });
+  const svg = `
+    <svg class="pie-svg" viewBox="0 0 360 360" role="img" aria-label="Gráfico de setores do ranking da turma">
+      ${slices.map(s=>`<path d="${s.path}" fill="${s.color}" stroke="rgba(6,25,30,.9)" stroke-width="2"></path>`).join('')}
+      ${slices.filter(s=>s.showText).map(s=>`<text class="${s.textClass}" x="${s.textX}" y="${s.textY}" text-anchor="middle" dominant-baseline="middle">${s.pctLabel}</text>`).join('')}
+    </svg>`;
+  const legend = `
+    <div class="pie-legend">
+      ${slices.map((s,i)=>{
+        const lines=shortTheme(s.theme);
+        return `<div class="legend-item">
+          <span class="legend-swatch" style="background:${s.color}"></span>
+          <div class="legend-theme">${i+1}. ${lines.join(' ')}</div>
+          <div class="legend-value">${s.pctLabel}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  return `
+    <div class="pie-panel">
+      <div class="pie-flex">
+        <div class="pie-graphic">${svg}</div>
+        ${legend}
+      </div>
+      <div class="pie-caption">Percentual do total de pontos. Empates são resolvidos pelo índice de atenção relativa.</div>
+    </div>`;
+}
+function metrics(d){
+
+ const views=d.events.filter(e=>e.event_type==='view').length;
+ return {participants:d.sessions.length,completed:d.sessions.filter(s=>s.feed_completed_at).length,views,reactions:d.reactions.length,thumbs:d.reactions.filter(r=>r.reaction==='thumb').length,hearts:d.reactions.filter(r=>r.reaction==='heart').length};
+}
+
+function closingScene(stage){
+  if(stage===1) return `<div class="closing-scene">
+    <div class="kicker">FECHAMENTO · 1/9</div>
+    <h2>Antes da pesquisa, você já tinha gerado dados.</h2>
+    <p>Ao navegar pelo feed, suas ações produziram registros mesmo sem a pergunta “qual é seu tema favorito?”.</p>
+    <div class="signal-grid">
+      <div class="signal-card"><div class="signal-icon">👁</div><b>Visualização</b><span>o que apareceu para você</span></div>
+      <div class="signal-card"><div class="signal-icon">⏱</div><b>Atenção</b><span>quanto tempo você permaneceu</span></div>
+      <div class="signal-card"><div class="signal-icon">👍</div><b>Interesse moderado</b><span>um sinal explícito</span></div>
+      <div class="signal-card"><div class="signal-icon">❤️</div><b>Interesse forte</b><span>um sinal explícito mais intenso</span></div>
+    </div>
+  </div>`;
+
+  if(stage===2) return `<div class="closing-scene">
+    <div class="kicker">FECHAMENTO · 2/9</div>
+    <h2>Ações viraram sinais. Sinais viraram padrões.</h2>
+    <div class="concept-chain">
+      <div class="concept-node">AÇÃO</div><div class="concept-arrow">→</div>
+      <div class="concept-node">REGISTRO</div><div class="concept-arrow">→</div>
+      <div class="concept-node">DADO</div><div class="concept-arrow">→</div>
+      <div class="concept-node">PADRÃO</div>
+    </div>
+    <p>Um dado isolado diz pouco. Muitos registros organizados começam a revelar regularidades.</p>
+  </div>`;
+
+  if(stage===3) return `<div class="closing-scene">
+    <div class="kicker">FECHAMENTO · 3/9</div>
+    <h2>O que você fez e o que você disse são dados diferentes.</h2>
+    <div class="dual-grid">
+      <div class="dual-card"><div class="kicker">COMPORTAMENTAL</div><strong>O que você FEZ</strong><p>visualizou · permaneceu · reagiu</p></div>
+      <div class="dual-plus">+</div>
+      <div class="dual-card"><div class="kicker">DECLARADO</div><strong>O que você DISSE</strong><p>preferências · hábitos · critérios</p></div>
+    </div>
+    <p>Comparar esses dois tipos de dado pode confirmar padrões — ou mostrar diferenças.</p>
+  </div>`;
+
+  if(stage===4) return `<div class="closing-scene">
+    <div class="kicker">FECHAMENTO · 4/9</div>
+    <h2>Padrões permitem fazer inferências.</h2>
+    <div class="concept-chain">
+      <div class="concept-node">PADRÃO</div><div class="concept-arrow">→</div>
+      <div class="concept-node">PERFIL</div><div class="concept-arrow">→</div>
+      <div class="concept-node">RECOMENDAÇÃO</div>
+    </div>
+    <div class="profile-box"><strong>Importante:</strong> uma inferência não “descobre quem você é”. Ela produz uma hipótese de afinidade com base nos sinais disponíveis.</div>
+  </div>`;
+
+  if(stage===5) return `<div class="closing-scene">
+    <div class="kicker">FECHAMENTO · 5/9</div>
+    <h2>Quando um padrão começa a orientar uma ação?</h2>
+    <div class="concept-chain">
+      <div class="concept-node">PADRÃO</div><div class="concept-arrow">→</div>
+      <div class="concept-node">PREVISÃO</div><div class="concept-arrow">→</div>
+      <div class="concept-node">ESCOLHA</div><div class="concept-arrow">→</div>
+      <div class="concept-node">RESULTADO</div>
+    </div>
+    <div class="bridge-grid">
+      <div class="bridge-card"><b>Conteúdo</b><span>o que mostrar primeiro?</span></div>
+      <div class="bridge-card"><b>Público</b><span>para quem mostrar?</span></div>
+      <div class="bridge-card"><b>Produto</b><span>o que criar, melhorar ou priorizar?</span></div>
+    </div>
+    <p>É aqui que o dado deixa de apenas descrever o que aconteceu e passa a apoiar uma decisão.</p>
+  </div>`;
+
+  if(stage===6) return `<div class="closing-scene">
+    <div class="kicker">FECHAMENTO · 6/9</div>
+    <h2>Por que os dados têm valor?</h2>
+    <p>Porque ajudam organizações a reduzir incerteza e escolher entre caminhos possíveis.</p>
+    <div class="value-grid">
+      <div class="value-card"><b>Recomendação</b><span>selecionar conteúdos mais relevantes</span></div>
+      <div class="value-card"><b>Segmentação</b><span>entender grupos com comportamentos diferentes</span></div>
+      <div class="value-card"><b>Publicidade</b><span>direcionar mensagens a públicos específicos</span></div>
+      <div class="value-card"><b>Produto</b><span>decidir o que melhorar, criar ou priorizar</span></div>
+    </div>
+    <p style="font-size:14px">O valor pode estar no uso dos dados para orientar decisões — não necessariamente na venda dos dados.</p>
+  </div>`;
+
+  if(stage===7) return `<div class="closing-scene">
+    <div class="kicker">FECHAMENTO · 7/9</div>
+    <h2>Dados exigem responsabilidade.</h2>
+    <div class="privacy-list">
+      <div class="privacy-card"><div class="num">01</div><b>Finalidade</b><span>por que o dado está sendo coletado?</span></div>
+      <div class="privacy-card"><div class="num">02</div><b>Minimização</b><span>coletar apenas o necessário</span></div>
+      <div class="privacy-card"><div class="num">03</div><b>Transparência</b><span>deixar claro o que será feito com os dados</span></div>
+    </div>
+    <p>A LGPD estabelece princípios e regras para o tratamento de dados pessoais no Brasil.</p>
+  </div>`;
+
+  if(stage===8) return `<div class="closing-scene">
+    <div class="kicker">FECHAMENTO · 8/9</div>
+    <h2>Quais profissões trabalham com dados?</h2>
+    <div class="jobs-wrap">
+      <div class="jobs-box">
+        <h3>Diretamente com dados</h3>
+        <div class="jobs-cloud">
+          <span class="job-pill">Analista de Dados</span><span class="job-pill">Cientista de Dados</span><span class="job-pill">BI</span><span class="job-pill">Engenheiro de Dados</span><span class="job-pill">Estatístico</span><span class="job-pill">Machine Learning</span><span class="job-pill">Pesquisa de Mercado</span><span class="job-pill">Product Analytics</span>
+        </div>
+      </div>
+      <div class="jobs-box">
+        <h3>Profissões que usam dados para decidir</h3>
+        <div class="jobs-cloud">
+          <span class="job-pill">Professor</span><span class="job-pill">Médico</span><span class="job-pill">Engenheiro</span><span class="job-pill">Administrador</span><span class="job-pill">Jornalista</span><span class="job-pill">Arquiteto</span><span class="job-pill">Atleta</span><span class="job-pill">Marketing</span><span class="job-pill">Logística</span><span class="job-pill">Turismo</span>
+        </div>
+      </div>
+    </div>
+    <p>Dados não são apenas uma profissão. São uma ferramenta presente em praticamente todas as áreas.</p>
+  </div>`;
+
+  return `<div class="closing-scene">
+    <div class="kicker">FECHAMENTO · 9/9</div>
+    <div class="final-definition">DATA DRIVEN é tomar <span>decisões orientadas por evidências.</span></div>
+    <div class="concept-chain">
+      <div class="concept-node">INVESTIGAR</div><div class="concept-arrow">→</div>
+      <div class="concept-node">ANALISAR</div><div class="concept-arrow">→</div>
+      <div class="concept-node">COMPARAR</div><div class="concept-arrow">→</div>
+      <div class="concept-node">DECIDIR</div>
+    </div>
+    <p>O dado não decide sozinho. Ele melhora a qualidade da decisão.</p>
+  </div>`;
+}
+
+function sceneHtml(d){
+ const st=latest.state||{status:'waiting',reveal_stage:0}, stage=st.reveal_stage||0, m=metrics(d), r=ranking(d.reactions,d.attention), max=Math.max(1,...r.map(x=>x.score));
+ if(st.status==='closing_reveal') return closingScene(st.closing_stage||1);
+ if(st.status==='decide_preview'){
+   const dec=DECISION[st.winning_theme];
+   return `<div class="decide-question"><div class="kicker">DECIDA · APRESENTAÇÃO</div><h2>${dec?.title||'Hora de decidir'}</h2>
+     <div class="decide-context-telao">
+       <div><b>OBJETIVO</b><span>${dec?.objective||''}</span></div>
+       <div><b>RESTRIÇÃO</b><span>${dec?.constraint||''}</span></div>
+     </div>
+     <p>${dec?.prompt||'Use os dados para tomar uma decisão.'}</p><p style="color:#ffd78a;font-weight:900">Ouça a explicação do professor. As decisões ainda não foram liberadas.</p></div>`;
+ }
+ if(st.status==='decide_open'){
+   const dec=DECISION[st.winning_theme];
+   return `<div class="decide-question"><div class="kicker">DECIDA</div><h2>${dec?.title||'Hora de decidir'}</h2>
+     <div class="decide-context-telao">
+       <div><b>OBJETIVO</b><span>${dec?.objective||''}</span></div>
+       <div><b>RESTRIÇÃO</b><span>${dec?.constraint||''}</span></div>
+     </div>
+     <p>${dec?.prompt||'Use os dados para tomar uma decisão.'}</p><p style="color:#fff;font-weight:900">Escolha uma estratégia e duas evidências no seu dispositivo.</p></div>`;
+ }
+ if(st.status==='decide_reveal'){
+   const dec=DECISION[st.winning_theme];
+   const rows=d.decisionAnswers||[];
+   const counts={};
+   (dec?.options||[]).forEach(o=>counts[o.code]=0);
+   rows.forEach(x=>counts[x.choice_code]=(counts[x.choice_code]||0)+1);
+   const total=Math.max(1,rows.length);
+   const topCode=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;
+   const supportIndex=code=>{
+     const strengths=rows.filter(r=>r.choice_code===code)
+       .flatMap(r=>(Array.isArray(r.evidence_json)?r.evidence_json:[]).map(e=>Number(e.strength)).filter(Number.isFinite));
+     return strengths.length?Math.round(strengths.reduce((a,b)=>a+b,0)/strengths.length):0;
+   };
+   return `<div class="decide-question"><div class="kicker">DECIDA · RESULTADO</div><h2>Qual estratégia a turma escolheu?</h2>
+     <div class="vote-bars">
+       ${(dec?.options||[]).map(opt=>{
+         const p=Math.round(100*(counts[opt.code]||0)/total);
+         const support=supportIndex(opt.code);
+         const top=rows.length && opt.code===topCode;
+         return `<div class="vote-row ${top?'top-choice':''}">
+           <div class="vote-text">${opt.text}${top?'<span class="choice-tag">(mais votada)</span>':''}</div>
+           <div class="vote-metrics"><div class="vote-share">${rows.length?p:0}%</div><div class="support-score">sustentação ${support}%</div></div>
+         </div>`;
+       }).join('')}
+     </div>
+     <p>Uma estratégia pode ser popular e, ao mesmo tempo, ter diferentes níveis de sustentação nos dados.</p>
+     <p class="support-explain">Índice de sustentação = média da força das evidências selecionadas pelos alunos que defenderam cada estratégia. Não é probabilidade nem nota de acerto.</p>
+   </div>`;
+ }
+ if(st.status==='investigation_preview') return `<div class="kicker">INVESTIGUE · PREPARAÇÃO</div><h2>O tema escolhido pela turma é</h2><h1 class="winner">${st.winning_theme||r[0]?.theme||'—'}</h1><p>Gostar do tema ainda nos diz muito pouco.</p><p style="color:#fff;font-weight:850">Vamos formular novas perguntas antes de liberar as respostas.</p>`;
+ if(st.status==='investigation_open') return `<div class="kicker">INVESTIGUE · LIBERADO</div><h2>O tema escolhido pela turma é</h2><h1 class="winner">${st.winning_theme||r[0]?.theme||'—'}</h1><p>A investigação já está disponível nos dispositivos.</p>`;
+ if(st.status==='waiting') return `<div class="kicker">MISSÃO 9</div><h1>Do interesse ao dado</h1><p>Aguardando o professor iniciar a experiência.</p>`;
+ if(st.status==='feed_open') return `<div class="kicker">EXPLORE</div><h1>Feed liberado</h1><p>As escolhas da turma estão sendo transformadas em sinais.</p>`;
+ if(st.status==='feed_paused') return `<div class="kicker">EXPLORE</div><h1>Feed pausado</h1><p>Aguarde a orientação do professor.</p>`;
+ if(st.status==='feed_closed') return `<div class="kicker">EXPLORE · CONCLUÍDO</div><h1>Dados coletados</h1><p>Aguardando a revelação dos padrões da turma.</p>`;
+ if(st.status!=='results_reveal') return `<div class="kicker">MISSÃO 9</div><h1>Do interesse ao dado</h1><p>Aguardando a próxima etapa.</p>`;
+ if(stage<=1) return `<div class="kicker">REVELE · PARTICIPANTES</div><div class="big">${m.participants}</div><div class="unit">sessões anônimas</div>`;
+ if(stage===2) return `<div class="kicker">REVELE · VISUALIZAÇÕES</div><div class="big">${m.views}</div><div class="unit">conteúdos visualizados</div><p>Poucas pessoas já geraram muitos registros.</p>`;
+ if(stage===3) return `<div class="kicker">REVELE · REAÇÕES</div><div class="big">${m.reactions}</div><div class="unit">👍 ${m.thumbs} &nbsp;&nbsp; ❤️ ${m.hearts}</div>`;
+ if(stage===4) return `<div class="kicker">UMA PERGUNTA</div><h2>Ninguém respondeu diretamente:</h2><h1>“Qual é o seu tema favorito?”</h1><p>Mesmo assim, suas interações produziram sinais de interesse.</p>`;
+ if(stage===5){
+   const top=r.slice(0,8), topMax=Math.max(1,...top.map(x=>x.score));
+   return `<div class="kicker">PADRÕES DE INTERESSE</div><div class="cloud">${top.map((x,i)=>`<span style="font-size:${Math.round(28+54*x.score/topMax)}px;opacity:${.62+.38*(1-i/top.length)}">${x.theme}</span>`).join('')}</div><p>O tamanho representa a força relativa das reações coletivas.</p>`;
+ }
+ const total = r.reduce((acc,x)=>acc+x.score,0);
+ return `<div class="ranking-scene"><div class="kicker">RANKING DA TURMA</div><h2>O padrão ficou visível</h2>
+  <div class="ranking-layout">
+    <div class="top3-stack">
+      ${r.slice(0,3).map((x,i)=>`<div class="top3-card"><div class="top3-pos">${i+1}º lugar</div><div class="top3-theme">${x.theme}</div><div class="top3-score">${pctText(x.score,total)}</div></div>`).join('')}
+    </div>
+    ${pieChart(r,total)}
+  </div>
+</div>`;
+}
+async function refresh(){
+  try{
+    latest=await getAll();
+    group=latest.state?.presentation_group||latest.state?.winning_group||'ALL';
+    classLabel.textContent=group==='ALL'?'TODAS AS TURMAS':group;
+    const d=filtered(latest,group);
+    scene.innerHTML=sceneHtml(d);
+  }catch(e){
+    console.error('Falha no telão:',e);
+    scene.innerHTML='<div class="kicker">SINCRONIZAÇÃO</div><h2>Não foi possível atualizar o telão.</h2><p>Verifique se Professor e Telão estão usando a mesma versão e o mesmo modo de conexão.</p>';
+  }
+}
+setInterval(refresh,1200);channel&&(channel.onmessage=refresh);
+window.addEventListener('storage',e=>{
+  if(!e.key || e.key.startsWith('m9_'))refresh();
+});refresh();
+</script></body></html>

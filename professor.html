@@ -1,0 +1,2151 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Missão 9 — V10.0.1 | Professor</title>
+<style>
+
+:root{
+  --petrol:#103941;--petrol2:#08252b;--petrol3:#0f3138;--orange:#f18a2a;--paper:#eef2f1;
+  --ink:#15272c;--muted:#75888d;--red:#db4a4a;--green:#39b978;--amber:#e9a63a;
+  --panel:#ffffff;--line:#dbe4e2;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#eef2f1;color:var(--ink)}
+header{
+  background:linear-gradient(135deg,var(--petrol2),var(--petrol));color:#fff;
+  padding:18px clamp(18px,3vw,38px);display:flex;justify-content:space-between;align-items:center;gap:20px;
+  border-bottom:3px solid rgba(241,138,42,.25)
+}
+.brand{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#f6a24f;font-weight:950}
+h1{margin:4px 0 0;font-size:clamp(26px,3.5vw,38px)}
+h2{margin:0;font-size:19px}
+h3{margin:0}
+.mode{font-size:11px;font-weight:900;padding:7px 11px;border-radius:999px;background:#fff2c8;color:#5b4617}
+main{max-width:1650px;margin:auto;padding:16px clamp(14px,2.4vw,30px) 38px}
+
+.view-tabs{display:flex;gap:8px;margin-bottom:14px}
+.view-tab{
+  appearance:none;border:1px solid #d1ddda;background:#fff;color:var(--petrol);border-radius:999px;
+  padding:9px 16px;font-weight:950;cursor:pointer
+}
+.view-tab.active{background:var(--petrol);color:#fff;border-color:var(--petrol)}
+.workspace{display:none}.workspace.active{display:block}
+
+.flightdeck{
+  display:grid;grid-template-columns:300px minmax(500px,1fr) 410px;gap:14px;align-items:start
+}
+.stack{display:grid;gap:14px}
+.panel{
+  background:#fff;border:1px solid var(--line);border-radius:22px;padding:14px;
+  box-shadow:0 10px 26px rgba(16,57,65,.045)
+}
+.panel.dark{background:linear-gradient(135deg,#0d2d33,#123b44);color:#fff;border-color:rgba(255,255,255,.06)}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.eyebrow{font-size:10px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:var(--orange)}
+.panel.dark .eyebrow{color:#ffb463}
+.subtitle{font-size:11px;color:var(--muted);font-weight:750}
+.panel.dark .subtitle{color:#b8cbcf}
+
+.chipbar{display:flex;gap:7px;flex-wrap:wrap}
+button,.chip{
+  appearance:none;border:0;border-radius:12px;padding:10px 12px;font-weight:900;cursor:pointer;
+  background:#dfe6e3;color:var(--ink);transition:.15s ease;min-height:40px
+}
+button:hover,.chip:hover{transform:translateY(-1px)}
+button.primary{background:var(--petrol);color:#fff}
+button.orange{background:var(--orange);color:#fff}
+button.red{background:var(--red);color:#fff}
+button.ghost{background:#edf3f1;border:1px solid #d4dfdc}
+button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.chip.active{background:var(--petrol);color:#fff}
+
+.scene-box{margin-top:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.11);border-radius:18px;padding:12px}
+.scene-label{font-size:9px;font-weight:950;letter-spacing:.14em;text-transform:uppercase;color:#b9ced3;margin-bottom:7px}
+.scene-pill{display:grid;grid-template-columns:1fr 82px;gap:9px;align-items:center;border-radius:16px;background:#f4f8f7;color:var(--petrol2);padding:11px 12px}
+.scene-text{font-size:14px;font-weight:950;line-height:1.12}
+.scene-sub{display:block;margin-top:4px;font-size:10px;color:#61797f;font-weight:750}
+.scene-badge{padding:9px 8px;border-radius:14px;background:linear-gradient(135deg,var(--petrol),#174852);color:#fff;text-align:center}
+.scene-badge .big{font-size:22px;font-weight:950;line-height:1}
+.scene-badge .small{font-size:8px;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+
+.command-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.command-block{border:1px solid #e2e8e6;border-radius:17px;padding:11px;background:#f8fbfa;position:relative}
+.command-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.command-title{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:950}
+.ready{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:950;text-transform:uppercase;letter-spacing:.06em}
+.lamp{width:10px;height:10px;border-radius:50%;background:var(--red);box-shadow:0 0 0 3px rgba(219,74,74,.10)}
+.ready.ok .lamp{background:var(--green);box-shadow:0 0 0 3px rgba(57,185,120,.12),0 0 10px rgba(57,185,120,.35)}
+.ready.ok{color:#238355}.ready.no{color:#9a4a4a}
+.command-buttons{display:grid;gap:7px}
+.command-buttons.two{grid-template-columns:1fr 1fr}
+.command-block.wide{grid-column:1/-1}
+.command-block button{font-size:11px;padding:9px 10px;min-height:38px}
+
+.mirror-screen{
+  width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;position:relative;
+  background:radial-gradient(circle at 78% 18%,rgba(241,138,42,.08),transparent 27%),linear-gradient(135deg,#06191e,#0a2c34);
+  color:#f7f8f5;border:1px solid #dbe4e2;padding:14px 16px 18px;display:flex;flex-direction:column
+}
+.mirror-top{display:flex;justify-content:space-between;gap:10px;font-size:7px;font-weight:950;letter-spacing:.09em;color:#ff9b3d}
+.mirror-top span:last-child{color:#a8bdc2}
+.mirror-content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0}
+.mirror-kicker{font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:#f18a2a;font-weight:950;margin-bottom:5px}
+.mirror-title{font-size:clamp(16px,1.55vw,24px);line-height:1.02;font-weight:950;max-width:95%}
+.mirror-sub{font-size:8px;line-height:1.25;color:#a8bdc2;margin-top:6px;max-width:90%}
+.mirror-big{font-size:42px;font-weight:950;line-height:.95}
+.mirror-rank{width:92%;display:grid;gap:6px;margin-top:7px}
+.mirror-rank-row{display:grid;grid-template-columns:1fr 55px;gap:8px;align-items:center;text-align:left}
+.mirror-rank-label{font-size:8px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mirror-rank-pct{text-align:right;font-size:9px;font-weight:950;color:#ffc16a}
+.mirror-mini-track{height:6px;background:rgba(255,255,255,.10);border-radius:99px;overflow:hidden;grid-column:1/-1}
+.mirror-mini-fill{height:100%;background:linear-gradient(90deg,#f18a2a,#ffc16a);border-radius:99px}
+.mirror-cloud{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px 10px;width:92%}
+.mirror-cloud span{font-weight:900;color:#eaf0f1}
+.mirror-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:92%;margin-top:7px}
+.mirror-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:7px;text-align:left}
+.mirror-card b{display:block;font-size:8px}.mirror-card strong{font-size:12px;color:#ffc16a}
+.mirror-bottom{text-align:center;color:#66878e;font-size:6px;letter-spacing:.02em}
+.mirror-note{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.3}
+
+.data-deck{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:12px;margin-top:14px}
+.kpi-group{background:#fff;border:1px solid var(--line);border-radius:20px;padding:12px}
+.kpi-title{font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.kpi,.card{background:#fafcfc;border:1px solid #e5ebe9;border-radius:14px;padding:9px}
+.lbl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:850}
+.n{font-size:20px;font-weight:950;margin-top:5px;line-height:1}
+.n.sm{font-size:17px}.n.long{font-size:14px;line-height:1.1}
+.question-wrap{margin-top:8px;border:1px solid #e2e8e6;border-radius:15px;background:#f8fbfa;padding:8px}
+.question-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-top:6px}
+.qbox{background:#edf2ef;border-radius:9px;padding:6px;text-align:center}
+.qbox b,.qbox span{font-size:10px}.qbox span{color:var(--muted);font-weight:850}
+
+.rank-panel{margin-top:12px}
+.bars{display:grid;gap:7px}
+.barrow{display:grid;grid-template-columns:minmax(145px,205px) 1fr 42px;gap:8px;align-items:center}
+.barrow strong{font-size:12px}
+.track{height:12px;background:#e5e9e7;border-radius:999px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,var(--petrol),#1d5966);border-radius:999px}
+.rank-hidden{padding:18px;border:1px dashed #b8c4c1;border-radius:16px;text-align:center;color:var(--muted);background:#fff;font-size:12px}
+.rank-note{margin-top:8px;font-size:10px;color:var(--muted);line-height:1.3}
+
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.analytics-wide{grid-column:1/-1}
+.analytics-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:14px}
+.metric-line{display:grid;grid-template-columns:150px 1fr 58px;gap:9px;align-items:center;margin-top:12px}
+.metric-line strong{font-size:12px}
+.analytics-track{height:14px;background:#e5e9e7;border-radius:999px;overflow:hidden}
+.analytics-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#f18a2a,#ffbd75)}
+.analytics-fill.petrol{background:linear-gradient(90deg,#15515d,#3f8995)}
+.pattern-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.pattern{border:1px solid #e4eae8;border-radius:14px;padding:10px;background:#fbfcfc}
+.pattern .q{font-size:9px;color:var(--muted);font-weight:800;line-height:1.2}
+.pattern .a{font-size:15px;font-weight:950;margin:7px 0 4px;line-height:1.05}
+.pattern .p{font-size:19px;color:var(--orange);font-weight:950}
+.segment-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.segment-card{border:1px solid #e4eae8;border-radius:14px;padding:10px}
+.result-list{display:grid;gap:8px;margin-top:10px}
+.result-row{display:grid;grid-template-columns:minmax(200px,1fr) 1.1fr 52px;gap:8px;align-items:center}
+.result-label{font-size:11px;font-weight:800}
+.result-track{height:12px;background:#e5eae7;border-radius:999px;overflow:hidden}
+.result-fill{height:100%;background:linear-gradient(90deg,#aebfc3,#6f8f96);border-radius:999px}
+.result-row.top .result-fill{background:linear-gradient(90deg,#e58a31,#ffc16d)}
+.result-value{font-size:12px;font-weight:950;text-align:right}
+.analysis-head{display:flex;justify-content:space-between;align-items:end;gap:10px;margin-bottom:10px}
+.analysis-theme{font-size:24px;font-weight:950}
+
+@media(max-width:1250px){
+  .flightdeck{grid-template-columns:1fr 1fr}
+  .flightdeck>.panel:nth-child(3){grid-column:1/-1;max-width:520px}
+  .data-deck{grid-template-columns:1fr}
+}
+@media(max-width:850px){
+  .flightdeck,.analytics-grid{grid-template-columns:1fr}
+  .command-grid,.kpi-grid,.pattern-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .command-grid,.kpi-grid,.pattern-grid,.segment-grid{grid-template-columns:1fr}
+  .scene-pill{grid-template-columns:1fr}
+  .result-row,.metric-line{grid-template-columns:1fr}
+}
+
+
+/* V7.1 — reset completo da simulação */
+.reset-zone{
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.10);
+}
+.reset-btn{
+  width:100%;
+  background:rgba(219,74,74,.12);
+  color:#ffd9d9;
+  border:1px solid rgba(219,74,74,.36);
+}
+.reset-btn:hover{background:rgba(219,74,74,.20)}
+.confirm-overlay{
+  position:fixed;inset:0;background:rgba(4,18,22,.72);backdrop-filter:blur(7px);
+  z-index:999;display:none;align-items:center;justify-content:center;padding:20px;
+}
+.confirm-overlay.active{display:flex}
+.confirm-box{
+  width:min(520px,94vw);background:#fff;color:var(--ink);border-radius:24px;padding:24px;
+  box-shadow:0 28px 80px rgba(0,0,0,.28)
+}
+.confirm-icon{
+  width:48px;height:48px;border-radius:50%;display:grid;place-items:center;
+  background:#fff0f0;color:var(--red);font-size:24px;font-weight:950;margin-bottom:14px;
+}
+.confirm-box h3{font-size:24px;margin:0 0 8px}
+.confirm-box p{color:var(--muted);line-height:1.45;margin:0 0 12px}
+.confirm-list{
+  background:#f6f8f7;border:1px solid #e2e8e6;border-radius:16px;padding:12px 14px;
+  margin:14px 0 18px;font-size:13px;line-height:1.5
+}
+.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.confirm-actions button{min-height:46px}
+.confirm-danger{background:var(--red);color:#fff}
+@media(max-width:520px){.confirm-actions{grid-template-columns:1fr}}
+
+
+/* V8.0 — prontidão em três estados, intertravamento e amostra */
+.readiness-config{display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.09)}
+.readiness-config label{font-size:10px;color:#c2d3d6;font-weight:850}
+.readiness-config input[type=number]{width:100%;margin-top:5px;border:0;border-radius:10px;padding:8px 10px;font-weight:850;color:var(--petrol)}
+.force-label{display:flex;align-items:center;gap:7px}.force-label input{accent-color:var(--orange)}
+.ready.warn{color:#a36d14}.ready.warn .lamp{background:var(--amber);box-shadow:0 0 0 3px rgba(233,166,58,.12),0 0 10px rgba(233,166,58,.28)}
+.sample-note{margin-top:7px;font-size:10px;color:var(--muted);font-weight:750}
+.analytics-grid{grid-template-columns:repeat(3,1fr)}
+.analytics-fill.attention{background:linear-gradient(90deg,#7e72d6,#b4a7ff)}
+.decision-context-mini{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px}
+.decision-context-mini div{background:#f7f9f8;border:1px solid #e2e8e6;border-radius:11px;padding:8px;font-size:10px;line-height:1.25}
+.decision-context-mini b{display:block;color:var(--petrol);margin-bottom:3px}
+.evidence-usage{display:grid;gap:6px;margin-top:7px}
+.evidence-use{display:grid;grid-template-columns:1fr auto;gap:8px;background:#f8faf9;border:1px solid #e5ebe9;border-radius:11px;padding:8px}
+.evidence-use span{font-size:10px;line-height:1.25}.evidence-use b{font-size:11px;color:var(--orange)}
+@media(max-width:1100px){.analytics-grid{grid-template-columns:1fr 1fr}.analytics-wide{grid-column:1/-1}}
+@media(max-width:700px){.analytics-grid{grid-template-columns:1fr}.decision-context-mini{grid-template-columns:1fr}}
+
+
+/* V8.1 — cronômetro */
+.timer-panel{margin-top:12px;padding:11px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.10)}
+.timer-head{display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
+.timer-value{font-size:28px;line-height:1;font-weight:950;letter-spacing:.03em;color:#fff}
+.timer-target{text-align:right;color:#b8cbcf;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.timer-target strong{font-size:14px;color:#fff}
+.timer-track{height:7px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden;margin:9px 0}
+.timer-fill{height:100%;width:0;background:#4fc08d;border-radius:999px;transition:width .3s,background .3s}
+.timer-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.timer-actions button{min-height:32px;padding:6px;font-size:9px}
+.timer-panel.warn .timer-value{color:#ffc16a}.timer-panel.danger .timer-value{color:#ff7b74}
+.timer-panel.warn .timer-fill{background:#e9a63a}.timer-panel.danger .timer-fill{background:#db4a4a}
+
+
+/* V8.3 — estabilidade e diagnóstico */
+.header-health{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.system-health{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;font-size:10px;font-weight:950;letter-spacing:.08em;background:rgba(255,255,255,.10);color:#dbe9eb}
+.health-dot{width:9px;height:9px;border-radius:50%;background:#e9a63a;box-shadow:0 0 0 3px rgba(233,166,58,.12)}
+.system-health.ok .health-dot{background:#39b978;box-shadow:0 0 0 3px rgba(57,185,120,.13)}
+.system-health.error .health-dot{background:#db4a4a;box-shadow:0 0 0 3px rgba(219,74,74,.13)}
+.system-health.ok{color:#bff0d3}.system-health.error{color:#ffd1d1}
+
+
+/* V10.0.1 — sinalização de prontidão de alta visibilidade */
+.ready{padding:5px 8px;border-radius:999px;background:#f2e8e8;min-width:82px;justify-content:center}
+.ready .lamp{width:13px;height:13px;flex:0 0 13px}
+.ready.warn{
+  color:#6e4700;background:#ffd86a;border:1px solid #d79b12;
+  box-shadow:0 0 0 3px rgba(233,166,58,.15),0 0 14px rgba(233,166,58,.25)
+}
+.ready.warn .lamp{
+  background:#f1a400;box-shadow:0 0 0 4px rgba(255,194,51,.22),0 0 14px rgba(255,183,0,.75)
+}
+.ready.ok{background:#dff4e8;border:1px solid #79c99d}
+.ready.no{background:#f5e2e2;border:1px solid #e1aaaa}
+.command-block.stage-warn{
+  border:2px solid #e0a11c!important;
+  background:linear-gradient(135deg,#fff8df,#fffdf7)!important;
+  box-shadow:0 0 0 4px rgba(233,166,58,.10),0 8px 22px rgba(184,126,0,.08)
+}
+.command-block.stage-ok{border-color:#9bd0af!important}
+.command-block.stage-no{border-color:#e0d5d5!important}
+@keyframes m9AmberPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+.ready.warn .lamp{animation:m9AmberPulse 1.2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.ready.warn .lamp{animation:none}}
+
+
+/* V10.0.1 — controle automático de tempo por etapa */
+.timer-panel{padding:12px}
+.timer-overview{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end}
+.timer-main-label{font-size:9px;text-transform:uppercase;letter-spacing:.10em;color:#a9c0c5;font-weight:900}
+.timer-stage-now{margin-top:5px;font-size:11px;color:#dbe9eb;font-weight:850}
+.timer-stage-now strong{color:#fff}
+.timer-status-pill{
+  display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:5px 8px;border-radius:999px;
+  font-size:9px;font-weight:950;letter-spacing:.06em;background:rgba(255,255,255,.08);color:#d7e5e7
+}
+.timer-status-pill .dot{width:8px;height:8px;border-radius:50%;background:#7d9195}
+.timer-status-pill.on-time{background:rgba(63,185,121,.13);color:#bff0d3}
+.timer-status-pill.on-time .dot{background:#39b978;box-shadow:0 0 0 3px rgba(57,185,120,.12)}
+.timer-status-pill.over{background:rgba(219,74,74,.14);color:#ffd1d1}
+.timer-status-pill.over .dot{background:#db4a4a;box-shadow:0 0 0 3px rgba(219,74,74,.13)}
+.timer-status-pill.idle{background:rgba(255,255,255,.07);color:#b8cbcf}
+.stage-timing-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:9px 0 8px
+}
+.stage-time-item{
+  display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:center;gap:6px;
+  min-height:32px;padding:5px 7px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.045)
+}
+.stage-time-item .stage-light{
+  width:9px;height:9px;border-radius:50%;background:#6f8185;
+  box-shadow:0 0 0 3px rgba(255,255,255,.035)
+}
+.stage-time-item .stage-name{font-size:8.5px;font-weight:950;letter-spacing:.045em;color:#bcd0d3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stage-time-item .stage-time{font-size:9px;font-weight:900;color:#dce8ea;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stage-time-item.current{border-color:rgba(255,255,255,.20);background:rgba(255,255,255,.085)}
+.stage-time-item.good .stage-light{background:#39b978;box-shadow:0 0 0 3px rgba(57,185,120,.12)}
+.stage-time-item.good .stage-name,.stage-time-item.good .stage-time{color:#c9f3d8}
+.stage-time-item.late{border-color:rgba(219,74,74,.45);background:rgba(219,74,74,.11)}
+.stage-time-item.late .stage-light{background:#db4a4a;box-shadow:0 0 0 3px rgba(219,74,74,.13)}
+.stage-time-item.late .stage-name,.stage-time-item.late .stage-time{color:#ffd1d1}
+.stage-time-item.future{opacity:.72}
+.timer-summary{
+  display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px
+}
+.timer-mini{
+  border-radius:10px;padding:6px 8px;background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.07)
+}
+.timer-mini span{display:block;font-size:7.5px;color:#98b2b7;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.timer-mini b{display:block;margin-top:2px;font-size:10px;color:#fff;font-variant-numeric:tabular-nums}
+.timer-actions{grid-template-columns:repeat(2,1fr)}
+.timer-actions .resume{background:rgba(255,255,255,.10);color:#fff}
+.timer-note{margin-top:6px;font-size:8px;color:#8fa8ad;line-height:1.25}
+@media(max-width:1050px){.stage-timing-grid{grid-template-columns:1fr}}
+
+
+/* V10.0.1 — controle de tempo em painel horizontal próprio */
+.timer-wide{
+  margin-top:14px;
+  padding:15px 16px 14px;
+  background:linear-gradient(135deg,#0d2d33,#123b44);
+}
+.timer-wide-head{
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) auto auto;
+  gap:18px;
+  align-items:center;
+}
+.timer-wide h2{font-size:18px}
+.timer-wide .timer-stage-now{
+  margin-top:4px;
+  font-size:11px;
+  color:#b8cbcf;
+}
+.timer-stage-sep{padding:0 4px;color:#77949a}
+.timer-global-clock{
+  min-width:170px;
+  padding:7px 12px;
+  border-left:1px solid rgba(255,255,255,.11);
+  border-right:1px solid rgba(255,255,255,.11);
+}
+.timer-global-clock>span{
+  display:block;
+  font-size:8px;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+  color:#93adb2;
+  font-weight:950;
+}
+.timer-global-clock div{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+  margin-top:2px;
+}
+.timer-global-clock strong{
+  font-size:27px;
+  line-height:1;
+  color:#fff;
+  font-variant-numeric:tabular-nums;
+}
+.timer-global-clock small{
+  color:#a9bdc1;
+  font-size:11px;
+  font-weight:900;
+}
+.timer-wide .timer-status-pill{
+  margin:0;
+  min-width:170px;
+  justify-content:center;
+  white-space:nowrap;
+}
+.timer-wide .timer-track{margin:11px 0 10px}
+
+.stage-timing-wide{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:8px;
+  margin:0;
+}
+.stage-timing-wide .stage-time-item{
+  min-height:52px;
+  padding:8px 9px;
+  grid-template-columns:11px minmax(0,1fr);
+  grid-template-areas:
+    "light name"
+    "light time";
+  column-gap:7px;
+  row-gap:2px;
+}
+.stage-timing-wide .stage-light{grid-area:light;align-self:center}
+.stage-timing-wide .stage-name{
+  grid-area:name;
+  font-size:9px;
+  overflow:visible;
+  text-overflow:clip;
+}
+.stage-timing-wide .stage-time{
+  grid-area:time;
+  font-size:10px;
+  text-align:left;
+}
+
+.timer-wide-footer{
+  display:grid;
+  grid-template-columns:minmax(280px,auto) minmax(330px,1fr) auto;
+  gap:14px;
+  align-items:center;
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,.09);
+}
+.timer-summary-wide{
+  grid-template-columns:repeat(2,minmax(135px,1fr));
+  margin:0;
+  min-width:300px;
+}
+.timer-summary-wide .timer-mini{
+  padding:7px 9px;
+  background:rgba(255,255,255,.055);
+  border-color:rgba(255,255,255,.08);
+}
+.timer-note-wide{
+  margin:0;
+  font-size:9px;
+  line-height:1.35;
+  color:#9eb5ba;
+}
+.timer-note-wide strong{color:#dce9eb}
+.timer-actions-wide{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  min-width:255px;
+}
+.timer-actions-wide button{
+  min-height:38px;
+  padding:8px 12px;
+  font-size:10px;
+  white-space:nowrap;
+}
+.timer-actions-wide .resume{
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  border:1px solid rgba(255,255,255,.09);
+}
+.timer-actions-wide .ghost{
+  background:#edf3f1;
+  color:#18333a;
+}
+
+@media(max-width:1200px){
+  .stage-timing-wide{grid-template-columns:repeat(3,1fr)}
+  .timer-wide-footer{grid-template-columns:1fr auto}
+  .timer-note-wide{grid-column:1/-1;grid-row:2}
+}
+@media(max-width:850px){
+  .timer-wide-head{grid-template-columns:1fr 1fr}
+  .timer-wide .timer-status-pill{grid-column:1/-1;justify-self:start}
+  .stage-timing-wide{grid-template-columns:repeat(2,1fr)}
+  .timer-wide-footer{grid-template-columns:1fr}
+  .timer-actions-wide{min-width:0}
+  .timer-summary-wide{min-width:0}
+}
+@media(max-width:520px){
+  .timer-wide-head{grid-template-columns:1fr}
+  .timer-global-clock{border-left:0;border-right:0;padding-left:0}
+  .stage-timing-wide{grid-template-columns:1fr}
+  .timer-summary-wide,.timer-actions-wide{grid-template-columns:1fr}
+}
+
+
+/* V10.0.1 — cronômetro exatamente abaixo do painel Espelho */
+.mirror-timer-stack{display:grid;gap:12px;align-content:start;min-width:0}
+.mirror-timer-stack>.panel{min-width:0}
+
+.timer-under-mirror{
+  margin:0;
+  padding:12px 13px 11px;
+  border-radius:20px;
+  min-width:0;
+}
+.timer-under-mirror .timer-wide-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px 12px;
+  align-items:start;
+}
+.timer-under-mirror h2{font-size:16px}
+.timer-under-mirror .timer-stage-now{
+  margin-top:3px;font-size:9px;line-height:1.25;color:#b8cbcf;
+}
+.timer-under-mirror .timer-global-clock{
+  min-width:128px;padding:3px 0 3px 10px;
+  border-left:1px solid rgba(255,255,255,.11);border-right:0;
+}
+.timer-under-mirror .timer-global-clock>span{font-size:7px}
+.timer-under-mirror .timer-global-clock strong{font-size:24px}
+.timer-under-mirror .timer-global-clock small{font-size:9px}
+.timer-under-mirror .timer-status-pill{
+  grid-column:1/-1;
+  margin:0;
+  min-width:0;
+  width:max-content;
+  max-width:100%;
+  padding:4px 8px;
+  font-size:8px;
+}
+.timer-under-mirror .timer-track{margin:8px 0 8px;height:6px}
+
+.timer-under-mirror .stage-timing-wide{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;
+  margin:0;
+}
+.timer-under-mirror .stage-time-item{
+  min-height:42px;
+  padding:6px 7px;
+  grid-template-columns:10px minmax(0,1fr) auto;
+  grid-template-areas:"light name time";
+  column-gap:6px;
+  row-gap:0;
+}
+.timer-under-mirror .stage-light{grid-area:light;align-self:center;width:9px;height:9px}
+.timer-under-mirror .stage-name{
+  grid-area:name;font-size:8px;overflow:visible;text-overflow:clip;white-space:nowrap;
+}
+.timer-under-mirror .stage-time{
+  grid-area:time;font-size:8px;text-align:right;white-space:nowrap;
+}
+
+.timer-under-mirror .timer-wide-footer{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:7px;
+  align-items:stretch;
+  margin-top:8px;
+  padding-top:8px;
+}
+.timer-under-mirror .timer-summary-wide{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:6px;
+  min-width:0;
+  margin:0;
+}
+.timer-under-mirror .timer-mini{padding:5px 7px}
+.timer-under-mirror .timer-mini span{font-size:7px}
+.timer-under-mirror .timer-mini b{font-size:9px;white-space:nowrap}
+.timer-under-mirror .timer-note-wide{
+  margin:0;font-size:7.5px;line-height:1.25;color:#91a9ae;
+}
+.timer-under-mirror .timer-actions-wide{
+  display:grid;grid-template-columns:1fr 1fr;gap:7px;min-width:0;
+}
+.timer-under-mirror .timer-actions-wide button{
+  min-height:32px;padding:6px 8px;font-size:8.5px;white-space:nowrap;
+}
+
+/* O painel de tempo acompanha apenas a largura do Espelho. */
+@media(max-width:1200px){
+  .timer-under-mirror .stage-timing-wide{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .timer-under-mirror .timer-wide-footer{grid-template-columns:1fr}
+  .timer-under-mirror .timer-note-wide{grid-column:auto;grid-row:auto}
+}
+@media(max-width:900px){
+  .mirror-timer-stack{grid-column:1/-1}
+  .timer-under-mirror .stage-timing-wide{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:560px){
+  .timer-under-mirror .timer-wide-head{grid-template-columns:1fr}
+  .timer-under-mirror .timer-global-clock{border-left:0;padding-left:0}
+  .timer-under-mirror .stage-timing-wide{grid-template-columns:1fr 1fr}
+}
+
+</style></head>
+<body><header>
+      <div><div class="brand">Missão 9 · Data Driven</div><h1>Painel do professor</h1></div>
+      <div class="header-health">
+        <div id="systemHealth" class="system-health starting"><span class="health-dot"></span><span id="systemHealthText">INICIANDO</span></div>
+        <div id="mode" class="mode">DEMO LOCAL</div>
+      </div>
+    </header>
+
+
+
+<main>
+  <div class="view-tabs">
+    <button class="view-tab active" data-view="control">CONTROLE</button>
+    <button class="view-tab" data-view="analysis">ANÁLISE / DECIDA</button>
+  </div>
+
+  <section id="view-control" class="workspace active">
+    <div class="flightdeck">
+      <div class="panel dark">
+        <div class="panel-head">
+          <div><div class="eyebrow">Navegação</div><h2>Filtro e estado</h2></div>
+        </div>
+        <div class="chipbar">
+          <button class="chip active" data-group="ALL">Todas</button>
+          <button class="chip" data-group="9A">9A</button>
+          <button class="chip" data-group="9B">9B</button>
+        </div>
+        <div class="readiness-config">
+          <label>Alunos esperados
+            <input id="expectedCount" type="number" min="0" inputmode="numeric" placeholder="opcional">
+          </label>
+          <label class="force-label"><input id="forceAdvance" type="checkbox"> permitir avanço manual</label>
+        </div>
+        <div class="scene-box">
+          <div class="scene-label">Tela atual</div>
+          <div class="scene-pill">
+            <div class="scene-text" id="sceneText">Aguardando início
+              <span class="scene-sub" id="sceneSub">Experiência ainda não iniciada</span>
+            </div>
+            <div class="scene-badge">
+              <div class="small" id="sceneBadgeLabel">cena</div>
+              <div class="big" id="sceneBadgeValue">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reset-zone">
+          <button class="reset-btn" onclick="openResetConfirm()">LIMPAR DADOS E REINICIAR</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="eyebrow">Controles</div><h2>Painel de comando</h2></div>
+          <div class="subtitle">Luzes indicam quando a etapa já pode ser exibida</div>
+        </div>
+        <div class="command-grid">
+          <div class="command-block">
+            <div class="command-head"><div class="command-title">Feed</div><div id="readyFeed" class="ready no"><span class="lamp"></span><span>aguarde</span></div></div>
+            <div class="command-buttons">
+              <button class="primary" id="openFeedBtn" onclick="openFeed()">ABRIR FEED</button>
+              <div class="command-buttons two">
+                <button class="ghost" id="pauseFeedBtn" onclick="pauseFeed()">PAUSAR</button>
+                <button class="red" id="closeFeedBtn" onclick="closeFeed()">ENCERRAR</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="command-block">
+            <div class="command-head"><div class="command-title">Revelação</div><div id="readyReveal" class="ready no"><span class="lamp"></span><span>aguarde</span></div></div>
+            <div class="command-buttons">
+              <button class="orange" id="startRevealBtn" onclick="startReveal()">REVELAR</button>
+              <div class="command-buttons two">
+                <button id="revealPrev" class="ghost" onclick="stepReveal(-1)">◀ VOLTAR</button>
+                <button id="revealNext" class="ghost" onclick="stepReveal(1)">AVANÇAR ▶</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="command-block">
+            <div class="command-head"><div class="command-title">Investigue</div><div id="readyInvestigate" class="ready no"><span class="lamp"></span><span>aguarde</span></div></div>
+            <div class="command-buttons">
+              <button class="primary" id="startInvestigateBtn" onclick="previewInvestigation()">APRESENTAR INVESTIGAÇÃO</button>
+              <div class="command-head" style="margin:2px 0 0">
+                <div class="command-title">Liberação aos alunos</div>
+                <div id="readyInvestigateRelease" class="ready no"><span class="lamp"></span><span>bloqueado</span></div>
+              </div>
+              <button class="orange" id="releaseInvestigateBtn" onclick="releaseInvestigation()">LIBERAR RESPOSTAS</button>
+            </div>
+          </div>
+
+          <div class="command-block">
+            <div class="command-head"><div class="command-title">Decida</div><div id="readyDecide" class="ready no"><span class="lamp"></span><span>aguarde</span></div></div>
+            <div class="command-buttons">
+              <button class="primary" id="previewDecideBtn" onclick="previewDecide()">APRESENTAR DECIDA</button>
+              <div class="command-head" style="margin:2px 0 0">
+                <div class="command-title">Liberação aos alunos</div>
+                <div id="readyDecideRelease" class="ready no"><span class="lamp"></span><span>bloqueado</span></div>
+              </div>
+              <button class="orange" id="startDecideBtn" onclick="startDecide()">LIBERAR DECISÃO</button>
+              <div class="command-head" style="margin:2px 0 0">
+                <div class="command-title">Resultado</div>
+                <div id="readyDecisionReveal" class="ready no"><span class="lamp"></span><span>aguarde</span></div>
+              </div>
+              <button class="primary" id="revealDecideBtn" onclick="revealDecide()">REVELAR DECISÕES</button>
+            </div>
+          </div>
+
+          <div class="command-block wide">
+            <div class="command-head"><div class="command-title">Fechamento pedagógico</div><div id="readyClosing" class="ready no"><span class="lamp"></span><span>aguarde</span></div></div>
+            <div class="command-buttons">
+              <button class="orange" id="startClosingBtn" onclick="startClosing()">INICIAR FECHAMENTO</button>
+              <div class="command-buttons two">
+                <button id="closingPrev" class="ghost" onclick="closingStep(-1)">◀ VOLTAR</button>
+                <button id="closingNext" class="ghost" onclick="closingStep(1)">AVANÇAR ▶</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack mirror-timer-stack">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="eyebrow">Espelho</div><h2>Telão</h2></div>
+          <div class="subtitle">prévia ao vivo</div>
+        </div>
+        <div class="mirror-screen" id="mirrorScreen">
+          <div class="mirror-top">
+            <span>MISSÃO 9 · DATA DRIVEN</span>
+            <span id="mirrorGroup">TODAS AS TURMAS</span>
+          </div>
+          <div id="mirrorContent" class="mirror-content"></div>
+          <div class="mirror-bottom">EXPLORE → REVELE → INVESTIGUE → DECIDA</div>
+        </div>
+        <div class="mirror-note">Prévia interna do estado atual do telão. Não depende de outro arquivo para carregar.</div>
+      </div>
+
+<div class="panel dark timer-panel timer-under-mirror" id="timerPanel">
+      <div class="timer-wide-head">
+        <div>
+          <div class="eyebrow">Controle de tempo</div>
+          <h2>Ritmo da experiência</h2>
+          <div class="timer-stage-now">
+            Etapa atual: <strong id="currentTimedStage">aguardando</strong>
+            <span class="timer-stage-sep">·</span>
+            <span id="currentStageClock">00:00 / --:--</span>
+          </div>
+        </div>
+
+        <div class="timer-global-clock">
+          <span>Tempo total</span>
+          <div><strong id="presentationTimer">00:00</strong><small>/ 40:00</small></div>
+        </div>
+
+        <div id="timerStatusPill" class="timer-status-pill idle">
+          <span class="dot"></span><span id="timerStatusText">AGUARDANDO INÍCIO</span>
+        </div>
+      </div>
+
+      <div class="timer-track"><div id="timerFill" class="timer-fill"></div></div>
+
+      <div class="stage-timing-grid stage-timing-wide" id="stageTimingGrid">
+        <div class="stage-time-item future" data-tstage="EXPLORE">
+          <span class="stage-light"></span><span class="stage-name">EXPLORE</span><span class="stage-time">-- / 08:00</span>
+        </div>
+        <div class="stage-time-item future" data-tstage="REVELE">
+          <span class="stage-light"></span><span class="stage-name">REVELE</span><span class="stage-time">-- / 05:00</span>
+        </div>
+        <div class="stage-time-item future" data-tstage="INVESTIGUE">
+          <span class="stage-light"></span><span class="stage-name">INVESTIGUE</span><span class="stage-time">-- / 10:00</span>
+        </div>
+        <div class="stage-time-item future" data-tstage="ANALISE">
+          <span class="stage-light"></span><span class="stage-name">ANALISE</span><span class="stage-time">-- / 05:00</span>
+        </div>
+        <div class="stage-time-item future" data-tstage="DECIDA">
+          <span class="stage-light"></span><span class="stage-name">DECIDA</span><span class="stage-time">-- / 05:00</span>
+        </div>
+        <div class="stage-time-item future" data-tstage="FECHAMENTO">
+          <span class="stage-light"></span><span class="stage-name">FECHAMENTO</span><span class="stage-time">-- / 05:00</span>
+        </div>
+      </div>
+
+      <div class="timer-wide-footer">
+        <div class="timer-summary timer-summary-wide">
+          <div class="timer-mini"><span>Planejado</span><b id="plannedTotal">38:00 + 02:00 reserva</b></div>
+          <div class="timer-mini"><span>Reserva restante</span><b id="reserveRemaining">02:00</b></div>
+        </div>
+
+        <div class="timer-note timer-note-wide">
+          O relógio inicia automaticamente ao abrir o FEED.
+          <strong>Verde</strong> = dentro do previsto · <strong>Vermelho</strong> = tempo da etapa ultrapassado.
+        </div>
+
+        <div class="timer-actions timer-actions-wide">
+          <button id="timerStartBtn" class="resume" onclick="startPresentationTimer()">INICIAR / RETOMAR</button>
+          <button class="ghost" onclick="pausePresentationTimer()">PAUSAR</button>
+        </div>
+      </div>
+    </div>
+      </div>
+    </div>
+
+
+    <div class="data-deck">
+      <div class="kpi-group">
+        <div class="kpi-title">Feed</div>
+        <div class="kpi-grid">
+          <div class="kpi"><div class="lbl">Perfis prontos</div><div id="participants" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">Concluíram</div><div id="completed" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">Visualizações</div><div id="views" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">Reações</div><div id="reactions" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">👍</div><div id="thumbs" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">❤️</div><div id="hearts" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">Posts / aluno</div><div id="avgViews" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">Conclusão</div><div id="completion" class="n">0%</div></div>
+        </div>
+      </div>
+
+      <div class="kpi-group">
+        <div class="kpi-title">Investigação</div>
+        <div class="info-grid">
+          <div class="kpi"><div class="lbl">Tema vencedor</div><div id="winningTheme" class="n long">—</div></div>
+          <div class="kpi"><div class="lbl">Iniciaram</div><div id="investStarted" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">Concluíram</div><div id="investCompleted" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">Respostas</div><div id="investAnswers" class="n">0</div></div>
+        </div>
+        <div id="investQuestionStatus" class="question-wrap"></div>
+      </div>
+
+      <div class="kpi-group">
+        <div class="kpi-title">Decisão</div>
+        <div class="info-grid">
+          <div class="kpi"><div class="lbl">Iniciaram</div><div id="decideStarted" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">Votaram</div><div id="decideCompleted" class="n">0</div></div>
+          <div class="kpi"><div class="lbl">Maior preferência</div><div id="decideTopPct" class="n sm">0%</div></div>
+          <div class="kpi"><div class="lbl">Estratégias votadas</div><div id="decideDiversity" class="n sm">0</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel rank-panel">
+      <div class="panel-head">
+        <div><div class="eyebrow">Leitura coletiva</div><h2>Ranking de interesses</h2></div>
+        <div class="subtitle">Percentual do total de pontos · oculto durante o feed</div>
+      </div>
+      <div id="rankWrap"></div>
+    </div>
+  </section>
+
+  <section id="view-analysis" class="workspace">
+    <div class="analysis-head">
+      <div><div class="eyebrow">ANÁLISE / DECIDA</div><div id="aThemeTitle" class="analysis-theme">Aguardando tema</div></div>
+      <div class="subtitle">Mesmo filtro de turma do cockpit</div>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <div class="eyebrow">Comportamento</div>
+        <h3>Força do tema no feed</h3>
+        <div class="metric-line"><strong id="aBehLabel">Tema</strong><div class="analytics-track"><div id="aBehBar" class="analytics-fill petrol"></div></div><b id="aBehPct">0%</b></div>
+        <div id="aBehN" class="sample-note">n=0 reações</div>
+      </div>
+
+      <div class="analytics-card">
+        <div class="eyebrow">Atenção</div>
+        <h3>Índice de atenção relativa</h3>
+        <div class="metric-line"><strong id="aAttLabel">Tema</strong><div class="analytics-track"><div id="aAttBar" class="analytics-fill attention"></div></div><b id="aAttPct">0%</b></div>
+        <div id="aAttN" class="sample-note">n=0 registros</div>
+      </div>
+
+      <div class="analytics-card">
+        <div class="eyebrow">Declaração</div>
+        <h3>Interesse médio declarado</h3>
+        <div class="metric-line"><strong>Q1 · Interesse</strong><div class="analytics-track"><div id="aDeclBar" class="analytics-fill"></div></div><b id="aDeclPct">0%</b></div><div id="aDeclN" class="sample-note">n=0 respostas</div>
+      </div>
+
+      <div class="analytics-card analytics-wide">
+        <div class="eyebrow">Padrões</div>
+        <h3>Respostas mais frequentes</h3>
+        <div id="aPatterns" class="pattern-grid"></div>
+      </div>
+
+      <div class="analytics-card">
+        <div class="eyebrow">Segmentação</div>
+        <h3>Comparação entre turmas</h3>
+        <div class="segment-grid">
+          <div class="segment-card"><strong>9A</strong><div class="metric-line"><span>Interesse</span><div class="analytics-track"><div id="a9ABar" class="analytics-fill petrol"></div></div><b id="a9APct">0%</b></div></div>
+          <div class="segment-card"><strong>9B</strong><div class="metric-line"><span>Interesse</span><div class="analytics-track"><div id="a9BBar" class="analytics-fill petrol"></div></div><b id="a9BPct">0%</b></div></div>
+        </div>
+      </div>
+
+      <div class="analytics-card">
+        <div class="eyebrow">DECIDA</div>
+        <h3>Resultado coletivo</h3>
+        <div id="aDecisionContext" class="decision-context-mini"></div>
+        <div id="aDecisionResult" class="result-list"></div>
+        <div class="sample-note" style="margin-top:10px">Evidências mais usadas para justificar as estratégias:</div>
+        <div id="aEvidenceUsage" class="evidence-usage"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+
+<script>
+// MISSÃO 9 — V10.0.1
+// Configure Supabase apenas quando for usar vários dispositivos.
+window.M9_PUBLIC_CONFIG = {
+  supabaseUrl: 'https://nctevblngdvowonsxhmz.supabase.co',
+  supabasePublishableKey: 'sb_publishable_4fQ50Zegz4SO6mG-g-9g2Q_KwNr439s'
+};
+
+</script>
+<script>
+// MISSÃO 9 — V10.0.1 | Fonte única de dados compartilhados
+window.M9_DATA = {
+  THEMES: ["Games", "Música", "Futebol", "Esportes", "Redes Sociais", "Inteligência Artificial", "Filmes e Séries", "Tecnologia", "Viagens", "Moda e Estilo", "Saúde e Bem-estar", "Dinheiro e Consumo"],
+  THEME_TO_SLUG: {"Games": "games", "Música": "musica", "Futebol": "futebol", "Esportes": "esportes", "Redes Sociais": "redes", "Inteligência Artificial": "ia", "Filmes e Séries": "filmes", "Tecnologia": "tecnologia", "Viagens": "viagens", "Moda e Estilo": "moda", "Saúde e Bem-estar": "saude", "Dinheiro e Consumo": "dinheiro"},
+  POST_META: [{"id": "A01", "theme": "Games", "secondary": null}, {"id": "B01", "theme": "Games", "secondary": "Tecnologia"}, {"id": "B02", "theme": "Música", "secondary": null}, {"id": "A02", "theme": "Música", "secondary": "Viagens"}, {"id": "A03", "theme": "Futebol", "secondary": null}, {"id": "B03", "theme": "Futebol", "secondary": "Dinheiro e Consumo"}, {"id": "B04", "theme": "Esportes", "secondary": null}, {"id": "A04", "theme": "Esportes", "secondary": "Saúde e Bem-estar"}, {"id": "A05", "theme": "Redes Sociais", "secondary": null}, {"id": "C01", "theme": "Redes Sociais", "secondary": "Filmes e Séries"}, {"id": "C02", "theme": "Inteligência Artificial", "secondary": null}, {"id": "A06", "theme": "Inteligência Artificial", "secondary": "Moda e Estilo"}, {"id": "A07", "theme": "Filmes e Séries", "secondary": null}, {"id": "C03", "theme": "Filmes e Séries", "secondary": "Redes Sociais"}, {"id": "C04", "theme": "Tecnologia", "secondary": null}, {"id": "A08", "theme": "Tecnologia", "secondary": "Games"}, {"id": "B05", "theme": "Viagens", "secondary": null}, {"id": "C05", "theme": "Viagens", "secondary": "Música"}, {"id": "C06", "theme": "Moda e Estilo", "secondary": null}, {"id": "B06", "theme": "Moda e Estilo", "secondary": "Inteligência Artificial"}, {"id": "B07", "theme": "Saúde e Bem-estar", "secondary": null}, {"id": "C07", "theme": "Saúde e Bem-estar", "secondary": "Esportes"}, {"id": "C08", "theme": "Dinheiro e Consumo", "secondary": null}, {"id": "B08", "theme": "Dinheiro e Consumo", "secondary": "Futebol"}],
+  DECISION: {"Games": {"title": "Uma desenvolvedora vai lançar um jogo novo para adolescentes e só pode priorizar uma frente nas duas primeiras semanas.", "prompt": "Qual estratégia você defenderia para esta turma? Cada opção atende a um objetivo diferente — use os padrões observados para justificar sua escolha.", "options": [{"code": "strategy_1", "text": "Experiência primeiro — vídeos curtos de gameplay, demonstração gratuita e acesso rápido para testar o jogo."}, {"code": "strategy_2", "text": "Comunidade primeiro — creators, desafios com amigos e ações multiplayer para gerar conversa e participação."}, {"code": "strategy_3", "text": "Decisão informada — reviews, requisitos, desempenho e comparação de custo-benefício antes do download."}], "objective": "Maximizar a experimentação inicial do novo jogo.", "constraint": "A empresa pode priorizar apenas uma frente nas duas primeiras semanas."}, "Música": {"title": "Um festival quer atrair adolescentes, mas o orçamento permite concentrar a campanha em apenas uma estratégia principal.", "prompt": "Qual estratégia você defenderia para esta turma? Considere descoberta, influência social e experiência.", "options": [{"code": "strategy_1", "text": "Descoberta — trechos de músicas, playlists e vídeos curtos para apresentar artistas e lançamentos."}, {"code": "strategy_2", "text": "Experiência — mostrar clima do evento, encontros, momentos ao vivo e a ideia de viver o show com amigos."}, {"code": "strategy_3", "text": "Curadoria — recomendações por estilo, contexto e preferências, ajudando cada pessoa a encontrar artistas de interesse."}], "objective": "Aumentar o interesse e a intenção de participar do festival.", "constraint": "O orçamento permite concentrar a campanha em uma única estratégia principal."}, "Futebol": {"title": "Uma marca esportiva quer lançar uma campanha ligada ao futebol para adolescentes e precisa escolher o foco principal.", "prompt": "Qual estratégia faz mais sentido para esta turma? Nenhuma opção é automaticamente correta: compare os sinais encontrados.", "options": [{"code": "strategy_1", "text": "Paixão pelo time — lances, identidade do clube, jogadores e conteúdos que reforcem pertencimento."}, {"code": "strategy_2", "text": "Desempenho — estatísticas, comparações e dados de jogadores e equipes para sustentar argumentos."}, {"code": "strategy_3", "text": "Consumo e oportunidade — produtos, preços, promoções e avaliações para transformar interesse em compra."}], "objective": "Aumentar o engajamento de adolescentes com a campanha da marca.", "constraint": "A campanha precisa escolher um foco principal para a primeira fase."}, "Esportes": {"title": "A escola vai organizar uma semana de esportes e precisa escolher uma abordagem central para aumentar a participação.", "prompt": "Qual proposta você defenderia para esta turma? Pense em motivação, experiência e acompanhamento.", "options": [{"code": "strategy_1", "text": "Evolução — desafios com acompanhamento de tempo, distância, frequência e progresso individual."}, {"code": "strategy_2", "text": "Participação social — atividades em equipes, desafios entre amigos e metas coletivas."}, {"code": "strategy_3", "text": "Experimentação — estações com diferentes modalidades para que cada estudante teste e descubra afinidades."}], "objective": "Aumentar a participação dos estudantes na semana de esportes.", "constraint": "A escola precisa adotar uma abordagem central para organizar a ação."}, "Redes Sociais": {"title": "Uma equipe vai criar o perfil digital de um evento para adolescentes e precisa escolher uma linha editorial principal.", "prompt": "Qual estratégia você defenderia para esta turma? Considere atenção, retenção e compartilhamento.", "options": [{"code": "strategy_1", "text": "Impacto rápido — vídeos curtos, humor e conteúdos de alta retenção para aumentar alcance."}, {"code": "strategy_2", "text": "Utilidade — conteúdos que expliquem, ensinem ou ajudem, buscando salvamentos e compartilhamentos."}, {"code": "strategy_3", "text": "Comunidade — enquetes, desafios, perguntas e participação do público para aumentar interação."}], "objective": "Aumentar alcance e participação no perfil digital do evento.", "constraint": "A equipe precisa escolher uma linha editorial principal."}, "Inteligência Artificial": {"title": "A escola vai oferecer uma oficina de IA e só há tempo para aprofundar uma linha de trabalho.", "prompt": "Qual formato você defenderia para esta turma? Considere utilidade, interesse e responsabilidade.", "options": [{"code": "strategy_1", "text": "IA para estudar — pesquisa, explicação, organização e verificação das respostas geradas."}, {"code": "strategy_2", "text": "IA para criar — produção de imagens, textos, ideias e protótipos, discutindo autoria e critérios."}, {"code": "strategy_3", "text": "IA para resolver problemas — programação, automação e desafios práticos, incluindo limites e privacidade."}], "objective": "Criar uma oficina de IA útil e relevante para os estudantes.", "constraint": "O tempo disponível permite aprofundar apenas uma linha de trabalho."}, "Filmes e Séries": {"title": "Uma plataforma quer lançar uma nova produção para adolescentes e precisa escolher sua principal estratégia de divulgação.", "prompt": "Qual abordagem você defenderia para esta turma? Pense em descoberta, recomendação e influência social.", "options": [{"code": "strategy_1", "text": "Curiosidade — trailers, cenas marcantes e conteúdos curtos que despertem vontade de assistir."}, {"code": "strategy_2", "text": "Recomendação — destacar gênero, avaliações e semelhanças com produções que o público já aprecia."}, {"code": "strategy_3", "text": "Conversa social — estimular comentários, teorias, memes e experiências compartilhadas entre amigos."}], "objective": "Aumentar a intenção de assistir à nova produção.", "constraint": "A plataforma precisa priorizar uma estratégia principal de divulgação."}, "Tecnologia": {"title": "Uma loja vai destacar um novo produto tecnológico para adolescentes e precisa escolher como apresentá-lo.", "prompt": "Qual estratégia você defenderia para esta turma? Cada uma prioriza um critério de decisão diferente.", "options": [{"code": "strategy_1", "text": "Desempenho — comparativos, especificações, testes e reviews que mostrem diferenças técnicas."}, {"code": "strategy_2", "text": "Experiência — demonstrações práticas e situações de uso que permitam imaginar o produto na rotina."}, {"code": "strategy_3", "text": "Valor — preço, garantia, durabilidade e custo-benefício para apoiar uma compra mais racional."}], "objective": "Ajudar adolescentes a considerar e avaliar o produto.", "constraint": "A loja precisa definir uma forma principal de apresentar o lançamento."}, "Viagens": {"title": "Uma agência quer criar uma campanha de viagem para adolescentes e dispõe de verba para uma única abordagem principal.", "prompt": "Qual estratégia você defenderia para esta turma? Considere inspiração, planejamento e influência social.", "options": [{"code": "strategy_1", "text": "Inspiração — vídeos e imagens fortes de destinos, experiências e paisagens para despertar desejo de viajar."}, {"code": "strategy_2", "text": "Planejamento — comparar custo total, avaliações, atrações e tempo de viagem para apoiar a escolha."}, {"code": "strategy_3", "text": "Experiência social — mostrar viagens com amigos, eventos, música e relatos de outros jovens."}], "objective": "Aumentar o interesse inicial por uma campanha de viagem.", "constraint": "A verba permite investir em apenas uma abordagem principal."}, "Moda e Estilo": {"title": "Uma marca quer lançar uma coleção para adolescentes e precisa definir o foco principal da campanha.", "prompt": "Qual estratégia você defenderia para esta turma? Considere estilo, compra e experimentação.", "options": [{"code": "strategy_1", "text": "Inspiração — looks, combinações, creators e tendências para mostrar possibilidades de estilo."}, {"code": "strategy_2", "text": "Escolha consciente — preço, qualidade, tamanho, avaliações e durabilidade para facilitar a comparação."}, {"code": "strategy_3", "text": "Experimentação — provador virtual, personalização e recursos digitais para testar combinações antes da compra."}], "objective": "Aumentar interesse e consideração pela nova coleção.", "constraint": "A marca precisa definir um foco principal para a campanha de lançamento."}, "Saúde e Bem-estar": {"title": "A escola vai criar uma ação de bem-estar para adolescentes e precisa escolher uma abordagem principal.", "prompt": "Qual proposta você defenderia para esta turma? Pense em adesão, acompanhamento e confiabilidade.", "options": [{"code": "strategy_1", "text": "Acompanhamento de hábitos — metas simples e registros de sono, atividade, hidratação ou rotina."}, {"code": "strategy_2", "text": "Ação coletiva — desafios em grupo, atividades com amigos e experiências presenciais para aumentar adesão."}, {"code": "strategy_3", "text": "Informação confiável — oficinas curtas com fontes seguras, comparação de informações e orientação prática."}], "objective": "Aumentar a adesão dos estudantes à ação de bem-estar.", "constraint": "A escola precisa escolher uma abordagem principal para iniciar o projeto."}, "Dinheiro e Consumo": {"title": "A escola quer criar uma ação sobre consumo consciente e precisa escolher um foco para os estudantes.", "prompt": "Qual abordagem você defenderia para esta turma? Considere como as decisões de compra realmente acontecem.", "options": [{"code": "strategy_1", "text": "Comparação — ferramentas para analisar preço, avaliações, qualidade, prazo e custo total antes da compra."}, {"code": "strategy_2", "text": "Influência — investigar como anúncios, creators, recomendações e repetição de exposição despertam interesse."}, {"code": "strategy_3", "text": "Planejamento — trabalhar prioridades, espera, metas e orçamento para decidir quando comprar ou adiar."}], "objective": "Ajudar estudantes a tomar decisões de consumo mais conscientes.", "constraint": "A ação precisa começar por um único foco de aprendizagem."}}
+};
+
+</script>
+<script>
+// MISSÃO 9 — V10.0.1 | Motor puro e testável
+(function(root,factory){
+  const api=factory();
+  if(typeof module==='object' && module.exports) module.exports=api;
+  root.M9Engine=api;
+})(typeof globalThis!=='undefined'?globalThis:this,function(){
+  function medianValue(values){
+    const a=(values||[]).map(Number).filter(v=>Number.isFinite(v)&&v>0).sort((x,y)=>x-y);
+    if(!a.length)return 0;
+    const m=Math.floor(a.length/2);
+    return a.length%2?a[m]:(a[m-1]+a[m])/2;
+  }
+
+  function reactionScoreMap(reactions,posts){
+    const themes=[...new Set((posts||[]).flatMap(p=>[p.theme,p.secondary].filter(Boolean)))];
+    const score=Object.fromEntries(themes.map(t=>[t,0]));
+    (reactions||[]).forEach(r=>{
+      const p=(posts||[]).find(x=>x.id===r.post_id);
+      if(!p)return;
+      if(r.reaction==='heart'){
+        score[p.theme]=(score[p.theme]||0)+5;
+        if(p.secondary)score[p.secondary]=(score[p.secondary]||0)+2;
+      }
+      if(r.reaction==='thumb'){
+        score[p.theme]=(score[p.theme]||0)+3;
+        if(p.secondary)score[p.secondary]=(score[p.secondary]||0)+1;
+      }
+    });
+    return score;
+  }
+
+  function attentionScoreMap(attention,posts){
+    const themes=[...new Set((posts||[]).flatMap(p=>[p.theme,p.secondary].filter(Boolean)))];
+    const out=Object.fromEntries(themes.map(t=>[t,0]));
+    const bySession={};
+    (attention||[]).forEach(a=>{
+      const ms=Math.max(0,Math.min(Number(a.duration_ms)||0,10000));
+      if(!ms)return;
+      (bySession[a.session_id] ||= []).push({...a,_ms:ms});
+    });
+    Object.values(bySession).forEach(rows=>{
+      const med=medianValue(rows.map(r=>r._ms))||1;
+      rows.forEach(r=>{
+        const p=(posts||[]).find(x=>x.id===r.post_id);
+        if(!p)return;
+        const relative=Math.min(2,r._ms/med);
+        out[p.theme]=(out[p.theme]||0)+relative;
+        if(p.secondary)out[p.secondary]=(out[p.secondary]||0)+relative*.4;
+      });
+    });
+    return out;
+  }
+
+  function ranking(reactions,attention,posts){
+    const scores=reactionScoreMap(reactions,posts);
+    const att=attentionScoreMap(attention,posts);
+    return Object.entries(scores)
+      .map(([theme,score])=>({theme,score,attention:att[theme]||0}))
+      .sort((a,b)=>(b.score-a.score)||(b.attention-a.attention)||a.theme.localeCompare(b.theme,'pt-BR'));
+  }
+
+  function percent(v,total,decimals=1){
+    if(!total)return 0;
+    const f=10**decimals;
+    return Math.round((Number(v)||0)*100*f/total)/f;
+  }
+
+  function supportIndex(rows,choiceCode){
+    const values=(rows||[])
+      .filter(r=>r.choice_code===choiceCode)
+      .flatMap(r=>(Array.isArray(r.evidence_json)?r.evidence_json:[])
+        .map(e=>Number(e.strength)).filter(Number.isFinite));
+    return values.length?Math.round(values.reduce((a,b)=>a+b,0)/values.length):0;
+  }
+
+  function makeRunId(){
+    return (globalThis.crypto&&crypto.randomUUID)
+      ? crypto.randomUUID()
+      : 'run-'+Date.now()+'-'+Math.random().toString(16).slice(2);
+  }
+
+  function filterRun(data,group='ALL'){
+    const runId=data?.state?.run_id;
+    let sessions=(data?.sessions||[]).filter(s=>!runId || !s.run_id || s.run_id===runId);
+    if(group!=='ALL')sessions=sessions.filter(s=>s.class_group===group);
+    const ids=new Set(sessions.map(s=>s.id));
+    const pick=arr=>(arr||[]).filter(x=>ids.has(x.session_id));
+    return {
+      ...data,
+      sessions,
+      reactions:pick(data?.reactions),
+      attention:pick(data?.attention),
+      events:pick(data?.events),
+      investigationAnswers:pick(data?.investigationAnswers),
+      decisionAnswers:pick(data?.decisionAnswers)
+    };
+  }
+
+
+  function stageReadiness(state,metrics,target){
+    state=state||{status:'waiting',reveal_stage:0};
+    metrics=metrics||{};
+    target=Math.max(0,Number(target)||0);
+
+    const total=Number(metrics.total)||0;
+    const feedDone=Number(metrics.feedDone)||0;
+    const reactions=Number(metrics.reactions)||0;
+    const investDone=Number(metrics.investDone)||0;
+    const decisionDone=Number(metrics.decisionDone)||0;
+    const st=state.status||'waiting';
+    const stage=Number(state.reveal_stage)||0;
+
+    const countStatus=(done,hasData=true)=>{
+      if(!hasData || done<=0)return 'no';
+      if(target>0 && done<target)return 'warn';
+      return 'ok';
+    };
+
+    const feed = total<=0 ? 'no' : (target>0 && total<target ? 'warn' : 'ok');
+
+    // REVELE só fica disponível depois de FEED_CLOSED.
+    const reveal = st!=='feed_closed' && st!=='results_reveal' &&
+      !['investigation_preview','investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st)
+        ? 'no'
+        : countStatus(feedDone,reactions>0);
+
+    // Apresentar INVESTIGUE exige a última cena do REVELE.
+    let investigatePreview='no';
+    if(st==='results_reveal'){
+      investigatePreview = stage>=6 ? 'ok' : 'warn';
+    }else if(['investigation_preview','investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st)){
+      investigatePreview='ok';
+    }
+
+    // Liberar respostas somente após a apresentação da investigação.
+    const investigateRelease = st==='investigation_preview' || st==='investigation_open' ? 'ok' : 'no';
+
+    // DECIDA só existe depois de INVESTIGATION_OPEN e conclusão da investigação.
+    let decide='no';
+    if(['investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st)){
+      decide=countStatus(investDone,true);
+    }
+
+    // Revelação das decisões somente em DECIDE_OPEN (ou depois) e com decisões concluídas.
+    let decisionReveal='no';
+    if(['decide_open','decide_reveal','closing_reveal'].includes(st)){
+      decisionReveal=countStatus(decisionDone,true);
+    }
+
+    // Fechamento somente depois da revelação das decisões.
+    let closing='no';
+    if(['decide_reveal','closing_reveal'].includes(st)){
+      closing=countStatus(decisionDone,true);
+    }
+
+    return {feed,reveal,investigatePreview,investigateRelease,decide,decisionReveal,closing};
+  }
+
+  function canAction(action,state,readiness,forceCounts=false){
+    state=state||{status:'waiting',reveal_stage:0};
+    readiness=readiness||{};
+    const st=state.status||'waiting';
+    const stage=Number(state.reveal_stage)||0;
+    const ready=k=>readiness[k]==='ok' || (forceCounts && readiness[k]==='warn');
+
+    switch(action){
+      case 'openFeed':
+        return (st==='waiting' || st==='feed_paused') && ready('feed');
+      case 'pauseFeed':
+        return st==='feed_open';
+      case 'closeFeed':
+        return st==='feed_open' || st==='feed_paused';
+      case 'startReveal':
+        return st==='feed_closed' && ready('reveal');
+      case 'revealPrev':
+      case 'revealNext':
+        return st==='results_reveal';
+      case 'previewInvestigation':
+        return st==='results_reveal' && stage>=6 && ready('investigatePreview');
+      case 'releaseInvestigation':
+        return st==='investigation_preview';
+      case 'previewDecide':
+        return st==='investigation_open' && ready('decide');
+      case 'startDecide':
+        return st==='decide_preview';
+      case 'revealDecide':
+        return st==='decide_open' && ready('decisionReveal');
+      case 'startClosing':
+        return st==='decide_reveal' && ready('closing');
+      case 'closingPrev':
+      case 'closingNext':
+        return st==='closing_reveal';
+      default:
+        return false;
+    }
+  }
+
+  return {medianValue,reactionScoreMap,attentionScoreMap,ranking,percent,supportIndex,makeRunId,filterRun,stageReadiness,canAction};
+});
+
+</script>
+<script>
+// MISSÃO 9 — V10.0.1 | Banco único do INVESTIGUE
+window.M9_INVEST_DATA = {"games": {"name": "Games", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Games faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Preferência", "title": "Que tipo de jogo mais chama sua atenção?", "subtitle": "Escolha apenas uma opção.", "options": [["acao", "Ação / aventura", "🎮"], ["esporte", "Esportes / corrida", "🏁"], ["estrategia", "Estratégia / simulação", "🧠"], ["competitivo", "Competitivo / multiplayer", "⚔️"], ["casual", "Casual / puzzle", "🧩"], ["nao_jogo", "Não costumo jogar", "—"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra conteúdo sobre jogos?", "subtitle": "Pense no lugar em que isso aparece com mais frequência.", "options": [["videos", "Vídeos curtos / redes", "📱"], ["stream", "Lives / transmissões", "▶"], ["amigos", "Amigos / grupos", "💬"], ["sites", "Sites / notícias", "🌐"], ["proprio", "Dentro dos próprios jogos", "🕹"], ["quase_nunca", "Quase nunca vejo", "—"]]}, {"id": "q4", "type": "cards", "dimension": "Dispositivo", "title": "Em qual dispositivo você joga mais?", "subtitle": "Se você joga em mais de um, escolha o principal.", "options": [["celular", "Celular", "📱"], ["console", "Console", "🎮"], ["pc", "Computador / notebook", "💻"], ["tablet", "Tablet", "▣"], ["varios", "Vários dispositivos", "↔"], ["nao_jogo", "Não costumo jogar", "—"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais influencia você a prestar atenção em um jogo?", "subtitle": "Qual destes sinais pesa mais?", "options": [["amigos", "Amigos falando sobre ele", "👥"], ["criador", "Criadores / streamers", "◉"], ["trailer", "Trailer ou gameplay", "▶"], ["popular", "Estar muito comentado", "🔥"], ["promocao", "Preço / promoção", "🏷"], ["nenhum", "Nada disso costuma influenciar", "—"]]}, {"id": "q6", "type": "cards", "dimension": "Modo de jogo", "title": "Como você prefere jogar?", "subtitle": "Escolha a experiência que mais combina com você.", "options": [["sozinho", "Sozinho", "●"], ["amigos", "Com amigos", "👥"], ["online", "Online com outras pessoas", "🌐"], ["competir", "Competindo / ranqueado", "🏆"], ["variado", "Depende do jogo", "↔"], ["nao_jogo", "Não costumo jogar", "—"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um jogo chama sua atenção, o que você costuma fazer primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar mais", "⌕"], ["video", "Assistir a vídeos / gameplay", "▶"], ["amigos", "Perguntar para amigos", "💬"], ["avaliacoes", "Ler avaliações / comentários", "★"], ["baixar", "Baixar / testar logo", "↓"], ["nada", "Normalmente não faço nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Experimentação", "title": "O que mais faria você experimentar um jogo novo?", "subtitle": "Escolha o fator mais forte.", "options": [["recomendacao", "Recomendação de alguém", "👥"], ["gratuito", "Ser gratuito / ter teste", "◌"], ["visual", "Visual / gráficos", "✦"], ["historia", "História / proposta", "📖"], ["competicao", "Competição / jogar com amigos", "🏆"], ["outro", "Outro fator", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Um conteúdo sobre jogo faz você pesquisar mais sobre ele com que frequência?", "subtitle": "Pense no que geralmente acontece com você.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de baixar, comprar ou começar um jogo, você compara opiniões ou avaliações?", "subtitle": "Considere comentários, vídeos, notas ou experiências de outras pessoas.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de ver ou interagir com conteúdo de um jogo, você percebe conteúdos parecidos aparecendo?", "subtitle": "Pense em recomendações, vídeos ou anúncios semelhantes.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Se você tivesse que decidir agora se vale a pena testar um jogo, qual informação seria mais importante?", "subtitle": "Escolha o dado que mais ajudaria sua decisão.", "options": [["avaliacao", "Avaliação de quem já jogou", "★"], ["gameplay", "Ver o jogo funcionando", "▶"], ["amigos", "Saber se amigos jogam", "👥"], ["preco", "Preço / custo", "$"], ["requisitos", "Saber se roda no meu dispositivo", "⚙"], ["popularidade", "Quantidade de jogadores / popularidade", "◉"]]}]}, "musica": {"name": "Música", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Música faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Preferência", "title": "Que tipo de música mais chama sua atenção?", "subtitle": "Escolha o estilo que mais aparece na sua rotina.", "options": [["pop", "Pop", "🎵"], ["rap", "Rap / trap", "🎤"], ["funk", "Funk", "🔊"], ["rock", "Rock / alternativo", "🎸"], ["eletronica", "Eletrônica", "🎧"], ["variado", "Escuto de tudo", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra músicas novas?", "subtitle": "Pense no ambiente em que isso acontece com mais frequência.", "options": [["streaming", "Aplicativos de música", "🎧"], ["redes", "Redes sociais / vídeos", "📱"], ["amigos", "Amigos", "👥"], ["radio", "Rádio / TV", "◉"], ["shows", "Shows / eventos", "🎤"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Situação", "title": "Em qual situação você mais escuta música?", "subtitle": "Escolha a mais frequente.", "options": [["estudo", "Estudando", "📚"], ["treino", "Treinando", "🏃"], ["transporte", "No transporte", "🚌"], ["casa", "Em casa", "🏠"], ["amigos", "Com amigos", "👥"], ["sempre", "Em vários momentos", "↔"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais faz você prestar atenção em uma música nova?", "subtitle": "Escolha o fator mais forte.", "options": [["amigos", "Amigos indicando", "👥"], ["artista", "Artista que já conhece", "★"], ["viral", "Estar viralizando", "🔥"], ["playlist", "Entrar em uma playlist", "▶"], ["trecho", "Ouvir um trecho em vídeo", "📱"], ["outro", "Outro", "…"]]}, {"id": "q6", "type": "frequency", "dimension": "Descoberta", "title": "Com que frequência playlists ou recomendações apresentam músicas novas para você?", "subtitle": "Pense no que costuma acontecer.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma música chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["salvar", "Salvar / curtir", "♥"], ["buscar", "Pesquisar o artista", "⌕"], ["playlist", "Adicionar à playlist", "+"], ["compartilhar", "Compartilhar", "↗"], ["ouvir", "Ouvir novamente", "↻"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Experiência", "title": "O que mais faria você ir a um show ou evento musical?", "subtitle": "Escolha o fator principal.", "options": [["artista", "Artista favorito", "★"], ["amigos", "Ir com amigos", "👥"], ["local", "Local / viagem", "✈"], ["preco", "Preço do ingresso", "$"], ["festival", "Vários artistas", "🎤"], ["outro", "Outro", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Um conteúdo sobre música faz você pesquisar mais sobre artista, show ou lançamento com que frequência?", "subtitle": "Pense no seu comportamento habitual.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher um show, playlist ou lançamento, você compara opiniões ou recomendações?", "subtitle": "Considere comentários, listas ou sugestões.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de ouvir ou curtir uma música, você percebe músicas parecidas aparecendo?", "subtitle": "Pense em playlists, vídeos ou recomendações.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais pesa quando você decide ouvir algo novo?", "subtitle": "Escolha o dado mais importante.", "options": [["trecho", "Ouvir um trecho", "▶"], ["amigos", "Indicação de amigos", "👥"], ["popularidade", "Número de reproduções / popularidade", "◉"], ["artista", "Conhecer o artista", "★"], ["playlist", "Estar em uma playlist", "≡"], ["comentarios", "Comentários / avaliações", "💬"]]}]}, "futebol": {"name": "Futebol", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Futebol faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Relação", "title": "Qual é sua principal relação com o futebol?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["jogo", "Jogo futebol", "⚽"], ["assisto", "Assisto partidas", "📺"], ["acompanho", "Acompanho notícias", "📰"], ["torco", "Torço por um time", "★"], ["games", "Jogo games de futebol", "🎮"], ["pouco", "Quase não acompanho", "—"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra conteúdo sobre futebol?", "subtitle": "Pense no ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["tv", "TV / transmissões", "📺"], ["amigos", "Amigos / grupos", "👥"], ["sites", "Sites esportivos", "🌐"], ["games", "Games", "🎮"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Conteúdo", "title": "Que tipo de conteúdo de futebol mais chama sua atenção?", "subtitle": "Escolha o principal.", "options": [["jogos", "Jogos / melhores momentos", "▶"], ["noticias", "Notícias / mercado", "📰"], ["estatisticas", "Estatísticas", "📊"], ["bastidores", "Bastidores", "◉"], ["memes", "Memes / cortes", "😄"], ["outro", "Outro", "…"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais influencia sua atenção em um conteúdo de futebol?", "subtitle": "Escolha o fator mais forte.", "options": [["time", "Seu time", "★"], ["jogador", "Jogador conhecido", "⚽"], ["amigos", "Amigos comentando", "👥"], ["viral", "Estar em alta", "🔥"], ["resultado", "Resultado importante", "🏆"], ["outro", "Outro", "…"]]}, {"id": "q6", "type": "frequency", "dimension": "Estatísticas", "title": "Com que frequência você observa estatísticas de jogadores ou times?", "subtitle": "Considere gols, posse, aproveitamento e outros números.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma notícia ou lance chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["buscar", "Pesquisar mais", "⌕"], ["video", "Ver vídeos", "▶"], ["comentar", "Comentar com amigos", "💬"], ["estatisticas", "Ver estatísticas", "📊"], ["compartilhar", "Compartilhar", "↗"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Comparação esportiva", "title": "Qual informação é mais útil para comparar jogadores ou times?", "subtitle": "Escolha a mais importante.", "options": [["gols", "Gols / pontos", "⚽"], ["vitorias", "Vitórias", "🏆"], ["desempenho", "Desempenho recente", "📈"], ["estatisticas", "Conjunto de estatísticas", "📊"], ["opinioes", "Opiniões de especialistas", "💬"], ["outro", "Outro", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo de futebol faz você pesquisar mais com que frequência?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de formar uma opinião sobre jogador, time ou contratação, você compara informações?", "subtitle": "Considere notícias, números e comentários.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de interagir com conteúdo de futebol, você percebe conteúdos semelhantes aparecendo?", "subtitle": "Pense em vídeos, notícias ou anúncios.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Se você fosse escolher um produto ou evento ligado ao futebol, qual informação mais ajudaria?", "subtitle": "Escolha o dado principal.", "options": [["preco", "Preço", "$"], ["avaliacao", "Avaliação / opinião", "★"], ["time", "Ligação com seu time", "⚽"], ["qualidade", "Qualidade do produto", "✓"], ["amigos", "Indicação de amigos", "👥"], ["popularidade", "Popularidade", "◉"]]}]}, "esportes": {"name": "Esportes", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Esportes faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Modalidade", "title": "Qual modalidade mais chama sua atenção?", "subtitle": "Escolha a principal.", "options": [["volei", "Vôlei", "🏐"], ["basquete", "Basquete", "🏀"], ["corrida", "Corrida / atletismo", "🏃"], ["luta", "Lutas", "🥋"], ["natacao", "Natação", "🏊"], ["outras", "Outras modalidades", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra conteúdo esportivo?", "subtitle": "Pense no ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["tv", "TV / transmissões", "📺"], ["amigos", "Amigos / equipe", "👥"], ["academia", "Academia / treino", "🏋"], ["sites", "Sites / notícias", "🌐"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Relação", "title": "Qual é sua principal relação com esportes?", "subtitle": "Escolha a que mais combina com você.", "options": [["pratico", "Pratico regularmente", "🏃"], ["assisto", "Assisto competições", "📺"], ["acompanho", "Acompanho atletas", "★"], ["lazer", "Pratico por lazer", "🙂"], ["escola", "Principalmente na escola", "🏫"], ["pouco", "Quase não acompanho", "—"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais influencia você a experimentar uma atividade esportiva?", "subtitle": "Escolha o fator principal.", "options": [["amigos", "Amigos", "👥"], ["atleta", "Atletas / influenciadores", "★"], ["saude", "Bem-estar", "♥"], ["competicao", "Competição", "🏆"], ["diversao", "Diversão", "🙂"], ["outro", "Outro", "…"]]}, {"id": "q6", "type": "cards", "dimension": "Tecnologia", "title": "Que tecnologia você usaria para acompanhar seu desempenho?", "subtitle": "Escolha a mais interessante.", "options": [["relogio", "Relógio / pulseira", "⌚"], ["app", "Aplicativo", "📱"], ["sensor", "Sensor / equipamento", "⚙"], ["video", "Vídeo / análise", "▶"], ["nenhuma", "Nenhuma", "—"], ["outra", "Outra", "…"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um conteúdo esportivo chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar mais", "⌕"], ["assistir", "Assistir mais vídeos", "▶"], ["praticar", "Experimentar a atividade", "🏃"], ["comentar", "Conversar com alguém", "💬"], ["salvar", "Salvar o conteúdo", "♥"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Desempenho", "title": "Qual dado de desempenho você mais gostaria de acompanhar?", "subtitle": "Escolha um.", "options": [["tempo", "Tempo", "⏱"], ["distancia", "Distância", "↔"], ["frequencia", "Frequência de treino", "📅"], ["evolucao", "Evolução ao longo do tempo", "📈"], ["pontuacao", "Pontuação / resultado", "🏆"], ["outro", "Outro", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo esportivo faz você pesquisar mais com que frequência?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher uma atividade, equipamento ou treino, você compara informações?", "subtitle": "Considere opiniões, preço, desempenho ou avaliações.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de interagir com conteúdo esportivo, você percebe conteúdos semelhantes aparecendo?", "subtitle": "Pense em vídeos, produtos ou recomendações.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a escolher uma atividade esportiva ou equipamento?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["avaliacao", "Avaliações", "★"], ["desempenho", "Dados de desempenho", "📊"], ["amigos", "Indicação de amigos", "👥"], ["conforto", "Conforto / adaptação", "✓"], ["marca", "Marca / reputação", "◉"]]}]}, "redes": {"name": "Redes Sociais", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Redes Sociais faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Plataforma", "title": "Que tipo de rede você mais usa?", "subtitle": "Escolha o formato principal, não a marca.", "options": [["video_curto", "Vídeos curtos", "▶"], ["fotos", "Fotos / stories", "▣"], ["mensagens", "Mensagens / grupos", "💬"], ["video_longo", "Vídeos longos", "▰"], ["comunidades", "Comunidades / fóruns", "👥"], ["varias", "Uso vários formatos", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "O que mais aparece para você nas redes?", "subtitle": "Escolha o tipo mais frequente.", "options": [["humor", "Humor / memes", "😄"], ["musica", "Música", "🎵"], ["games", "Games", "🎮"], ["esportes", "Esportes", "🏆"], ["moda", "Moda / estilo", "✦"], ["variado", "Conteúdo variado", "↔"]]}, {"id": "q4", "type": "cards", "dimension": "Finalidade", "title": "Qual é seu principal objetivo ao usar redes sociais?", "subtitle": "Escolha o mais comum.", "options": [["entretenimento", "Entretenimento", "▶"], ["conversar", "Conversar", "💬"], ["informar", "Informar-se", "📰"], ["aprender", "Aprender algo", "📚"], ["postar", "Publicar conteúdo", "＋"], ["acompanhar", "Acompanhar pessoas", "👥"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais faz você parar em um conteúdo?", "subtitle": "Escolha o fator mais forte.", "options": [["imagem", "Imagem / visual", "✦"], ["titulo", "Título / chamada", "A"], ["pessoa", "Pessoa conhecida", "👤"], ["viral", "Estar viralizando", "🔥"], ["assunto", "Assunto de interesse", "★"], ["amigo", "Amigo compartilhou", "👥"]]}, {"id": "q6", "type": "cards", "dimension": "Retenção", "title": "O que mais faz você permanecer em um conteúdo?", "subtitle": "Escolha o principal.", "options": [["curto", "Ser rápido / direto", "⏱"], ["historia", "Ter uma história", "📖"], ["humor", "Ser engraçado", "😄"], ["util", "Ser útil", "✓"], ["surpresa", "Surpreender", "!"], ["comentarios", "Comentários / discussão", "💬"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um conteúdo chama sua atenção, o que você mais faz?", "subtitle": "Escolha a ação mais provável.", "options": [["curtir", "Curtir", "♥"], ["comentar", "Comentar", "💬"], ["salvar", "Salvar", "🔖"], ["compartilhar", "Compartilhar", "↗"], ["buscar", "Pesquisar mais", "⌕"], ["so_ver", "Só assistir / ler", "👁"]]}, {"id": "q8", "type": "cards", "dimension": "Conteúdo", "title": "Que tipo de conteúdo você mais compartilharia com alguém?", "subtitle": "Escolha o principal.", "options": [["engracado", "Engraçado", "😄"], ["util", "Útil", "✓"], ["surpreendente", "Surpreendente", "!"], ["opiniao", "Opinião", "💬"], ["noticia", "Notícia", "📰"], ["interesse", "Algo de interesse comum", "★"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Um conteúdo nas redes faz você pesquisar mais sobre o assunto com que frequência?", "subtitle": "Pense no seu comportamento habitual.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de acreditar ou decidir algo com base em uma postagem, você compara outras fontes?", "subtitle": "Pense em comentários, sites ou outras pessoas.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de curtir ou assistir a um conteúdo, você percebe conteúdos parecidos aparecendo?", "subtitle": "Pense no que o feed passa a mostrar.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual sinal mais influencia você a abrir um conteúdo recomendado?", "subtitle": "Escolha o principal.", "options": [["assunto", "Assunto de interesse", "★"], ["amigos", "Amigos interagiram", "👥"], ["visual", "Visual", "✦"], ["popularidade", "Muitas curtidas / visualizações", "◉"], ["criador", "Quem publicou", "👤"], ["titulo", "Título / chamada", "A"]]}]}, "ia": {"name": "Inteligência Artificial", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Inteligência Artificial faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "frequency", "dimension": "Uso", "title": "Com que frequência você usa ferramentas de IA?", "subtitle": "Considere estudo, criação, pesquisa ou outras tarefas.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra conteúdo sobre IA?", "subtitle": "Pense no ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["escola", "Escola / estudo", "📚"], ["videos", "Vídeos / tutoriais", "▶"], ["noticias", "Notícias / sites", "📰"], ["amigos", "Amigos", "👥"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Finalidade", "title": "Para que você mais usaria IA?", "subtitle": "Escolha a principal finalidade.", "options": [["estudo", "Estudar / explicar", "📚"], ["texto", "Criar textos", "A"], ["imagem", "Criar imagens", "✦"], ["ideias", "Gerar ideias", "💡"], ["codigo", "Programar / resolver problemas", "⌘"], ["outro", "Outro", "…"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais faria você experimentar uma ferramenta de IA?", "subtitle": "Escolha o principal fator.", "options": [["amigos", "Amigos indicando", "👥"], ["video", "Vídeo mostrando uso", "▶"], ["escola", "Uso na escola", "📚"], ["viral", "Estar em alta", "🔥"], ["utilidade", "Resolver algo útil", "✓"], ["curiosidade", "Curiosidade", "?"]]}, {"id": "q6", "type": "cards", "dimension": "Aplicação", "title": "Em qual situação a IA parece mais útil para você?", "subtitle": "Escolha uma.", "options": [["pesquisa", "Pesquisar / resumir", "⌕"], ["criacao", "Criar conteúdo", "✦"], ["organizacao", "Organizar tarefas", "✓"], ["aprender", "Aprender algo novo", "📚"], ["tecnologia", "Tecnologia / programação", "💻"], ["outro", "Outro", "…"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma resposta de IA chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["usar", "Uso a resposta", "✓"], ["verificar", "Verifico em outra fonte", "⌕"], ["perguntar", "Faço outra pergunta", "?"], ["editar", "Adapto / edito", "✎"], ["compartilhar", "Compartilho", "↗"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "frequency", "dimension": "Verificação", "title": "Com que frequência você verifica informações dadas por uma IA?", "subtitle": "Considere sites, livros, professores ou outras fontes.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo sobre IA faz você pesquisar mais sobre uma ferramenta ou assunto com que frequência?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher uma ferramenta de IA, você compara recursos ou opiniões?", "subtitle": "Considere vídeos, avaliações e recomendações.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar ou usar IA, você percebe mais conteúdos sobre IA aparecendo?", "subtitle": "Pense em vídeos, anúncios ou notícias.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a decidir se uma ferramenta de IA vale a pena?", "subtitle": "Escolha a principal.", "options": [["resultado", "Qualidade do resultado", "✓"], ["facilidade", "Facilidade de usar", "●"], ["gratuito", "Ser gratuita / ter teste", "$"], ["privacidade", "Privacidade", "🔒"], ["opiniao", "Opiniões de usuários", "★"], ["recursos", "Quantidade de recursos", "⚙"]]}]}, "filmes": {"name": "Filmes e Séries", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Filmes e Séries faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Gênero", "title": "Que gênero mais chama sua atenção?", "subtitle": "Escolha o principal.", "options": [["acao", "Ação / aventura", "⚡"], ["comedia", "Comédia", "😄"], ["terror", "Terror / suspense", "◐"], ["ficcao", "Ficção científica / fantasia", "✦"], ["drama", "Drama / romance", "♥"], ["variado", "Vários gêneros", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais descobre o que assistir?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["streaming", "Catálogo de streaming", "▶"], ["redes", "Redes sociais", "📱"], ["amigos", "Amigos", "👥"], ["criticas", "Sites / críticas", "★"], ["trailers", "Trailers", "🎬"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Plataforma", "title": "Onde você mais assiste a filmes e séries?", "subtitle": "Escolha o principal formato.", "options": [["tv", "TV / smart TV", "📺"], ["celular", "Celular", "📱"], ["pc", "Computador", "💻"], ["tablet", "Tablet", "▣"], ["cinema", "Cinema", "🎬"], ["varios", "Vários", "↔"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais influencia sua escolha do que assistir?", "subtitle": "Escolha o fator mais forte.", "options": [["amigos", "Indicação de amigos", "👥"], ["trailer", "Trailer", "▶"], ["comentarios", "Comentários / avaliações", "★"], ["viral", "Estar muito comentado", "🔥"], ["elenco", "Elenco / personagens", "👤"], ["genero", "Gênero", "🎬"]]}, {"id": "q6", "type": "frequency", "dimension": "Tendência", "title": "Com que frequência você assiste algo porque está em alta ou sendo muito recomendado?", "subtitle": "Pense no seu comportamento habitual.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma produção chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["trailer", "Ver trailer", "▶"], ["pesquisar", "Pesquisar mais", "⌕"], ["comentarios", "Ler comentários", "💬"], ["salvar", "Adicionar à lista", "+"], ["amigos", "Perguntar a amigos", "👥"], ["assistir", "Começar a assistir", "▶"]]}, {"id": "q8", "type": "cards", "dimension": "Escolha", "title": "Qual característica mais pesa para você começar uma série ou filme?", "subtitle": "Escolha a principal.", "options": [["historia", "História / sinopse", "📖"], ["genero", "Gênero", "🎬"], ["avaliacao", "Avaliação", "★"], ["duracao", "Duração", "⏱"], ["popularidade", "Popularidade", "◉"], ["recomendacao", "Recomendação", "👥"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo sobre filmes ou séries faz você pesquisar mais com que frequência?", "subtitle": "Pense em elenco, história, trailers ou avaliações.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher o que assistir, você compara avaliações ou opiniões?", "subtitle": "Considere notas, comentários ou recomendações.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de assistir ou pesquisar uma produção, você percebe conteúdos semelhantes aparecendo?", "subtitle": "Pense em recomendações ou trailers.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajuda você a decidir se vale a pena assistir?", "subtitle": "Escolha a principal.", "options": [["avaliacao", "Avaliação / nota", "★"], ["trailer", "Trailer", "▶"], ["amigos", "Indicação de amigos", "👥"], ["sinopse", "Sinopse", "📖"], ["popularidade", "Popularidade", "◉"], ["duracao", "Duração", "⏱"]]}]}, "tecnologia": {"name": "Tecnologia", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Tecnologia faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Área", "title": "Qual área de tecnologia mais chama sua atenção?", "subtitle": "Escolha a principal.", "options": [["celulares", "Celulares / gadgets", "📱"], ["computadores", "Computadores", "💻"], ["games", "Tecnologia para games", "🎮"], ["robotica", "Robótica", "🤖"], ["ia", "Inteligência Artificial", "✦"], ["outros", "Outros", "…"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra novidades de tecnologia?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["videos", "Vídeos / reviews", "▶"], ["sites", "Sites / notícias", "🌐"], ["amigos", "Amigos", "👥"], ["lojas", "Lojas / anúncios", "🏷"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Rotina", "title": "Qual tecnologia mais faz parte da sua rotina?", "subtitle": "Escolha a principal.", "options": [["celular", "Celular", "📱"], ["computador", "Computador", "💻"], ["console", "Console", "🎮"], ["relogio", "Smartwatch", "⌚"], ["casa", "Dispositivos inteligentes", "⌂"], ["varios", "Vários", "↔"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais faz você se interessar por um produto tecnológico?", "subtitle": "Escolha o fator principal.", "options": [["review", "Review / teste", "★"], ["amigos", "Amigos indicando", "👥"], ["novidade", "Ser novidade", "✦"], ["desempenho", "Desempenho", "⚡"], ["design", "Design", "◈"], ["preco", "Preço", "$"]]}, {"id": "q6", "type": "cards", "dimension": "Decisão técnica", "title": "Qual informação você mais compara antes de escolher um produto tecnológico?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["desempenho", "Desempenho", "⚡"], ["bateria", "Bateria", "◐"], ["memoria", "Memória / armazenamento", "▦"], ["avaliacao", "Avaliações", "★"], ["durabilidade", "Durabilidade", "✓"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma tecnologia chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar", "⌕"], ["review", "Assistir review", "▶"], ["comparar", "Comparar modelos", "↔"], ["amigos", "Perguntar a alguém", "👥"], ["loja", "Ver em uma loja", "🏷"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Experimentação", "title": "Qual tecnologia você mais gostaria de testar?", "subtitle": "Escolha uma.", "options": [["vr", "Realidade virtual", "◉"], ["robot", "Robô doméstico", "🤖"], ["ia", "IA avançada", "✦"], ["wearable", "Dispositivo vestível", "⌚"], ["smart", "Casa inteligente", "⌂"], ["outra", "Outra", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo de tecnologia faz você pesquisar mais com que frequência?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher um produto tecnológico, você compara especificações e opiniões?", "subtitle": "Pense no que geralmente faz.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar um produto, você percebe anúncios ou conteúdos parecidos aparecendo?", "subtitle": "Pense em redes, sites ou vídeos.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual dado mais ajudaria você a decidir entre dois produtos tecnológicos?", "subtitle": "Escolha o principal.", "options": [["preco", "Preço", "$"], ["benchmark", "Teste de desempenho", "📊"], ["avaliacao", "Avaliação de usuários", "★"], ["garantia", "Garantia / suporte", "✓"], ["especificacoes", "Especificações", "⚙"], ["marca", "Reputação da marca", "◉"]]}]}, "viagens": {"name": "Viagens", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Viagens faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Tipo de viagem", "title": "Que tipo de viagem mais chama sua atenção?", "subtitle": "Escolha a principal.", "options": [["praia", "Praia", "☀"], ["natureza", "Natureza / aventura", "▲"], ["cidade", "Grandes cidades", "⌂"], ["cultural", "Cultural / histórica", "🏛"], ["parques", "Parques / atrações", "★"], ["variado", "Vários tipos", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra ideias de viagem?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["videos", "Vídeos", "▶"], ["amigos", "Amigos / família", "👥"], ["sites", "Sites de viagem", "🌐"], ["series", "Filmes / séries", "🎬"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Decisão de destino", "title": "O que mais pesa na escolha de um destino?", "subtitle": "Escolha o principal.", "options": [["preco", "Preço", "$"], ["paisagem", "Paisagem", "▲"], ["atividades", "O que fazer", "★"], ["seguranca", "Segurança", "✓"], ["clima", "Clima", "☀"], ["distancia", "Distância / tempo", "↔"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais aumenta sua vontade de conhecer um lugar?", "subtitle": "Escolha o fator mais forte.", "options": [["fotos", "Fotos / vídeos", "✦"], ["amigos", "Indicação de amigos", "👥"], ["viral", "Lugar em alta", "🔥"], ["musica", "Música / cultura", "🎵"], ["evento", "Evento / show", "🎤"], ["historia", "História do lugar", "📖"]]}, {"id": "q6", "type": "cards", "dimension": "Comparação", "title": "Que informação você mais compara entre destinos?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["hospedagem", "Hospedagem", "⌂"], ["avaliacoes", "Avaliações", "★"], ["distancia", "Distância", "↔"], ["atracoes", "Atrações", "★"], ["clima", "Clima", "☀"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um destino chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar", "⌕"], ["salvar", "Salvar", "🔖"], ["mapa", "Ver no mapa", "⌖"], ["precos", "Pesquisar preços", "$"], ["amigos", "Compartilhar com alguém", "↗"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "frequency", "dimension": "Desejo", "title": "Com que frequência um conteúdo na internet faz você querer conhecer um lugar?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo de viagem faz você pesquisar mais sobre o destino com que frequência?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher um destino, você compara preços, avaliações ou opções?", "subtitle": "Considere diferentes sites e opiniões.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar um destino, você percebe mais conteúdos sobre ele aparecendo?", "subtitle": "Pense em anúncios, vídeos ou posts.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a decidir entre dois destinos?", "subtitle": "Escolha a principal.", "options": [["custo_total", "Custo total", "$"], ["avaliacao", "Avaliações", "★"], ["atracoes", "Atrações", "★"], ["seguranca", "Segurança", "✓"], ["tempo", "Tempo de viagem", "⏱"], ["clima", "Clima", "☀"]]}]}, "moda": {"name": "Moda e Estilo", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Moda e Estilo faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Influência", "title": "O que mais influencia seu estilo?", "subtitle": "Escolha o principal.", "options": [["gosto", "Meu próprio gosto", "★"], ["amigos", "Amigos", "👥"], ["redes", "Redes sociais", "📱"], ["artistas", "Artistas / criadores", "👤"], ["tendencias", "Tendências", "🔥"], ["familia", "Família", "⌂"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra referências de estilo?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["lojas", "Lojas", "🏷"], ["amigos", "Amigos", "👥"], ["videos", "Vídeos", "▶"], ["rua", "Pessoas / rua", "◉"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Compra", "title": "O que mais pesa quando você escolhe uma roupa ou acessório?", "subtitle": "Escolha o principal.", "options": [["preco", "Preço", "$"], ["conforto", "Conforto", "✓"], ["estilo", "Estilo / aparência", "✦"], ["qualidade", "Qualidade", "★"], ["marca", "Marca", "◉"], ["necessidade", "Necessidade", "●"]]}, {"id": "q5", "type": "cards", "dimension": "Influência digital", "title": "O que mais faz você prestar atenção em uma peça?", "subtitle": "Escolha o fator mais forte.", "options": [["visual", "Visual", "✦"], ["pessoa", "Quem está usando", "👤"], ["viral", "Estar em alta", "🔥"], ["promocao", "Promoção", "🏷"], ["combinacao", "Como foi combinada", "↔"], ["amigos", "Amigos indicando", "👥"]]}, {"id": "q6", "type": "cards", "dimension": "Comparação", "title": "Que informação você mais compara antes de comprar?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["tamanho", "Tamanho / medidas", "↔"], ["qualidade", "Qualidade", "★"], ["avaliacao", "Avaliação de clientes", "★"], ["material", "Material", "▦"], ["frete", "Frete / prazo", "⏱"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma peça chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["salvar", "Salvar", "🔖"], ["buscar", "Pesquisar", "⌕"], ["comparar", "Comparar preços", "↔"], ["amigos", "Mostrar para alguém", "↗"], ["comprar", "Comprar", "$"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "frequency", "dimension": "Exposição", "title": "Ver a mesma peça ou estilo várias vezes aumenta seu interesse?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo de moda faz você pesquisar mais sobre uma peça ou estilo com que frequência?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de comprar uma peça, você compara preços, avaliações ou lojas?", "subtitle": "Pense no que geralmente faz.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar uma peça ou estilo, você percebe conteúdos parecidos aparecendo?", "subtitle": "Pense em anúncios e recomendações.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a decidir entre duas peças semelhantes?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["qualidade", "Qualidade", "★"], ["avaliacao", "Avaliações", "★"], ["caimento", "Caimento / tamanho", "↔"], ["estilo", "Estilo", "✦"], ["durabilidade", "Durabilidade", "✓"]]}]}, "saude": {"name": "Saúde e Bem-estar", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Saúde e Bem-estar faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Área", "title": "Qual aspecto de bem-estar mais chama sua atenção?", "subtitle": "Escolha o principal.", "options": [["atividade", "Atividade física", "🏃"], ["sono", "Sono / descanso", "☾"], ["alimentacao", "Alimentação equilibrada", "●"], ["rotina", "Organização da rotina", "✓"], ["relaxamento", "Relaxamento / pausas", "◌"], ["outro", "Outro", "…"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra informações sobre bem-estar?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["familia", "Família", "⌂"], ["profissionais", "Profissionais / escola", "✓"], ["redes", "Redes sociais", "📱"], ["sites", "Sites confiáveis", "🌐"], ["amigos", "Amigos", "👥"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Tecnologia", "title": "Que tecnologia você usaria para acompanhar hábitos?", "subtitle": "Escolha a mais interessante.", "options": [["relogio", "Relógio / pulseira", "⌚"], ["app", "Aplicativo", "📱"], ["agenda", "Agenda / lembretes", "📅"], ["sensor", "Sensor", "⚙"], ["nenhuma", "Nenhuma", "—"], ["outra", "Outra", "…"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais ajuda você a prestar atenção em hábitos saudáveis?", "subtitle": "Escolha o principal.", "options": [["rotina", "Ter uma rotina", "✓"], ["amigos", "Fazer com amigos", "👥"], ["resultado", "Perceber evolução", "📈"], ["conteudo", "Conteúdo informativo", "📚"], ["tecnologia", "Tecnologia / app", "⌚"], ["outro", "Outro", "…"]]}, {"id": "q6", "type": "cards", "dimension": "Dado", "title": "Que dado você acharia mais útil acompanhar?", "subtitle": "Escolha um.", "options": [["sono", "Horas de sono", "☾"], ["atividade", "Tempo de atividade", "⏱"], ["passos", "Passos / distância", "↔"], ["agua", "Hidratação", "●"], ["rotina", "Frequência de hábitos", "📅"], ["outro", "Outro", "…"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um conteúdo de bem-estar chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar mais", "⌕"], ["testar", "Experimentar a dica", "✓"], ["salvar", "Salvar", "🔖"], ["perguntar", "Perguntar a alguém", "💬"], ["compartilhar", "Compartilhar", "↗"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Recuperação", "title": "O que mais ajuda você a se recuperar depois de atividade física?", "subtitle": "Escolha o principal.", "options": [["descanso", "Descanso", "☾"], ["alongar", "Alongamento", "↔"], ["agua", "Hidratação", "●"], ["alimentacao", "Alimentação", "●"], ["sono", "Sono", "☾"], ["nao_pratico", "Não pratico regularmente", "—"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo sobre bem-estar faz você pesquisar mais com que frequência?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de seguir uma dica de bem-estar, você compara informações em outras fontes?", "subtitle": "Pense em pessoas, sites ou profissionais.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de interagir com conteúdo de bem-estar, você percebe conteúdos parecidos aparecendo?", "subtitle": "Pense em vídeos, dicas ou produtos.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a escolher uma atividade ou recurso de bem-estar?", "subtitle": "Escolha a principal.", "options": [["confianca", "Fonte confiável", "✓"], ["resultado", "Resultados esperados", "📈"], ["facilidade", "Facilidade de manter", "●"], ["tempo", "Tempo necessário", "⏱"], ["custo", "Custo", "$"], ["amigos", "Indicação de alguém", "👥"]]}]}, "dinheiro": {"name": "Dinheiro e Consumo", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Dinheiro e Consumo faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Primeiro passo", "title": "Quando pensa em comprar algo, qual costuma ser seu primeiro passo?", "subtitle": "Escolha o mais comum.", "options": [["preco", "Pesquisar preço", "$"], ["reviews", "Ver avaliações", "★"], ["lojas", "Comparar lojas", "↔"], ["amigos", "Perguntar a alguém", "👥"], ["produto", "Ver detalhes do produto", "⌕"], ["impulso", "Às vezes compro sem pesquisar", "!"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra produtos ou ofertas?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["sites", "Sites / lojas online", "🌐"], ["loja", "Loja física", "🏷"], ["amigos", "Amigos / família", "👥"], ["videos", "Vídeos / reviews", "▶"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Informação", "title": "Qual informação mais pesa na compra?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["qualidade", "Qualidade", "★"], ["avaliacao", "Avaliações", "★"], ["necessidade", "Necessidade", "●"], ["marca", "Marca", "◉"], ["prazo", "Prazo / entrega", "⏱"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais desperta interesse em algo que você não estava pensando em comprar?", "subtitle": "Escolha o principal.", "options": [["anuncio", "Anúncio", "◉"], ["influenciador", "Criador / influenciador", "👤"], ["amigos", "Amigos", "👥"], ["promocao", "Promoção", "🏷"], ["recomendacao", "Recomendação automática", "✦"], ["viral", "Produto em alta", "🔥"]]}, {"id": "q6", "type": "frequency", "dimension": "Comparação de preço", "title": "Com que frequência você compara preços antes de comprar?", "subtitle": "Pense no que geralmente faz.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um produto chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar mais", "⌕"], ["preco", "Comparar preços", "$"], ["avaliacoes", "Ler avaliações", "★"], ["salvar", "Salvar para depois", "🔖"], ["amigos", "Perguntar a alguém", "👥"], ["comprar", "Comprar", "$"]]}, {"id": "q8", "type": "frequency", "dimension": "Impulso", "title": "Com que frequência anúncios, influenciadores ou recomendações fazem você se interessar por algo que não estava procurando?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Um produto visto na internet faz você pesquisar mais sobre ele com que frequência?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de comprar, você compara avaliações, preços ou lojas?", "subtitle": "Considere diferentes fontes.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar um produto, você percebe anúncios ou produtos parecidos aparecendo?", "subtitle": "Pense em redes e sites.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual dado mais ajudaria você a decidir entre dois produtos semelhantes?", "subtitle": "Escolha o principal.", "options": [["preco", "Preço", "$"], ["avaliacao", "Avaliação de clientes", "★"], ["qualidade", "Qualidade / durabilidade", "✓"], ["prazo", "Prazo de entrega", "⏱"], ["garantia", "Garantia", "✓"], ["frete", "Frete", "↔"]]}]}};
+
+</script>
+<script>
+// MISSÃO 9 — V10.0.1
+// Esta chave é uma barreira operacional para o piloto, não um segredo de produção.
+// Use o mesmo valor no SQL e neste arquivo.
+window.M9_PROFESSOR_CONFIG = {
+  professorControlKey: ''
+};
+
+</script>
+<script>
+
+const CONFIG={...window.M9_PUBLIC_CONFIG,...window.M9_PROFESSOR_CONFIG};
+
+function getProfessorControlKey(){
+  try{return sessionStorage.getItem('m9_professor_control_key')||''}catch(_){return ''}
+}
+function clearProfessorControlKey(){
+  try{sessionStorage.removeItem('m9_professor_control_key')}catch(_){}
+}
+function ensureProfessorControlKey(){
+  let key=getProfessorControlKey();
+  if(key)return key;
+  key=(window.prompt('Digite a chave de controle do professor para esta sessão:')||'').trim();
+  if(key){
+    try{sessionStorage.setItem('m9_professor_control_key',key)}catch(_){}
+  }
+  return key;
+}
+
+const THEMES=window.M9_DATA.THEMES;
+const POSTS=window.M9_DATA.POST_META;
+const INVEST_DATA=window.M9_INVEST_DATA;
+const THEME_TO_SLUG=window.M9_DATA.THEME_TO_SLUG;
+const DECISION=window.M9_DATA.DECISION;
+const channel=('BroadcastChannel' in window)?new BroadcastChannel('m9-data-driven-v5'):null;
+function remoteEnabled(){return location.protocol!=='file:' && CONFIG.supabaseUrl.startsWith('http')&&!CONFIG.supabasePublishableKey.startsWith('COLE_')}
+function headers(extra={}){return {apikey:CONFIG.supabasePublishableKey,'Content-Type':'application/json',...extra}}
+async function sb(path,opts={}){const r=await fetch(CONFIG.supabaseUrl+'/rest/v1/'+path,{...opts,headers:headers(opts.headers||{})});if(!r.ok)throw new Error(await r.text());const t=await r.text();return t?JSON.parse(t):null}
+function dg(k,f){try{return JSON.parse(localStorage.getItem(k)||'null')??f}catch{return f}}
+function ds(k,v){localStorage.setItem(k,JSON.stringify(v));channel?.postMessage({type:'changed',key:k})}
+async function getAll(){
+  if(remoteEnabled()){
+    const [sessions,reactions,attention,events,investigationAnswers,decisionAnswers,state]=await Promise.all([
+      sb('sessions?select=*'),
+      sb('reactions?select=*'),
+      sb('attention?select=*'),
+      sb('feed_events?select=*'),
+      sb('investigation_answers?select=*'),
+      sb('decision_answers?select=*'),
+      sb('experiment_state?id=eq.main&select=*')
+    ]);
+    return {sessions:sessions||[],reactions:reactions||[],attention:attention||[],events:events||[],investigationAnswers:investigationAnswers||[],decisionAnswers:decisionAnswers||[],state:state?.[0]||{status:'waiting',reveal_stage:0,presentation_group:'ALL'}};
+  }
+  return {
+    sessions:dg('m9_sessions',[]),
+    reactions:Object.values(dg('m9_reactions',{})),
+    attention:Object.values(dg('m9_attention',{})),
+    events:dg('m9_events',[]),
+    investigationAnswers:Object.values(dg('m9_investigation_answers',{})),
+    decisionAnswers:Object.values(dg('m9_decision_answers',{})),
+    state:dg('m9_state',{status:'waiting',reveal_stage:0,winning_theme:null,winning_group:'ALL',presentation_group:'ALL',closing_stage:1})
+  };
+}
+function filtered(data,group){
+  const base=currentRunData(data);
+  if(!group||group==='ALL')return base;
+  const ids=new Set(base.sessions.filter(s=>s.class_group===group).map(s=>s.id));
+  return {
+    ...base,
+    sessions:base.sessions.filter(s=>ids.has(s.id)),
+    reactions:base.reactions.filter(r=>ids.has(r.session_id)),
+    attention:base.attention.filter(a=>ids.has(a.session_id)),
+    events:base.events.filter(e=>ids.has(e.session_id)),
+    investigationAnswers:(base.investigationAnswers||[]).filter(a=>ids.has(a.session_id)),
+    decisionAnswers:(base.decisionAnswers||[]).filter(a=>ids.has(a.session_id))
+  };
+}
+
+function medianValue(values){return M9Engine.medianValue(values)}
+function attentionScoreMap(attention,postMeta){return M9Engine.attentionScoreMap(attention,postMeta)}
+
+function currentRunData(data){
+  const runId=data.state?.run_id;
+  const sessions=(data.sessions||[]).filter(s=>!runId || !s.run_id || s.run_id===runId);
+  const ids=new Set(sessions.map(s=>s.id));
+  return {
+    ...data,
+    sessions,
+    reactions:(data.reactions||[]).filter(x=>ids.has(x.session_id)),
+    attention:(data.attention||[]).filter(x=>ids.has(x.session_id)),
+    events:(data.events||[]).filter(x=>ids.has(x.session_id)),
+    investigationAnswers:(data.investigationAnswers||[]).filter(x=>ids.has(x.session_id)),
+    decisionAnswers:(data.decisionAnswers||[]).filter(x=>ids.has(x.session_id))
+  };
+}
+
+function reactionScoreMap(reactions){return M9Engine.reactionScoreMap(reactions,POSTS)}
+function ranking(reactions,attention=[]){return M9Engine.ranking(reactions,attention,POSTS)}
+
+let group='ALL', latest=null;
+let lockedTargets=(()=>{try{return JSON.parse(localStorage.getItem('m9_locked_targets')||'{}')}catch{return {}}})();
+let refreshIntervalId=null;
+let timerIntervalId=null;
+let panelBooted=false;
+async function writeState(patch){
+  const cur=(await getAll()).state||{status:'waiting',reveal_stage:0,run_id:null,presentation_group:'ALL'};
+  const next={...cur,...patch,id:'main',updated_at:new Date().toISOString()};
+  if(!next.run_id) next.run_id=M9Engine.makeRunId();
+  if(remoteEnabled()){
+    await sb('rpc/m9_set_state',{
+      method:'POST',
+      body:JSON.stringify({p_secret:ensureProfessorControlKey(),p_patch:next})
+    });
+  }else ds('m9_state',next);
+  refresh();
+}
+
+function flowContext(){
+  const d=filtered(latest||{
+    sessions:[],reactions:[],attention:[],events:[],
+    investigationAnswers:[],decisionAnswers:[],
+    state:{status:'waiting',reveal_stage:0}
+  },group);
+  const state=(latest&&latest.state)||d.state||{status:'waiting',reveal_stage:0};
+  const target=expectedTarget(d.sessions.length);
+  const metrics={
+    total:d.sessions.length,
+    feedDone:d.sessions.filter(s=>s.feed_completed_at).length,
+    reactions:d.reactions.length,
+    investDone:d.sessions.filter(s=>s.investigation_completed_at).length,
+    decisionDone:d.sessions.filter(s=>s.decision_completed_at).length
+  };
+  return {d,state,target,metrics,readiness:M9Engine.stageReadiness(state,metrics,target)};
+}
+function requireAction(action,message){
+  const ctx=flowContext();
+  if(M9Engine.canAction(action,ctx.state,ctx.readiness,forceAdvance))return ctx;
+  alert(message);
+  return null;
+}
+function lockCurrentTargets(){
+  const all=currentRunData(latest||{sessions:[],state:{}}).sessions||[];
+  const values={
+    ALL:all.length,
+    '9A':all.filter(s=>s.class_group==='9A').length,
+    '9B':all.filter(s=>s.class_group==='9B').length
+  };
+  Object.entries(values).forEach(([g,n])=>{
+    if(!Number(expectedCounts[g]||0) && n>0)lockedTargets[g]=n;
+  });
+  try{localStorage.setItem('m9_locked_targets',JSON.stringify(lockedTargets))}catch(_){}
+}
+async function openFeed(){
+  const ctx=requireAction('openFeed','O FEED só pode ser aberto quando houver perfis prontos. Se a contagem estiver parcial, use “permitir avanço manual”.');
+  if(!ctx)return;
+  if(ctx.state.status==='waiting')lockCurrentTargets();
+  ensureTimerRunningForExperience();
+  setTimedStage('EXPLORE');
+  await writeState({status:'feed_open',presentation_group:group});
+  syncTimedStage();
+  renderPresentationTimer();
+}
+async function pauseFeed(){
+  if(!requireAction('pauseFeed','O feed só pode ser pausado enquanto estiver aberto.'))return;
+  await writeState({status:'feed_paused'});
+}
+async function closeFeed(){
+  if(!requireAction('closeFeed','O feed só pode ser encerrado depois de ter sido aberto.'))return;
+  await writeState({status:'feed_closed'});
+}
+async function startReveal(){
+  if(!requireAction('startReveal','Encerre o feed e aguarde a conclusão necessária antes de iniciar o REVELE.'))return;
+  setTimedStage('REVELE');
+  await writeState({status:'results_reveal',reveal_stage:1,presentation_group:group});
+}
+async function stepReveal(delta){
+  const action=delta<0?'revealPrev':'revealNext';
+  if(!requireAction(action,'Os controles de cena funcionam somente durante o REVELE.'))return;
+  const s=(await getAll()).state||{};
+  const current=s.reveal_stage||1;
+  const stage=Math.max(1,Math.min(6,current+delta));
+  await writeState({status:'results_reveal',reveal_stage:stage});
+}
+async function previewInvestigation(){
+  const ctx=requireAction('previewInvestigation','Chegue à cena 6 do REVELE antes de apresentar o INVESTIGUE.');
+  if(!ctx)return;
+  setTimedStage('INVESTIGUE');
+  const r=ranking(ctx.d.reactions,ctx.d.attention);
+  await writeState({
+    status:'investigation_preview',
+    winning_theme:r[0]?.theme||null,
+    winning_group:group,
+    presentation_group:group,
+    reveal_stage:6
+  });
+}
+async function releaseInvestigation(){
+  if(!requireAction('releaseInvestigation','Primeiro use “APRESENTAR INVESTIGAÇÃO”.'))return;
+  await writeState({status:'investigation_open'});
+}
+async function previewDecide(){
+  if(!requireAction('previewDecide','O DECIDA só pode ser apresentado depois que o INVESTIGUE estiver concluído.'))return;
+  setTimedStage('DECIDA');
+  await writeState({status:'decide_preview'});
+}
+async function startDecide(){
+  if(!requireAction('startDecide','Primeiro use “APRESENTAR DECIDA” e explique o desafio à turma.'))return;
+  setTimedStage('DECIDA');
+  await writeState({status:'decide_open'});
+}
+async function revealDecide(){
+  if(!requireAction('revealDecide','As decisões só podem ser reveladas depois que o DECIDA estiver aberto e houver conclusões suficientes.'))return;
+  await writeState({status:'decide_reveal'});
+}
+
+function resetDemo(){ openResetConfirm(); }
+
+function openResetConfirm(){
+  document.getElementById('resetConfirm').classList.add('active');
+}
+function closeResetConfirm(){
+  document.getElementById('resetConfirm').classList.remove('active');
+}
+async function deleteRemoteTable(path){
+  await sb(path,{method:'DELETE',headers:{Prefer:'return=minimal'}});
+}
+async function confirmFullReset(){
+  const btn=document.getElementById('confirmResetBtn');
+  btn.disabled=true;
+  btn.textContent='LIMPANDO...';
+
+  try{
+    if(remoteEnabled()){
+      await sb('rpc/m9_reset_simulation',{
+        method:'POST',
+        body:JSON.stringify({p_secret:ensureProfessorControlKey()})
+      });
+    }else{
+      const newState={
+        status:'waiting',
+        reveal_stage:0,
+        closing_stage:1,
+        winning_theme:null,
+        winning_group:'ALL',
+        presentation_group:'ALL',
+        run_id:M9Engine.makeRunId(),
+        updated_at:new Date().toISOString()
+      };
+
+      [
+        'm9_sessions',
+        'm9_reactions',
+        'm9_attention',
+        'm9_events',
+        'm9_investigation_answers',
+        'm9_decision_answers'
+      ].forEach(k=>{
+        try{localStorage.removeItem(k)}catch(_){}
+      });
+
+      ds('m9_state',newState);
+    }
+
+    forceAdvance=false;
+    lockedTargets={};
+    try{localStorage.removeItem('m9_locked_targets')}catch(_){}
+    const force=document.getElementById('forceAdvance');
+    if(force) force.checked=false;
+
+    group='ALL';
+    if(latest?.state)latest.state.presentation_group='ALL';
+    document.querySelectorAll('[data-group]').forEach(x=>{
+      x.classList.toggle('active',x.dataset.group==='ALL');
+    });
+    loadExpected();
+
+    resetPresentationTimer();
+    closeResetConfirm();
+
+    document.querySelectorAll('[data-view]').forEach(x=>{
+      x.classList.toggle('active',x.dataset.view==='control');
+    });
+    document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));
+    document.getElementById('view-control')?.classList.add('active');
+
+    await refresh();
+    setSystemHealth('ok','REINICIADO');
+  }catch(err){
+    console.error('Erro no reset:',err);
+    const msg = remoteEnabled()
+      ? 'Falha ao limpar os dados no Supabase. Verifique se o SQL da V10.0.1 foi executado e se a chave do professor está correta.'
+      : 'Falha ao reiniciar a simulação local. Recarregue o painel e tente novamente.';
+    alert(msg + (err?.message ? '\n\nDetalhe: '+err.message : ''));
+  }finally{
+    btn.disabled=false;
+    btn.textContent='SIM, LIMPAR TUDO';
+  }
+}
+
+async function startClosing(){
+  if(!requireAction('startClosing','O fechamento só pode começar depois da revelação do DECIDA.'))return;
+  setTimedStage('FECHAMENTO');
+  await writeState({status:'closing_reveal',closing_stage:1});
+}
+async function closingStep(delta){
+  const action=delta<0?'closingPrev':'closingNext';
+  if(!requireAction(action,'Os controles do fechamento funcionam somente durante o FECHAMENTO.'))return;
+  const s=(await getAll()).state||{};
+  const current=s.closing_stage||1;
+  const next=Math.max(1,Math.min(9,current+delta));
+  await writeState({status:'closing_reveal',closing_stage:next});
+}
+
+
+let forceAdvance=false;
+let expectedCounts=(()=>{try{return JSON.parse(localStorage.getItem('m9_expected_counts')||'{}')}catch{return {}}})();
+function loadExpected(){
+  const el=document.getElementById('expectedCount');
+  if(el)el.value=expectedCounts[group]||'';
+}
+function expectedTarget(total){
+  const configured=Number(expectedCounts[group]||0);
+  if(configured>0)return configured;
+  const locked=Number(lockedTargets[group]||0);
+  if(locked>0)return locked;
+  return total;
+}
+function setReady(id,status,label){
+  const el=document.getElementById(id); if(!el)return;
+  el.classList.remove('ok','warn','no');
+  el.classList.add(status);
+  const txt=el.querySelector('span:last-child');
+  if(txt)txt.textContent=status==='warn'?'PARCIAL · '+label:status==='ok'?'PRONTO · '+label:'BLOQUEADO · '+label;
+  const block=el.closest('.command-block');
+  if(block){
+    block.classList.remove('stage-ok','stage-warn','stage-no');
+    block.classList.add('stage-'+status);
+  }
+}
+function interlock(id,status,reason='Etapa ainda não está pronta'){
+  const el=document.getElementById(id);
+  if(!el)return;
+  const locked=(!forceAdvance && status!=='ok');
+  el.disabled=locked;
+  el.title=locked?reason:'';
+}
+function updateReadiness(d){
+  const state=latest.state||{status:'waiting',reveal_stage:0};
+  const target=expectedTarget(d.sessions.length);
+  const metrics={
+    total:d.sessions.length,
+    feedDone:d.sessions.filter(s=>s.feed_completed_at).length,
+    reactions:d.reactions.length,
+    investDone:d.sessions.filter(s=>s.investigation_completed_at).length,
+    decisionDone:d.sessions.filter(s=>s.decision_completed_at).length
+  };
+  const r=M9Engine.stageReadiness(state,metrics,target);
+
+  setReady('readyFeed',r.feed,r.feed==='warn'?`${metrics.total}/${target}`:r.feed==='ok'?'perfis':'aguarde');
+  setReady('readyReveal',r.reveal,r.reveal==='warn'?`${metrics.feedDone}/${target}`:r.reveal==='ok'?'concluído':'aguarde');
+  setReady('readyInvestigate',r.investigatePreview,r.investigatePreview==='warn'?'avance até 6/6':r.investigatePreview==='ok'?'cena 6/6':'aguarde');
+  setReady('readyInvestigateRelease',r.investigateRelease,state.status==='investigation_open'?'liberado':r.investigateRelease==='ok'?'apresentado':'bloqueado');
+
+  setReady('readyDecide',r.decide,r.decide==='warn'?`${metrics.investDone}/${target}`:r.decide==='ok'?'investigação concluída':'aguarde');
+  const releaseStatus=state.status==='decide_preview'||state.status==='decide_open'?'ok':'no';
+  setReady('readyDecideRelease',releaseStatus,state.status==='decide_open'?'liberado':releaseStatus==='ok'?'apresentado':'bloqueado');
+
+  setReady('readyDecisionReveal',r.decisionReveal,r.decisionReveal==='warn'?`${metrics.decisionDone}/${target}`:r.decisionReveal==='ok'?'decisões concluídas':'aguarde');
+  setReady('readyClosing',r.closing,r.closing==='warn'?`${metrics.decisionDone}/${target}`:r.closing==='ok'?'resultado revelado':'aguarde');
+
+  const allow=(action)=>M9Engine.canAction(action,state,r,forceAdvance);
+  const lock=(id,ok,reason)=>{
+    const el=document.getElementById(id); if(!el)return;
+    el.disabled=!ok; el.title=ok?'':reason;
+  };
+
+  lock('openFeedBtn',allow('openFeed'),'Aguarde os perfis ou use avanço manual se a contagem estiver parcial.');
+  lock('pauseFeedBtn',M9Engine.canAction('pauseFeed',state,r,false),'O feed só pode ser pausado enquanto estiver aberto.');
+  lock('closeFeedBtn',M9Engine.canAction('closeFeed',state,r,false),'O feed só pode ser encerrado depois de aberto.');
+  lock('startRevealBtn',allow('startReveal'),'Encerre o feed e aguarde as conclusões.');
+  lock('startInvestigateBtn',allow('previewInvestigation'),'Chegue à cena 6/6 do REVELE.');
+  lock('releaseInvestigateBtn',allow('releaseInvestigation'),'Apresente a investigação primeiro.');
+  lock('previewDecideBtn',allow('previewDecide'),'Conclua o INVESTIGUE antes de apresentar o DECIDA.');
+  lock('startDecideBtn',allow('startDecide'),'Apresente e explique o DECIDA antes de liberar as decisões.');
+  lock('revealDecideBtn',allow('revealDecide'),'Aguarde a conclusão do DECIDA.');
+  lock('startClosingBtn',allow('startClosing'),'Revele primeiro o resultado do DECIDA.');
+
+  const prev=document.getElementById('revealPrev'),next=document.getElementById('revealNext');
+  if(prev)prev.disabled=state.status!=='results_reveal'||(state.reveal_stage||1)<=1;
+  if(next)next.disabled=state.status!=='results_reveal'||(state.reveal_stage||1)>=6;
+  const cp=document.getElementById('closingPrev'),cn=document.getElementById('closingNext');
+  if(cp)cp.disabled=state.status!=='closing_reveal'||(state.closing_stage||1)<=1;
+  if(cn)cn.disabled=state.status!=='closing_reveal'||(state.closing_stage||1)>=9;
+}
+function scoreMap(reactions){return reactionScoreMap(reactions)}
+function percent(v,total){return total?Math.round(v*1000/total)/10:0}
+function interestStats(data,slug){
+  const vals=(data.investigationAnswers||[]).filter(a=>a.theme_slug===slug&&a.question_id==='q1').map(a=>Number(a.answer)).filter(Number.isFinite);
+  return {pct:vals.length?Math.round(((vals.reduce((a,b)=>a+b,0)/vals.length)-1)/4*100):0,n:vals.length};
+}
+function interestIndex(data,slug){return interestStats(data,slug).pct}
+function answerTop(data,slug,qid){
+  const q=INVEST_DATA[slug]?.questions.find(x=>x.id===qid);
+  if(!q)return {question:'—',label:'—',pct:0};
+  const rows=(data.investigationAnswers||[]).filter(a=>a.theme_slug===slug&&a.question_id===qid);
+  const counts={};rows.forEach(r=>counts[r.answer]=(counts[r.answer]||0)+1);
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+  if(!top)return {question:q.title,label:'Sem respostas',pct:0,n:0};
+  const opt=q.options.find(o=>String(o[0])===String(top[0]));
+  return {question:q.title,label:opt?opt[1]:top[0],pct:Math.round(top[1]*100/rows.length),n:rows.length};
+}
+function renderAnalytics(){
+  if(!latest)return;
+  const d=filtered(latest,group);
+  const rank=ranking(d.reactions,d.attention);
+  const theme=latest.state.winning_theme||rank[0]?.theme||'Games';
+  const slug=THEME_TO_SLUG[theme]||'games';
+  document.getElementById('aThemeTitle').textContent=theme;
+
+  const scores=reactionScoreMap(d.reactions), total=Object.values(scores).reduce((a,b)=>a+b,0);
+  const bp=percent(scores[theme]||0,total);
+  document.getElementById('aBehLabel').textContent=theme;
+  document.getElementById('aBehPct').textContent=String(bp).replace('.',',')+'%';
+  document.getElementById('aBehBar').style.width=bp+'%';
+  document.getElementById('aBehN').textContent=`n=${d.reactions.length} reações`;
+
+  const att=attentionScoreMap(d.attention,POSTS), attTotal=Object.values(att).reduce((a,b)=>a+b,0);
+  const ap=percent(att[theme]||0,attTotal);
+  document.getElementById('aAttLabel').textContent=theme;
+  document.getElementById('aAttPct').textContent=String(ap).replace('.',',')+'%';
+  document.getElementById('aAttBar').style.width=ap+'%';
+  document.getElementById('aAttN').textContent=`n=${d.attention.length} registros · desempate do ranking`;
+
+  const is=interestStats(d,slug);
+  document.getElementById('aDeclPct').textContent=is.pct+'%';
+  document.getElementById('aDeclBar').style.width=is.pct+'%';
+  document.getElementById('aDeclN').textContent=`n=${is.n} respostas`;
+
+  document.getElementById('aPatterns').innerHTML=['q2','q5','q10','q12'].map(qid=>{
+    const x=answerTop(d,slug,qid);
+    return `<div class="pattern"><div class="q">${x.question}</div><div class="a">${x.label}</div><div class="p">${x.pct}%</div><div class="sample-note">n=${x.n}</div></div>`;
+  }).join('');
+
+  const d9a=filtered(latest,'9A'),d9b=filtered(latest,'9B');
+  const s9a=interestStats(d9a,slug),s9b=interestStats(d9b,slug);
+  document.getElementById('a9APct').textContent=s9a.pct+'%';document.getElementById('a9ABar').style.width=s9a.pct+'%';
+  document.getElementById('a9BPct').textContent=s9b.pct+'%';document.getElementById('a9BBar').style.width=s9b.pct+'%';
+
+  const dec=DECISION[theme]||DECISION['Games'];
+  document.getElementById('aDecisionContext').innerHTML=
+    `<div><b>Objetivo</b>${dec.objective}</div><div><b>Restrição</b>${dec.constraint}</div>`;
+  const votes=d.decisionAnswers||[];
+  const counts={};(dec.options||[]).forEach(o=>counts[o.code]=0);votes.forEach(v=>counts[v.choice_code]=(counts[v.choice_code]||0)+1);
+  const vt=votes.length;
+  const topCode=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;
+  function supportIndex(code){
+    const strengths=votes.filter(v=>v.choice_code===code).flatMap(v=>(Array.isArray(v.evidence_json)?v.evidence_json:[]).map(e=>Number(e.strength)).filter(Number.isFinite));
+    return strengths.length?Math.round(strengths.reduce((a,b)=>a+b,0)/strengths.length):0;
+  }
+  document.getElementById('aDecisionResult').innerHTML=(dec.options||[]).map(o=>{
+    const p=vt?Math.round(100*(counts[o.code]||0)/vt):0;
+    const support=supportIndex(o.code);
+    return `<div class="result-row ${o.code===topCode&&vt?'top':''}"><div class="result-label">${o.text}<div class="sample-note">Sustentação nos dados: ${support}%</div></div><div class="result-track"><div class="result-fill" style="width:${p}%"></div></div><div class="result-value">${p}%</div></div>`;
+  }).join('');
+
+  const evidenceCounts={};
+  votes.forEach(v=>{
+    const arr=Array.isArray(v.evidence_json)?v.evidence_json:[];
+    arr.forEach(e=>{
+      const key=e.text||e.id;
+      if(key)evidenceCounts[key]=(evidenceCounts[key]||0)+1;
+    });
+  });
+  const topEvidence=Object.entries(evidenceCounts).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  document.getElementById('aEvidenceUsage').innerHTML=topEvidence.length
+    ? topEvidence.map(([text,n])=>`<div class="evidence-use"><span>${text}</span><b>${n}×</b></div>`).join('')
+    : '<div class="sample-note">Aguardando justificativas dos alunos.</div>';
+}
+
+
+const CLOSING_TITLES={
+  1:'Antes da pesquisa, você já tinha gerado dados.',
+  2:'Ações viraram sinais. Sinais viraram padrões.',
+  3:'O que você fez e o que você disse são dados diferentes.',
+  4:'Padrões permitem fazer inferências.',
+  5:'Quando um padrão começa a orientar uma ação?',
+  6:'Por que os dados têm valor?',
+  7:'Dados exigem responsabilidade.',
+  8:'Quais profissões trabalham com dados?',
+  9:'DATA DRIVEN: decisões orientadas por evidências.'
+};
+function mirrorPct(v,total){
+  if(!total)return '0%';
+  const p=v*100/total;
+  return (p>=10?Math.round(p):Math.round(p*10)/10).toString().replace('.',',')+'%';
+}
+function renderMirror(d){
+  const box=document.getElementById('mirrorContent');
+  const grp=document.getElementById('mirrorGroup');
+  if(!box)return;
+  if(grp)grp.textContent=group==='ALL'?'TODAS AS TURMAS':group;
+
+  const st=latest?.state||{status:'waiting',reveal_stage:0,closing_stage:1};
+  const r=ranking(d.reactions,d.attention);
+  const total=r.reduce((s,x)=>s+x.score,0);
+  const m={
+    participants:d.sessions.length,
+    views:d.events.filter(e=>e.event_type==='view').length,
+    reactions:d.reactions.length,
+    thumbs:d.reactions.filter(x=>x.reaction==='thumb').length,
+    hearts:d.reactions.filter(x=>x.reaction==='heart').length
+  };
+
+  if(st.status==='waiting'){
+    box.innerHTML='<div class="mirror-kicker">MISSÃO 9</div><div class="mirror-title">Do interesse ao dado</div><div class="mirror-sub">Aguardando o início da experiência.</div>';
+    return;
+  }
+  if(st.status==='feed_open'||st.status==='feed_paused'||st.status==='feed_closed'){
+    box.innerHTML=`<div class="mirror-kicker">EXPLORE</div><div class="mirror-title">${st.status==='feed_open'?'Feed aberto':st.status==='feed_paused'?'Feed pausado':'Feed encerrado'}</div><div class="mirror-sub">${m.participants} perfis prontos · ${m.reactions} reações registradas</div>`;
+    return;
+  }
+  if(st.status==='results_reveal'){
+    const stage=st.reveal_stage||1;
+    if(stage===1)box.innerHTML=`<div class="mirror-kicker">REVELE · PARTICIPANTES</div><div class="mirror-big">${m.participants}</div><div class="mirror-sub">sessões anônimas</div>`;
+    else if(stage===2)box.innerHTML=`<div class="mirror-kicker">REVELE · VISUALIZAÇÕES</div><div class="mirror-big">${m.views}</div><div class="mirror-sub">conteúdos visualizados</div>`;
+    else if(stage===3)box.innerHTML=`<div class="mirror-kicker">REVELE · REAÇÕES</div><div class="mirror-big">${m.reactions}</div><div class="mirror-sub">👍 ${m.thumbs} &nbsp; ❤️ ${m.hearts}</div>`;
+    else if(stage===4)box.innerHTML='<div class="mirror-kicker">UMA PERGUNTA</div><div class="mirror-title">“Qual é o seu tema favorito?”</div><div class="mirror-sub">Ninguém respondeu diretamente — mas as interações produziram sinais.</div>';
+    else if(stage===5){
+      const top=r.slice(0,7),mx=Math.max(1,...top.map(x=>x.score));
+      box.innerHTML='<div class="mirror-kicker">PADRÕES DE INTERESSE</div><div class="mirror-cloud">'+top.map((x,i)=>`<span style="font-size:${9+8*x.score/mx}px;opacity:${.62+.38*(1-i/top.length)}">${x.theme}</span>`).join('')+'</div>';
+    } else {
+      box.innerHTML='<div class="mirror-kicker">RANKING DA TURMA</div><div class="mirror-title" style="font-size:16px">O padrão ficou visível</div><div class="mirror-cards">'+r.slice(0,3).map((x,i)=>`<div class="mirror-card"><b>${i+1}º lugar</b><span>${x.theme}</span><strong>${mirrorPct(x.score,total)}</strong></div>`).join('')+'</div>';
+    }
+    return;
+  }
+  if(st.status==='investigation_preview'){
+    box.innerHTML=`<div class="mirror-kicker">INVESTIGUE · PREPARAÇÃO</div><div class="mirror-title">${st.winning_theme||'Tema vencedor'}</div><div class="mirror-sub">Respostas dos alunos ainda bloqueadas.</div>`;
+    return;
+  }
+  if(st.status==='investigation_open'){
+    box.innerHTML=`<div class="mirror-kicker">INVESTIGUE · LIBERADO</div><div class="mirror-title">${st.winning_theme||'Tema vencedor'}</div><div class="mirror-sub">A investigação está disponível nos dispositivos.</div>`;
+    return;
+  }
+  if(st.status==='decide_preview'){
+    const dec=DECISION[st.winning_theme];
+    box.innerHTML=`<div class="mirror-kicker">DECIDA · APRESENTAÇÃO</div><div class="mirror-title" style="font-size:14px">${dec?.title||'Hora de decidir'}</div><div class="mirror-sub">Ouça a explicação do professor. As decisões dos alunos ainda estão bloqueadas.</div>`;
+    return;
+  }
+  if(st.status==='decide_open'){
+    const dec=DECISION[st.winning_theme];
+    box.innerHTML=`<div class="mirror-kicker">DECIDA</div><div class="mirror-title" style="font-size:14px">${dec?.title||'Hora de decidir'}</div><div class="mirror-sub">Escolha uma estratégia e duas evidências.</div>`;
+    return;
+  }
+  if(st.status==='decide_reveal'){
+    const dec=DECISION[st.winning_theme],rows=d.decisionAnswers||[],counts={};
+    (dec?.options||[]).forEach(o=>counts[o.code]=0);rows.forEach(v=>counts[v.choice_code]=(counts[v.choice_code]||0)+1);
+    box.innerHTML='<div class="mirror-kicker">DECIDA · RESULTADO</div><div class="mirror-title" style="font-size:15px">Qual estratégia a turma escolheu?</div><div class="mirror-rank">'+(dec?.options||[]).map(o=>{const p=rows.length?Math.round(100*(counts[o.code]||0)/rows.length):0;return `<div class="mirror-rank-row"><div class="mirror-rank-label">${o.text}</div><div class="mirror-rank-pct">${p}%</div><div class="mirror-mini-track"><div class="mirror-mini-fill" style="width:${p}%"></div></div></div>`}).join('')+'</div>';
+    return;
+  }
+  if(st.status==='closing_reveal'){
+    const n=st.closing_stage||1;
+    box.innerHTML=`<div class="mirror-kicker">FECHAMENTO · ${n}/9</div><div class="mirror-title">${CLOSING_TITLES[n]||'Fechamento pedagógico'}</div>`;
+    return;
+  }
+}
+
+function safeSection(name,fn){
+  try{fn()}catch(e){console.error('Falha em '+name+':',e)}
+}
+function render(){
+ if(!latest)return; const d=filtered(latest,group);
+ safeSection('espelho',()=>renderMirror(d));
+ safeSection('filtro de turma',()=>syncGroupControls());
+ const views=d.events.filter(e=>e.event_type==='view').length;
+ const thumbs=d.reactions.filter(r=>r.reaction==='thumb').length, hearts=d.reactions.filter(r=>r.reaction==='heart').length;
+ participants.textContent=d.sessions.length; completed.textContent=d.sessions.filter(s=>s.feed_completed_at).length; 
+ document.getElementById('views').textContent=views; reactions.textContent=d.reactions.length; document.getElementById('thumbs').textContent=thumbs; document.getElementById('hearts').textContent=hearts;
+ avgViews.textContent=d.sessions.length?(views/d.sessions.length).toFixed(1):'0';
+ completion.textContent=d.sessions.length?Math.round(100*d.sessions.filter(s=>s.feed_completed_at).length/d.sessions.length)+'%':'0%';
+ const st = latest.state.status || 'waiting';
+ const revealStage = latest.state.reveal_stage || 1;
+ const closingStage = latest.state.closing_stage || 1;
+ let sceneTitle='Aguardando início', sceneSub='Experiência ainda não iniciada', badgeLabel='cena', badgeValue='0';
+
+ if(st==='feed_open'){ sceneTitle='Feed aberto'; sceneSub='Os alunos podem explorar o feed.'; badgeLabel='modo'; badgeValue='FEED'; }
+ else if(st==='feed_paused'){ sceneTitle='Feed pausado'; sceneSub='Navegação temporariamente interrompida.'; badgeLabel='modo'; badgeValue='PAUSE'; }
+ else if(st==='feed_closed'){ sceneTitle='Feed encerrado'; sceneSub='Exploração finalizada.'; badgeLabel='modo'; badgeValue='END'; }
+ else if(st==='results_reveal'){ sceneTitle='Revelação de resultados'; sceneSub=`Cena ${revealStage} de 6.`; badgeLabel='cena'; badgeValue=`${revealStage}/6`; }
+ else if(st==='investigation_preview'){ sceneTitle='Investigue · apresentação'; sceneSub='Tema revelado; respostas dos alunos ainda bloqueadas.'; badgeLabel='etapa'; badgeValue='INV'; }
+ else if(st==='investigation_open'){ sceneTitle='Investigue · liberado'; sceneSub='Os alunos já podem iniciar as respostas.'; badgeLabel='etapa'; badgeValue='INV'; }
+ else if(st==='decide_preview'){ sceneTitle='Decida · apresentação'; sceneSub='Desafio em explicação; decisões dos alunos bloqueadas.'; badgeLabel='etapa'; badgeValue='DEC'; }
+ else if(st==='decide_open'){ sceneTitle='Decida · liberado'; sceneSub='Alunos tomando a decisão.'; badgeLabel='etapa'; badgeValue='DEC'; }
+ else if(st==='decide_reveal'){ sceneTitle='Decida · resultado'; sceneSub='Resultado coletivo em exibição.'; badgeLabel='etapa'; badgeValue='DEC'; }
+ else if(st==='closing_reveal'){ sceneTitle='Fechamento pedagógico'; sceneSub=`Cena ${closingStage} de 9.`; badgeLabel='fech.'; badgeValue=`${closingStage}/9`; }
+
+ document.getElementById('sceneText').firstChild.textContent=sceneTitle;
+ document.getElementById('sceneSub').textContent=sceneSub;
+ document.getElementById('sceneBadgeLabel').textContent=badgeLabel;
+ document.getElementById('sceneBadgeValue').textContent=badgeValue;
+
+ document.getElementById('revealPrev').disabled = st!=='results_reveal' || revealStage<=1;
+ document.getElementById('revealNext').disabled = st!=='results_reveal' || revealStage>=6;
+ document.getElementById('closingPrev').disabled = st!=='closing_reveal' || closingStage<=1;
+ document.getElementById('closingNext').disabled = st!=='closing_reveal' || closingStage>=9;
+
+ const win=latest.state.winning_theme||'—';
+ document.getElementById('winningTheme').textContent=win;
+ const started=d.sessions.filter(s=>s.investigation_started_at).length;
+ const done=d.sessions.filter(s=>s.investigation_completed_at).length;
+ document.getElementById('investStarted').textContent=started;
+ document.getElementById('investCompleted').textContent=done;
+ document.getElementById('investAnswers').textContent=(d.investigationAnswers||[]).length;
+ const qCounts={};
+ (d.investigationAnswers||[]).forEach(a=>qCounts[a.question_id]=(qCounts[a.question_id]||0)+1);
+ document.getElementById('investQuestionStatus').innerHTML=
+   '<div class="lbl">Respostas por questão</div><div class="question-grid">'+
+   Array.from({length:12},(_,i)=>`<div class="qbox"><b>Q${i+1}</b><br><span>${qCounts['q'+(i+1)]||0}</span></div>`).join('')+
+   '</div>';
+
+ const ds=d.decisionAnswers||[];
+ const totalDecision=ds.length;
+ const voteCounts={};
+ ds.forEach(x=>voteCounts[x.choice_code]=(voteCounts[x.choice_code]||0)+1);
+ const topVotes=Math.max(0,...Object.values(voteCounts));
+ document.getElementById('decideStarted').textContent=d.sessions.filter(s=>s.decision_started_at).length;
+ document.getElementById('decideCompleted').textContent=d.sessions.filter(s=>s.decision_completed_at).length;
+ document.getElementById('decideTopPct').textContent=totalDecision?Math.round(100*topVotes/totalDecision)+'%':'0%';
+ document.getElementById('decideDiversity').textContent=Object.values(voteCounts).filter(v=>v>0).length;
+
+ safeSection('prontidão',()=>updateReadiness(d));
+ safeSection('análise',()=>renderAnalytics());
+
+ const visible=['results_reveal','investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(latest.state.status);
+ if(!visible){rankWrap.innerHTML='<div class="rank-hidden">O ranking permanece oculto enquanto os alunos navegam.</div>';return}
+ const r=ranking(d.reactions,d.attention);
+ const max=Math.max(1,...r.map(x=>x.score));
+ const totalRank=r.reduce((sum,x)=>sum+x.score,0);
+ const rankPct=v=>{
+   if(!totalRank)return '0%';
+   const p=v*100/totalRank;
+   return (p>=10?Math.round(p):Math.round(p*10)/10).toString().replace('.',',')+'%';
+ };
+ rankWrap.innerHTML=
+   '<div class="card bars">'+
+   r.map((x,i)=>`<div class="barrow"><strong>${i+1}. ${x.theme}</strong><div class="track"><div class="fill" style="width:${100*x.score/max}%"></div></div><b>${rankPct(x.score)}</b></div>`).join('')+
+   '<div class="rank-note">Percentuais calculados sobre o total de pontos distribuídos pelas reações. Em empate de pontos, o índice de atenção relativa define a ordem. O comprimento das barras é relativo ao tema líder.</div>'+
+   '</div>';
+}
+
+
+
+
+const TIMER_KEY='m9_presentation_timer_v3';
+const STAGE_TIMER_KEY='m9_stage_timing_v93';
+
+const STAGE_PLAN = [
+  {key:'EXPLORE',label:'EXPLORE',budget:8*60*1000},
+  {key:'REVELE',label:'REVELE',budget:5*60*1000},
+  {key:'INVESTIGUE',label:'INVESTIGUE',budget:10*60*1000},
+  {key:'ANALISE',label:'ANALISE',budget:5*60*1000},
+  {key:'DECIDA',label:'DECIDA',budget:5*60*1000},
+  {key:'FECHAMENTO',label:'FECHAMENTO',budget:5*60*1000}
+];
+const TOTAL_TARGET_MS=40*60*1000;
+const PLANNED_MS=STAGE_PLAN.reduce((s,x)=>s+x.budget,0);
+const RESERVE_MS=TOTAL_TARGET_MS-PLANNED_MS;
+
+function loadTimerState(){
+  try{
+    const v=JSON.parse(localStorage.getItem(TIMER_KEY)||'null');
+    if(v && Number.isFinite(Number(v.elapsed)) && typeof v.running==='boolean'){
+      return {elapsed:Number(v.elapsed)||0,running:v.running,startedAt:Number(v.startedAt)||null};
+    }
+  }catch(_){}
+  return {elapsed:0,running:false,startedAt:null};
+}
+function loadStageTiming(){
+  try{
+    const v=JSON.parse(localStorage.getItem(STAGE_TIMER_KEY)||'null');
+    if(v && typeof v==='object'){
+      return {
+        current:v.current||null,
+        phaseStartedAtElapsed:Number(v.phaseStartedAtElapsed)||0,
+        completed:v.completed&&typeof v.completed==='object'?v.completed:{}
+      };
+    }
+  }catch(_){}
+  return {current:null,phaseStartedAtElapsed:0,completed:{}};
+}
+let presentationTimer=loadTimerState();
+let stageTiming=loadStageTiming();
+
+function savePresentationTimer(){
+  try{localStorage.setItem(TIMER_KEY,JSON.stringify(presentationTimer))}catch(_){}
+}
+function saveStageTiming(){
+  try{localStorage.setItem(STAGE_TIMER_KEY,JSON.stringify(stageTiming))}catch(_){}
+}
+function timerElapsed(){
+  const base=Number(presentationTimer.elapsed)||0;
+  if(!presentationTimer.running || !presentationTimer.startedAt)return base;
+  return base+Math.max(0,Date.now()-presentationTimer.startedAt);
+}
+function fmtTime(ms){
+  const total=Math.max(0,Math.floor(ms/1000));
+  const m=Math.floor(total/60),s=total%60;
+  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function deriveTimedStage(){
+  const st=latest?.state?.status||'waiting';
+  if(st==='waiting')return null;
+  if(['feed_open','feed_paused','feed_closed'].includes(st))return 'EXPLORE';
+  if(st==='results_reveal')return 'REVELE';
+  if(['investigation_preview','investigation_open'].includes(st)){
+    try{
+      const d=filtered(latest,group);
+      const target=expectedTarget(d.sessions.length);
+      const investDone=d.sessions.filter(s=>s.investigation_completed_at).length;
+      if(st==='investigation_open' && target>0 && investDone>=target)return 'ANALISE';
+    }catch(_){}
+    return 'INVESTIGUE';
+  }
+  if(['decide_preview','decide_open','decide_reveal'].includes(st))return 'DECIDA';
+  if(st==='closing_reveal')return 'FECHAMENTO';
+  return null;
+}
+function setTimedStage(next){
+  const elapsed=timerElapsed();
+  if(next===stageTiming.current)return;
+
+  if(stageTiming.current){
+    const used=Math.max(0,elapsed-(Number(stageTiming.phaseStartedAtElapsed)||0));
+    stageTiming.completed[stageTiming.current]=used;
+  }
+
+  stageTiming.current=next;
+  stageTiming.phaseStartedAtElapsed=elapsed;
+  saveStageTiming();
+}
+function syncTimedStage(){
+  setTimedStage(deriveTimedStage());
+}
+function currentStageElapsed(){
+  if(!stageTiming.current)return 0;
+  return Math.max(0,timerElapsed()-(Number(stageTiming.phaseStartedAtElapsed)||0));
+}
+function stageBudget(key){
+  return STAGE_PLAN.find(x=>x.key===key)?.budget||0;
+}
+function startPresentationTimer(){
+  if(presentationTimer.running)return;
+  presentationTimer.running=true;
+  presentationTimer.startedAt=Date.now();
+  savePresentationTimer();
+  renderPresentationTimer();
+}
+function pausePresentationTimer(){
+  if(!presentationTimer.running)return;
+  presentationTimer.elapsed=timerElapsed();
+  presentationTimer.running=false;
+  presentationTimer.startedAt=null;
+  savePresentationTimer();
+  renderPresentationTimer();
+}
+function resetPresentationTimer(){
+  presentationTimer={elapsed:0,running:false,startedAt:null};
+  stageTiming={current:null,phaseStartedAtElapsed:0,completed:{}};
+  try{
+    localStorage.removeItem(TIMER_KEY);
+    localStorage.removeItem(STAGE_TIMER_KEY);
+    localStorage.removeItem('m9_presentation_timer_v2');
+  }catch(_){}
+  savePresentationTimer();
+  saveStageTiming();
+  renderPresentationTimer();
+}
+function ensureTimerRunningForExperience(){
+  if(!presentationTimer.running && timerElapsed()===0)startPresentationTimer();
+}
+function renderPresentationTimer(){
+  syncTimedStage();
+
+  const ms=timerElapsed();
+  const el=document.getElementById('presentationTimer');
+  const fill=document.getElementById('timerFill');
+  const panel=document.getElementById('timerPanel')||document.querySelector('.timer-panel');
+
+  if(el)el.textContent=fmtTime(ms);
+  if(fill)fill.style.width=Math.min(100,(ms/TOTAL_TARGET_MS)*100)+'%';
+
+  if(panel){
+    panel.classList.toggle('warn',ms>=38*60*1000&&ms<TOTAL_TARGET_MS);
+    panel.classList.toggle('danger',ms>=TOTAL_TARGET_MS);
+  }
+
+  const currentKey=stageTiming.current;
+  const plan=STAGE_PLAN.find(x=>x.key===currentKey);
+  const stageElapsed=currentStageElapsed();
+  const currentName=document.getElementById('currentTimedStage');
+  const currentClock=document.getElementById('currentStageClock');
+  if(currentName)currentName.textContent=plan?plan.label:'aguardando';
+  if(currentClock)currentClock.textContent=plan?`${fmtTime(stageElapsed)} / ${fmtTime(plan.budget)}`:'00:00 / --:--';
+
+  const pill=document.getElementById('timerStatusPill');
+  const pillText=document.getElementById('timerStatusText');
+  if(pill){
+    pill.classList.remove('on-time','over','idle');
+    if(!plan){
+      pill.classList.add('idle');
+      if(pillText)pillText.textContent='AGUARDANDO INÍCIO';
+    }else if(stageElapsed<=plan.budget){
+      pill.classList.add('on-time');
+      if(pillText)pillText.textContent='NO TEMPO PREVISTO';
+    }else{
+      pill.classList.add('over');
+      if(pillText)pillText.textContent=`ESTOUROU +${fmtTime(stageElapsed-plan.budget)}`;
+    }
+  }
+
+  STAGE_PLAN.forEach(item=>{
+    const node=document.querySelector(`[data-tstage="${item.key}"]`);
+    if(!node)return;
+    node.classList.remove('future','current','good','late');
+
+    let used=null;
+    if(Object.prototype.hasOwnProperty.call(stageTiming.completed,item.key)){
+      used=Number(stageTiming.completed[item.key])||0;
+      node.classList.add(used<=item.budget?'good':'late');
+    }else if(currentKey===item.key){
+      used=stageElapsed;
+      node.classList.add('current',used<=item.budget?'good':'late');
+    }else{
+      node.classList.add('future');
+    }
+
+    const time=node.querySelector('.stage-time');
+    if(time){
+      time.textContent=(used===null?'--':fmtTime(used))+' / '+fmtTime(item.budget);
+    }
+  });
+
+  const reserve=document.getElementById('reserveRemaining');
+  if(reserve){
+    const remaining=Math.max(0,TOTAL_TARGET_MS-Math.max(ms,PLANNED_MS));
+    if(ms<PLANNED_MS) reserve.textContent=fmtTime(RESERVE_MS);
+    else reserve.textContent=fmtTime(Math.max(0,TOTAL_TARGET_MS-ms));
+  }
+
+  const b=document.getElementById('timerStartBtn');
+  if(b)b.textContent=presentationTimer.running?'RODANDO':'INICIAR / RETOMAR';
+}
+
+function setSystemHealth(state,text){
+  const el=document.getElementById('systemHealth');
+  const tx=document.getElementById('systemHealthText');
+  if(el){el.classList.remove('starting','ok','error');el.classList.add(state)}
+  if(tx)tx.textContent=text;
+}
+async function refresh(){
+  try{
+    latest=await getAll();
+    group=latest.state?.presentation_group||group||'ALL';
+    syncTimedStage();
+    render();
+    renderPresentationTimer();
+    setSystemHealth('ok','SISTEMA OK');
+  }catch(e){
+    console.error('Falha no refresh:',e);
+    setSystemHealth('error','ERRO NO PAINEL');
+  }
+}
+
+
+function groupIsLocked(){
+  const st=latest?.state?.status||'waiting';
+  return ['investigation_preview','investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st);
+}
+async function selectGroup(nextGroup){
+  if(groupIsLocked() && nextGroup!==group){
+    alert('A turma exibida fica travada a partir do INVESTIGUE para manter a mesma base de dados até o final. Use LIMPAR DADOS E REINICIAR para iniciar outra execução.');
+    return;
+  }
+  group=nextGroup;
+  document.querySelectorAll('[data-group]').forEach(x=>x.classList.toggle('active',x.dataset.group===group));
+  loadExpected();
+  if(latest?.state && (latest.state.presentation_group||'ALL')!==group){
+    await writeState({presentation_group:group});
+  }else if(latest){
+    render();
+  }
+}
+function syncGroupControls(){
+  const locked=groupIsLocked();
+  document.querySelectorAll('[data-group]').forEach(b=>{
+    b.disabled=locked && b.dataset.group!==group;
+    b.title=locked && b.dataset.group!==group?'Turma travada para esta execução.':'';
+  });
+}
+
+function bindProfessorEvents(){
+  document.querySelectorAll('[data-group]').forEach(b=>{
+    b.onclick=()=>selectGroup(b.dataset.group);
+  });
+
+  document.querySelectorAll('[data-view]').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('[data-view]').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));
+      document.getElementById('view-'+b.dataset.view)?.classList.add('active');
+      if(b.dataset.view==='analysis') safeSection('análise',()=>renderAnalytics());
+    };
+  });
+
+  document.getElementById('expectedCount')?.addEventListener('input',e=>{
+    expectedCounts[group]=Math.max(0,Number(e.target.value)||0);
+    try{localStorage.setItem('m9_expected_counts',JSON.stringify(expectedCounts))}catch(_){}
+    if(latest)render();
+  });
+
+  document.getElementById('forceAdvance')?.addEventListener('change',e=>{
+    forceAdvance=!!e.target.checked;
+    if(latest)render();
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape') closeResetConfirm();
+  });
+
+  document.getElementById('resetConfirm')?.addEventListener('click',e=>{
+    if(e.target.id==='resetConfirm') closeResetConfirm();
+  });
+}
+
+function initializeLocalRun(){
+  if(remoteEnabled())return;
+  const s=dg('m9_state',{
+    status:'waiting',
+    reveal_stage:0,
+    closing_stage:1,
+    winning_theme:null,
+    winning_group:'ALL',
+    presentation_group:'ALL',
+    run_id:null
+  });
+  if(!s.run_id) ds('m9_state',{...s,run_id:M9Engine.makeRunId(),updated_at:new Date().toISOString()});
+}
+
+function bootProfessorPanel(){
+  if(panelBooted)return;
+  panelBooted=true;
+
+  try{
+    setSystemHealth('starting','INICIANDO');
+    bindProfessorEvents();
+    loadExpected();
+    initializeLocalRun();
+
+    const mode=document.getElementById('mode');
+    if(mode){
+      if(remoteEnabled()){
+        mode.textContent='SUPABASE';
+        mode.style.background='#d9f6e8';
+        mode.style.color='#155b3a';
+      }else{
+        mode.textContent='DEMO LOCAL';
+        mode.style.background='#fff2c8';
+        mode.style.color='#5b4617';
+        if(location.protocol==='file:')mode.title='Teste local: sem chamadas ao Supabase.';
+      }
+    }
+
+    renderPresentationTimer();
+
+    if(timerIntervalId)clearInterval(timerIntervalId);
+    timerIntervalId=setInterval(renderPresentationTimer,500);
+
+    if(refreshIntervalId)clearInterval(refreshIntervalId);
+    refreshIntervalId=setInterval(refresh,1400);
+
+    if(channel)channel.onmessage=()=>refresh();
+
+    window.addEventListener('storage',e=>{
+      if(!e.key || e.key.startsWith('m9_'))refresh();
+    });
+
+    window.addEventListener('unhandledrejection',e=>{
+      console.error('Promise rejeitada:',e.reason);
+      setSystemHealth('error','ERRO NO PAINEL');
+    });
+
+    window.addEventListener('error',e=>{
+      console.error('Erro global:',e.error||e.message);
+      setSystemHealth('error','ERRO NO PAINEL');
+    });
+
+    refresh();
+  }catch(e){
+    console.error('Falha na inicialização do painel:',e);
+    setSystemHealth('error','FALHA AO INICIAR');
+  }
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',bootProfessorPanel,{once:true});
+}else{
+  bootProfessorPanel();
+}
+
+</script>
+<div id="resetConfirm" class="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+  <div class="confirm-box">
+    <div class="confirm-icon">!</div>
+    <h3 id="resetTitle">Limpar todos os dados?</h3>
+    <p>Esta ação retornará a Missão 9 ao estado inicial de espera.</p>
+    <div class="confirm-list">
+      Serão apagados:
+      <br>• perfis/sessões anônimas da simulação;
+      <br>• visualizações, reações e tempos de atenção;
+      <br>• respostas do INVESTIGUE;
+      <br>• decisões do DECIDA;
+      <br>• ranking, indicadores e dados da aba ANÁLISE / DECIDA.
+    </div>
+    <p><strong>Esta ação não pode ser desfeita.</strong></p>
+    <div class="confirm-actions">
+      <button class="ghost" onclick="closeResetConfirm()">CANCELAR</button>
+      <button id="confirmResetBtn" class="confirm-danger" onclick="confirmFullReset()">SIM, LIMPAR TUDO</button>
+    </div>
+  </div>
+</div>
+
+</body></html>
