@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Missão 9 — V10.0.1 | Telão</title>
+<title>Missão 9 — V10.0.2 | Telão</title>
 <style>
 :root{--petrol:#0a252c;--petrol2:#06191e;--orange:#f18a2a;--white:#f7f8f5;--muted:#9fb1b5}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--petrol2);color:var(--white);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;overflow:hidden}
@@ -934,7 +934,7 @@ function sceneHtml(d){
        <div><b>OBJETIVO</b><span>${dec?.objective||''}</span></div>
        <div><b>RESTRIÇÃO</b><span>${dec?.constraint||''}</span></div>
      </div>
-     <p>${dec?.prompt||'Use os dados para tomar uma decisão.'}</p><p style="color:#ffd78a;font-weight:900">Ouça a explicação do professor. As decisões ainda não foram liberadas.</p></div>`;
+     <p>${dec?.prompt||'Use os dados para tomar uma decisão.'}</p></div>`;
  }
  if(st.status==='decide_open'){
    const dec=DECISION[st.winning_theme];

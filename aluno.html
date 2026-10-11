@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Missão 9 — V10.0.1 | Aluno</title>
+<title>Missão 9 — V10.0.2 | Aluno</title>
 <style>
 :root{
   --dark:#07171b;
@@ -619,8 +619,7 @@ p{line-height:1.5;color:var(--muted);margin:8px 0}
   <div class="brand">Missão 9 · Decida</div>
   <h2>Agora os dados precisam virar uma decisão.</h2>
   <p style="max-width:700px">Use os padrões apresentados no dashboard. As alternativas representam estratégias possíveis, com prioridades diferentes. Escolha a que você defenderia para esta turma.</p>
-  <div id="decideTeacherGate" style="margin:14px 0 2px;padding:11px 14px;border-radius:12px;background:rgba(255,181,48,.12);border:1px solid rgba(255,181,48,.38);color:#ffe2a6;font-weight:850">Aguarde a explicação do professor. A decisão ainda não foi liberada.</div>
-  <div style="height:12px"></div>
+  <div style="height:16px"></div>
   <button id="openDecisionBtn" class="btn" onclick="openDecision()" disabled>TOMAR UMA DECISÃO</button>
 </section>
 
@@ -1247,19 +1246,16 @@ function prepareDecision(themeName,enabled=false){
   const status=document.getElementById('decideStatus');
   if(status)status.replaceChildren(document.createTextNode(enabled?'A etapa DECIDA foi liberada.':'O desafio DECIDA está sendo apresentado pelo professor.'));
   const btn=document.getElementById('openDecisionBtn');
-  const gate=document.getElementById('decideTeacherGate');
   if(btn){
     btn.disabled=!enabled;
-    btn.textContent=enabled?'TOMAR UMA DECISÃO':'AGUARDE A LIBERAÇÃO';
+    btn.textContent='TOMAR UMA DECISÃO';
   }
-  if(gate)gate.style.display=enabled?'none':'block';
   const active=document.querySelector('.screen.active')?.id||'';
   if(['investWait','decideIntro'].includes(active)) go('decideIntro');
 }
 async function openDecision(){
   if(experimentState.status!=='decide_open'){
-    const gate=document.getElementById('decideTeacherGate');
-    if(gate)gate.style.display='block';
+      if(gate)gate.style.display='block';
     return;
   }
   const theme=experimentState.winning_theme;
@@ -1589,8 +1585,8 @@ function renderFeed(){
         <div class="visual"><img src="${p.image}" alt="" loading="lazy"></div>
         <div class="post-actions" role="group" aria-label="Reação ao conteúdo">
           <button class="reaction-btn thumb" aria-label="Gostei" aria-pressed="false"><svg class="reaction-icon" viewBox="0 0 24 24" aria-hidden="true">
-  <path d="M7 10v12H3V10.0.1h4Z"></path>
-  <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H9V10.0.1.7l3.7-7.4A2.6 2.6 0 0 1 15 2a3 3 0 0 1 0 3.88Z"></path>
+  <path d="M7 10v12H3V10h4Z"></path>
+  <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H9V10.7l3.7-7.4A2.6 2.6 0 0 1 15 2a3 3 0 0 1 0 3.88Z"></path>
 </svg></button>
           <button class="reaction-btn heart" aria-label="Gostei muito" aria-pressed="false"><svg class="reaction-icon" viewBox="0 0 24 24" aria-hidden="true">
   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"></path>

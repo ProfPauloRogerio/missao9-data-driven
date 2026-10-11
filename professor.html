@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Missão 9 — V10.0.1 | Professor</title>
+<title>Missão 9 — V10.0.2 | Professor</title>
 <style>
 
 :root{
@@ -584,8 +584,58 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none}
   .timer-under-mirror .stage-timing-wide{grid-template-columns:1fr 1fr}
 }
 
+
+/* Acesso simples do professor — V10.0.2 */
+body.prof-locked{overflow:hidden}
+body.prof-locked > header,
+body.prof-locked > main,
+body.prof-locked > #resetConfirm{visibility:hidden}
+.prof-login-overlay{
+  position:fixed;inset:0;z-index:99999;
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  background:
+    radial-gradient(circle at 78% 20%,rgba(241,138,42,.12),transparent 24%),
+    linear-gradient(135deg,#06191e,#0b333b);
+}
+.prof-login-overlay.hidden{display:none}
+.prof-login-card{
+  width:min(430px,94vw);background:#fff;border:1px solid #dbe4e2;
+  border-radius:24px;padding:28px;box-shadow:0 24px 70px rgba(0,0,0,.28)
+}
+.prof-login-card .login-brand{
+  font-size:11px;font-weight:950;letter-spacing:.15em;text-transform:uppercase;color:#f18a2a
+}
+.prof-login-card h2{font-size:28px;margin:8px 0 8px;color:#103941}
+.prof-login-card p{margin:0 0 18px;color:#6b7f84;font-size:13px;line-height:1.45}
+.prof-login-card label{display:block;font-size:11px;font-weight:900;color:#53696f;margin-bottom:7px}
+.prof-login-card input{
+  width:100%;height:50px;border-radius:13px;border:1px solid #cddbd8;
+  padding:0 14px;font-size:20px;letter-spacing:.12em;font-weight:900;
+  color:#103941;outline:none;background:#f8fbfa
+}
+.prof-login-card input:focus{border-color:#f18a2a;box-shadow:0 0 0 3px rgba(241,138,42,.12)}
+.prof-login-card button{width:100%;margin-top:12px;background:#103941;color:#fff;min-height:48px}
+.prof-login-error{min-height:18px;margin-top:9px;font-size:12px;font-weight:850;color:#b13d3d}
+
 </style></head>
-<body><header>
+<body class="prof-locked">
+
+<div id="profLoginOverlay" class="prof-login-overlay" role="dialog" aria-modal="true" aria-labelledby="profLoginTitle">
+  <div class="prof-login-card">
+    <div class="login-brand">Missão 9 · Data Driven</div>
+    <h2 id="profLoginTitle">Acesso do professor</h2>
+    <p>Digite o PIN para abrir o painel de comando.</p>
+    <form id="profLoginForm">
+      <label for="profPin">PIN</label>
+      <input id="profPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="profLoginError">
+      <button type="submit">ENTRAR</button>
+      <div id="profLoginError" class="prof-login-error" aria-live="polite"></div>
+    </form>
+  </div>
+</div>
+
+<header>
       <div><div class="brand">Missão 9 · Data Driven</div><h1>Painel do professor</h1></div>
       <div class="header-health">
         <div id="systemHealth" class="system-health starting"><span class="health-dot"></span><span id="systemHealthText">INICIANDO</span></div>
@@ -892,238 +942,10 @@ button:disabled{opacity:.35;cursor:not-allowed;transform:none}
 
 
 <script>
-// MISSÃO 9 — V10.0.1
-// Configure Supabase apenas quando for usar vários dispositivos.
-window.M9_PUBLIC_CONFIG = {
-  supabaseUrl: 'https://nctevblngdvowonsxhmz.supabase.co',
-  supabasePublishableKey: 'sb_publishable_4fQ50Zegz4SO6mG-g-9g2Q_KwNr439s'
-};
-
-</script>
-<script>
-// MISSÃO 9 — V10.0.1 | Fonte única de dados compartilhados
-window.M9_DATA = {
-  THEMES: ["Games", "Música", "Futebol", "Esportes", "Redes Sociais", "Inteligência Artificial", "Filmes e Séries", "Tecnologia", "Viagens", "Moda e Estilo", "Saúde e Bem-estar", "Dinheiro e Consumo"],
-  THEME_TO_SLUG: {"Games": "games", "Música": "musica", "Futebol": "futebol", "Esportes": "esportes", "Redes Sociais": "redes", "Inteligência Artificial": "ia", "Filmes e Séries": "filmes", "Tecnologia": "tecnologia", "Viagens": "viagens", "Moda e Estilo": "moda", "Saúde e Bem-estar": "saude", "Dinheiro e Consumo": "dinheiro"},
-  POST_META: [{"id": "A01", "theme": "Games", "secondary": null}, {"id": "B01", "theme": "Games", "secondary": "Tecnologia"}, {"id": "B02", "theme": "Música", "secondary": null}, {"id": "A02", "theme": "Música", "secondary": "Viagens"}, {"id": "A03", "theme": "Futebol", "secondary": null}, {"id": "B03", "theme": "Futebol", "secondary": "Dinheiro e Consumo"}, {"id": "B04", "theme": "Esportes", "secondary": null}, {"id": "A04", "theme": "Esportes", "secondary": "Saúde e Bem-estar"}, {"id": "A05", "theme": "Redes Sociais", "secondary": null}, {"id": "C01", "theme": "Redes Sociais", "secondary": "Filmes e Séries"}, {"id": "C02", "theme": "Inteligência Artificial", "secondary": null}, {"id": "A06", "theme": "Inteligência Artificial", "secondary": "Moda e Estilo"}, {"id": "A07", "theme": "Filmes e Séries", "secondary": null}, {"id": "C03", "theme": "Filmes e Séries", "secondary": "Redes Sociais"}, {"id": "C04", "theme": "Tecnologia", "secondary": null}, {"id": "A08", "theme": "Tecnologia", "secondary": "Games"}, {"id": "B05", "theme": "Viagens", "secondary": null}, {"id": "C05", "theme": "Viagens", "secondary": "Música"}, {"id": "C06", "theme": "Moda e Estilo", "secondary": null}, {"id": "B06", "theme": "Moda e Estilo", "secondary": "Inteligência Artificial"}, {"id": "B07", "theme": "Saúde e Bem-estar", "secondary": null}, {"id": "C07", "theme": "Saúde e Bem-estar", "secondary": "Esportes"}, {"id": "C08", "theme": "Dinheiro e Consumo", "secondary": null}, {"id": "B08", "theme": "Dinheiro e Consumo", "secondary": "Futebol"}],
-  DECISION: {"Games": {"title": "Uma desenvolvedora vai lançar um jogo novo para adolescentes e só pode priorizar uma frente nas duas primeiras semanas.", "prompt": "Qual estratégia você defenderia para esta turma? Cada opção atende a um objetivo diferente — use os padrões observados para justificar sua escolha.", "options": [{"code": "strategy_1", "text": "Experiência primeiro — vídeos curtos de gameplay, demonstração gratuita e acesso rápido para testar o jogo."}, {"code": "strategy_2", "text": "Comunidade primeiro — creators, desafios com amigos e ações multiplayer para gerar conversa e participação."}, {"code": "strategy_3", "text": "Decisão informada — reviews, requisitos, desempenho e comparação de custo-benefício antes do download."}], "objective": "Maximizar a experimentação inicial do novo jogo.", "constraint": "A empresa pode priorizar apenas uma frente nas duas primeiras semanas."}, "Música": {"title": "Um festival quer atrair adolescentes, mas o orçamento permite concentrar a campanha em apenas uma estratégia principal.", "prompt": "Qual estratégia você defenderia para esta turma? Considere descoberta, influência social e experiência.", "options": [{"code": "strategy_1", "text": "Descoberta — trechos de músicas, playlists e vídeos curtos para apresentar artistas e lançamentos."}, {"code": "strategy_2", "text": "Experiência — mostrar clima do evento, encontros, momentos ao vivo e a ideia de viver o show com amigos."}, {"code": "strategy_3", "text": "Curadoria — recomendações por estilo, contexto e preferências, ajudando cada pessoa a encontrar artistas de interesse."}], "objective": "Aumentar o interesse e a intenção de participar do festival.", "constraint": "O orçamento permite concentrar a campanha em uma única estratégia principal."}, "Futebol": {"title": "Uma marca esportiva quer lançar uma campanha ligada ao futebol para adolescentes e precisa escolher o foco principal.", "prompt": "Qual estratégia faz mais sentido para esta turma? Nenhuma opção é automaticamente correta: compare os sinais encontrados.", "options": [{"code": "strategy_1", "text": "Paixão pelo time — lances, identidade do clube, jogadores e conteúdos que reforcem pertencimento."}, {"code": "strategy_2", "text": "Desempenho — estatísticas, comparações e dados de jogadores e equipes para sustentar argumentos."}, {"code": "strategy_3", "text": "Consumo e oportunidade — produtos, preços, promoções e avaliações para transformar interesse em compra."}], "objective": "Aumentar o engajamento de adolescentes com a campanha da marca.", "constraint": "A campanha precisa escolher um foco principal para a primeira fase."}, "Esportes": {"title": "A escola vai organizar uma semana de esportes e precisa escolher uma abordagem central para aumentar a participação.", "prompt": "Qual proposta você defenderia para esta turma? Pense em motivação, experiência e acompanhamento.", "options": [{"code": "strategy_1", "text": "Evolução — desafios com acompanhamento de tempo, distância, frequência e progresso individual."}, {"code": "strategy_2", "text": "Participação social — atividades em equipes, desafios entre amigos e metas coletivas."}, {"code": "strategy_3", "text": "Experimentação — estações com diferentes modalidades para que cada estudante teste e descubra afinidades."}], "objective": "Aumentar a participação dos estudantes na semana de esportes.", "constraint": "A escola precisa adotar uma abordagem central para organizar a ação."}, "Redes Sociais": {"title": "Uma equipe vai criar o perfil digital de um evento para adolescentes e precisa escolher uma linha editorial principal.", "prompt": "Qual estratégia você defenderia para esta turma? Considere atenção, retenção e compartilhamento.", "options": [{"code": "strategy_1", "text": "Impacto rápido — vídeos curtos, humor e conteúdos de alta retenção para aumentar alcance."}, {"code": "strategy_2", "text": "Utilidade — conteúdos que expliquem, ensinem ou ajudem, buscando salvamentos e compartilhamentos."}, {"code": "strategy_3", "text": "Comunidade — enquetes, desafios, perguntas e participação do público para aumentar interação."}], "objective": "Aumentar alcance e participação no perfil digital do evento.", "constraint": "A equipe precisa escolher uma linha editorial principal."}, "Inteligência Artificial": {"title": "A escola vai oferecer uma oficina de IA e só há tempo para aprofundar uma linha de trabalho.", "prompt": "Qual formato você defenderia para esta turma? Considere utilidade, interesse e responsabilidade.", "options": [{"code": "strategy_1", "text": "IA para estudar — pesquisa, explicação, organização e verificação das respostas geradas."}, {"code": "strategy_2", "text": "IA para criar — produção de imagens, textos, ideias e protótipos, discutindo autoria e critérios."}, {"code": "strategy_3", "text": "IA para resolver problemas — programação, automação e desafios práticos, incluindo limites e privacidade."}], "objective": "Criar uma oficina de IA útil e relevante para os estudantes.", "constraint": "O tempo disponível permite aprofundar apenas uma linha de trabalho."}, "Filmes e Séries": {"title": "Uma plataforma quer lançar uma nova produção para adolescentes e precisa escolher sua principal estratégia de divulgação.", "prompt": "Qual abordagem você defenderia para esta turma? Pense em descoberta, recomendação e influência social.", "options": [{"code": "strategy_1", "text": "Curiosidade — trailers, cenas marcantes e conteúdos curtos que despertem vontade de assistir."}, {"code": "strategy_2", "text": "Recomendação — destacar gênero, avaliações e semelhanças com produções que o público já aprecia."}, {"code": "strategy_3", "text": "Conversa social — estimular comentários, teorias, memes e experiências compartilhadas entre amigos."}], "objective": "Aumentar a intenção de assistir à nova produção.", "constraint": "A plataforma precisa priorizar uma estratégia principal de divulgação."}, "Tecnologia": {"title": "Uma loja vai destacar um novo produto tecnológico para adolescentes e precisa escolher como apresentá-lo.", "prompt": "Qual estratégia você defenderia para esta turma? Cada uma prioriza um critério de decisão diferente.", "options": [{"code": "strategy_1", "text": "Desempenho — comparativos, especificações, testes e reviews que mostrem diferenças técnicas."}, {"code": "strategy_2", "text": "Experiência — demonstrações práticas e situações de uso que permitam imaginar o produto na rotina."}, {"code": "strategy_3", "text": "Valor — preço, garantia, durabilidade e custo-benefício para apoiar uma compra mais racional."}], "objective": "Ajudar adolescentes a considerar e avaliar o produto.", "constraint": "A loja precisa definir uma forma principal de apresentar o lançamento."}, "Viagens": {"title": "Uma agência quer criar uma campanha de viagem para adolescentes e dispõe de verba para uma única abordagem principal.", "prompt": "Qual estratégia você defenderia para esta turma? Considere inspiração, planejamento e influência social.", "options": [{"code": "strategy_1", "text": "Inspiração — vídeos e imagens fortes de destinos, experiências e paisagens para despertar desejo de viajar."}, {"code": "strategy_2", "text": "Planejamento — comparar custo total, avaliações, atrações e tempo de viagem para apoiar a escolha."}, {"code": "strategy_3", "text": "Experiência social — mostrar viagens com amigos, eventos, música e relatos de outros jovens."}], "objective": "Aumentar o interesse inicial por uma campanha de viagem.", "constraint": "A verba permite investir em apenas uma abordagem principal."}, "Moda e Estilo": {"title": "Uma marca quer lançar uma coleção para adolescentes e precisa definir o foco principal da campanha.", "prompt": "Qual estratégia você defenderia para esta turma? Considere estilo, compra e experimentação.", "options": [{"code": "strategy_1", "text": "Inspiração — looks, combinações, creators e tendências para mostrar possibilidades de estilo."}, {"code": "strategy_2", "text": "Escolha consciente — preço, qualidade, tamanho, avaliações e durabilidade para facilitar a comparação."}, {"code": "strategy_3", "text": "Experimentação — provador virtual, personalização e recursos digitais para testar combinações antes da compra."}], "objective": "Aumentar interesse e consideração pela nova coleção.", "constraint": "A marca precisa definir um foco principal para a campanha de lançamento."}, "Saúde e Bem-estar": {"title": "A escola vai criar uma ação de bem-estar para adolescentes e precisa escolher uma abordagem principal.", "prompt": "Qual proposta você defenderia para esta turma? Pense em adesão, acompanhamento e confiabilidade.", "options": [{"code": "strategy_1", "text": "Acompanhamento de hábitos — metas simples e registros de sono, atividade, hidratação ou rotina."}, {"code": "strategy_2", "text": "Ação coletiva — desafios em grupo, atividades com amigos e experiências presenciais para aumentar adesão."}, {"code": "strategy_3", "text": "Informação confiável — oficinas curtas com fontes seguras, comparação de informações e orientação prática."}], "objective": "Aumentar a adesão dos estudantes à ação de bem-estar.", "constraint": "A escola precisa escolher uma abordagem principal para iniciar o projeto."}, "Dinheiro e Consumo": {"title": "A escola quer criar uma ação sobre consumo consciente e precisa escolher um foco para os estudantes.", "prompt": "Qual abordagem você defenderia para esta turma? Considere como as decisões de compra realmente acontecem.", "options": [{"code": "strategy_1", "text": "Comparação — ferramentas para analisar preço, avaliações, qualidade, prazo e custo total antes da compra."}, {"code": "strategy_2", "text": "Influência — investigar como anúncios, creators, recomendações e repetição de exposição despertam interesse."}, {"code": "strategy_3", "text": "Planejamento — trabalhar prioridades, espera, metas e orçamento para decidir quando comprar ou adiar."}], "objective": "Ajudar estudantes a tomar decisões de consumo mais conscientes.", "constraint": "A ação precisa começar por um único foco de aprendizagem."}}
-};
-
-</script>
-<script>
-// MISSÃO 9 — V10.0.1 | Motor puro e testável
-(function(root,factory){
-  const api=factory();
-  if(typeof module==='object' && module.exports) module.exports=api;
-  root.M9Engine=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
-  function medianValue(values){
-    const a=(values||[]).map(Number).filter(v=>Number.isFinite(v)&&v>0).sort((x,y)=>x-y);
-    if(!a.length)return 0;
-    const m=Math.floor(a.length/2);
-    return a.length%2?a[m]:(a[m-1]+a[m])/2;
-  }
-
-  function reactionScoreMap(reactions,posts){
-    const themes=[...new Set((posts||[]).flatMap(p=>[p.theme,p.secondary].filter(Boolean)))];
-    const score=Object.fromEntries(themes.map(t=>[t,0]));
-    (reactions||[]).forEach(r=>{
-      const p=(posts||[]).find(x=>x.id===r.post_id);
-      if(!p)return;
-      if(r.reaction==='heart'){
-        score[p.theme]=(score[p.theme]||0)+5;
-        if(p.secondary)score[p.secondary]=(score[p.secondary]||0)+2;
-      }
-      if(r.reaction==='thumb'){
-        score[p.theme]=(score[p.theme]||0)+3;
-        if(p.secondary)score[p.secondary]=(score[p.secondary]||0)+1;
-      }
-    });
-    return score;
-  }
-
-  function attentionScoreMap(attention,posts){
-    const themes=[...new Set((posts||[]).flatMap(p=>[p.theme,p.secondary].filter(Boolean)))];
-    const out=Object.fromEntries(themes.map(t=>[t,0]));
-    const bySession={};
-    (attention||[]).forEach(a=>{
-      const ms=Math.max(0,Math.min(Number(a.duration_ms)||0,10000));
-      if(!ms)return;
-      (bySession[a.session_id] ||= []).push({...a,_ms:ms});
-    });
-    Object.values(bySession).forEach(rows=>{
-      const med=medianValue(rows.map(r=>r._ms))||1;
-      rows.forEach(r=>{
-        const p=(posts||[]).find(x=>x.id===r.post_id);
-        if(!p)return;
-        const relative=Math.min(2,r._ms/med);
-        out[p.theme]=(out[p.theme]||0)+relative;
-        if(p.secondary)out[p.secondary]=(out[p.secondary]||0)+relative*.4;
-      });
-    });
-    return out;
-  }
-
-  function ranking(reactions,attention,posts){
-    const scores=reactionScoreMap(reactions,posts);
-    const att=attentionScoreMap(attention,posts);
-    return Object.entries(scores)
-      .map(([theme,score])=>({theme,score,attention:att[theme]||0}))
-      .sort((a,b)=>(b.score-a.score)||(b.attention-a.attention)||a.theme.localeCompare(b.theme,'pt-BR'));
-  }
-
-  function percent(v,total,decimals=1){
-    if(!total)return 0;
-    const f=10**decimals;
-    return Math.round((Number(v)||0)*100*f/total)/f;
-  }
-
-  function supportIndex(rows,choiceCode){
-    const values=(rows||[])
-      .filter(r=>r.choice_code===choiceCode)
-      .flatMap(r=>(Array.isArray(r.evidence_json)?r.evidence_json:[])
-        .map(e=>Number(e.strength)).filter(Number.isFinite));
-    return values.length?Math.round(values.reduce((a,b)=>a+b,0)/values.length):0;
-  }
-
-  function makeRunId(){
-    return (globalThis.crypto&&crypto.randomUUID)
-      ? crypto.randomUUID()
-      : 'run-'+Date.now()+'-'+Math.random().toString(16).slice(2);
-  }
-
-  function filterRun(data,group='ALL'){
-    const runId=data?.state?.run_id;
-    let sessions=(data?.sessions||[]).filter(s=>!runId || !s.run_id || s.run_id===runId);
-    if(group!=='ALL')sessions=sessions.filter(s=>s.class_group===group);
-    const ids=new Set(sessions.map(s=>s.id));
-    const pick=arr=>(arr||[]).filter(x=>ids.has(x.session_id));
-    return {
-      ...data,
-      sessions,
-      reactions:pick(data?.reactions),
-      attention:pick(data?.attention),
-      events:pick(data?.events),
-      investigationAnswers:pick(data?.investigationAnswers),
-      decisionAnswers:pick(data?.decisionAnswers)
-    };
-  }
-
-
-  function stageReadiness(state,metrics,target){
-    state=state||{status:'waiting',reveal_stage:0};
-    metrics=metrics||{};
-    target=Math.max(0,Number(target)||0);
-
-    const total=Number(metrics.total)||0;
-    const feedDone=Number(metrics.feedDone)||0;
-    const reactions=Number(metrics.reactions)||0;
-    const investDone=Number(metrics.investDone)||0;
-    const decisionDone=Number(metrics.decisionDone)||0;
-    const st=state.status||'waiting';
-    const stage=Number(state.reveal_stage)||0;
-
-    const countStatus=(done,hasData=true)=>{
-      if(!hasData || done<=0)return 'no';
-      if(target>0 && done<target)return 'warn';
-      return 'ok';
-    };
-
-    const feed = total<=0 ? 'no' : (target>0 && total<target ? 'warn' : 'ok');
-
-    // REVELE só fica disponível depois de FEED_CLOSED.
-    const reveal = st!=='feed_closed' && st!=='results_reveal' &&
-      !['investigation_preview','investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st)
-        ? 'no'
-        : countStatus(feedDone,reactions>0);
-
-    // Apresentar INVESTIGUE exige a última cena do REVELE.
-    let investigatePreview='no';
-    if(st==='results_reveal'){
-      investigatePreview = stage>=6 ? 'ok' : 'warn';
-    }else if(['investigation_preview','investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st)){
-      investigatePreview='ok';
-    }
-
-    // Liberar respostas somente após a apresentação da investigação.
-    const investigateRelease = st==='investigation_preview' || st==='investigation_open' ? 'ok' : 'no';
-
-    // DECIDA só existe depois de INVESTIGATION_OPEN e conclusão da investigação.
-    let decide='no';
-    if(['investigation_open','decide_preview','decide_open','decide_reveal','closing_reveal'].includes(st)){
-      decide=countStatus(investDone,true);
-    }
-
-    // Revelação das decisões somente em DECIDE_OPEN (ou depois) e com decisões concluídas.
-    let decisionReveal='no';
-    if(['decide_open','decide_reveal','closing_reveal'].includes(st)){
-      decisionReveal=countStatus(decisionDone,true);
-    }
-
-    // Fechamento somente depois da revelação das decisões.
-    let closing='no';
-    if(['decide_reveal','closing_reveal'].includes(st)){
-      closing=countStatus(decisionDone,true);
-    }
-
-    return {feed,reveal,investigatePreview,investigateRelease,decide,decisionReveal,closing};
-  }
-
-  function canAction(action,state,readiness,forceCounts=false){
-    state=state||{status:'waiting',reveal_stage:0};
-    readiness=readiness||{};
-    const st=state.status||'waiting';
-    const stage=Number(state.reveal_stage)||0;
-    const ready=k=>readiness[k]==='ok' || (forceCounts && readiness[k]==='warn');
-
-    switch(action){
-      case 'openFeed':
-        return (st==='waiting' || st==='feed_paused') && ready('feed');
-      case 'pauseFeed':
-        return st==='feed_open';
-      case 'closeFeed':
-        return st==='feed_open' || st==='feed_paused';
-      case 'startReveal':
-        return st==='feed_closed' && ready('reveal');
-      case 'revealPrev':
-      case 'revealNext':
-        return st==='results_reveal';
-      case 'previewInvestigation':
-        return st==='results_reveal' && stage>=6 && ready('investigatePreview');
-      case 'releaseInvestigation':
-        return st==='investigation_preview';
-      case 'previewDecide':
-        return st==='investigation_open' && ready('decide');
-      case 'startDecide':
-        return st==='decide_preview';
-      case 'revealDecide':
-        return st==='decide_open' && ready('decisionReveal');
-      case 'startClosing':
-        return st==='decide_reveal' && ready('closing');
-      case 'closingPrev':
-      case 'closingNext':
-        return st==='closing_reveal';
-      default:
-        return false;
-    }
-  }
-
-  return {medianValue,reactionScoreMap,attentionScoreMap,ranking,percent,supportIndex,makeRunId,filterRun,stageReadiness,canAction};
-});
-
-</script>
-<script>
-// MISSÃO 9 — V10.0.1 | Banco único do INVESTIGUE
-window.M9_INVEST_DATA = {"games": {"name": "Games", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Games faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Preferência", "title": "Que tipo de jogo mais chama sua atenção?", "subtitle": "Escolha apenas uma opção.", "options": [["acao", "Ação / aventura", "🎮"], ["esporte", "Esportes / corrida", "🏁"], ["estrategia", "Estratégia / simulação", "🧠"], ["competitivo", "Competitivo / multiplayer", "⚔️"], ["casual", "Casual / puzzle", "🧩"], ["nao_jogo", "Não costumo jogar", "—"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra conteúdo sobre jogos?", "subtitle": "Pense no lugar em que isso aparece com mais frequência.", "options": [["videos", "Vídeos curtos / redes", "📱"], ["stream", "Lives / transmissões", "▶"], ["amigos", "Amigos / grupos", "💬"], ["sites", "Sites / notícias", "🌐"], ["proprio", "Dentro dos próprios jogos", "🕹"], ["quase_nunca", "Quase nunca vejo", "—"]]}, {"id": "q4", "type": "cards", "dimension": "Dispositivo", "title": "Em qual dispositivo você joga mais?", "subtitle": "Se você joga em mais de um, escolha o principal.", "options": [["celular", "Celular", "📱"], ["console", "Console", "🎮"], ["pc", "Computador / notebook", "💻"], ["tablet", "Tablet", "▣"], ["varios", "Vários dispositivos", "↔"], ["nao_jogo", "Não costumo jogar", "—"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais influencia você a prestar atenção em um jogo?", "subtitle": "Qual destes sinais pesa mais?", "options": [["amigos", "Amigos falando sobre ele", "👥"], ["criador", "Criadores / streamers", "◉"], ["trailer", "Trailer ou gameplay", "▶"], ["popular", "Estar muito comentado", "🔥"], ["promocao", "Preço / promoção", "🏷"], ["nenhum", "Nada disso costuma influenciar", "—"]]}, {"id": "q6", "type": "cards", "dimension": "Modo de jogo", "title": "Como você prefere jogar?", "subtitle": "Escolha a experiência que mais combina com você.", "options": [["sozinho", "Sozinho", "●"], ["amigos", "Com amigos", "👥"], ["online", "Online com outras pessoas", "🌐"], ["competir", "Competindo / ranqueado", "🏆"], ["variado", "Depende do jogo", "↔"], ["nao_jogo", "Não costumo jogar", "—"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um jogo chama sua atenção, o que você costuma fazer primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar mais", "⌕"], ["video", "Assistir a vídeos / gameplay", "▶"], ["amigos", "Perguntar para amigos", "💬"], ["avaliacoes", "Ler avaliações / comentários", "★"], ["baixar", "Baixar / testar logo", "↓"], ["nada", "Normalmente não faço nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Experimentação", "title": "O que mais faria você experimentar um jogo novo?", "subtitle": "Escolha o fator mais forte.", "options": [["recomendacao", "Recomendação de alguém", "👥"], ["gratuito", "Ser gratuito / ter teste", "◌"], ["visual", "Visual / gráficos", "✦"], ["historia", "História / proposta", "📖"], ["competicao", "Competição / jogar com amigos", "🏆"], ["outro", "Outro fator", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Um conteúdo sobre jogo faz você pesquisar mais sobre ele com que frequência?", "subtitle": "Pense no que geralmente acontece com você.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de baixar, comprar ou começar um jogo, você compara opiniões ou avaliações?", "subtitle": "Considere comentários, vídeos, notas ou experiências de outras pessoas.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de ver ou interagir com conteúdo de um jogo, você percebe conteúdos parecidos aparecendo?", "subtitle": "Pense em recomendações, vídeos ou anúncios semelhantes.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Se você tivesse que decidir agora se vale a pena testar um jogo, qual informação seria mais importante?", "subtitle": "Escolha o dado que mais ajudaria sua decisão.", "options": [["avaliacao", "Avaliação de quem já jogou", "★"], ["gameplay", "Ver o jogo funcionando", "▶"], ["amigos", "Saber se amigos jogam", "👥"], ["preco", "Preço / custo", "$"], ["requisitos", "Saber se roda no meu dispositivo", "⚙"], ["popularidade", "Quantidade de jogadores / popularidade", "◉"]]}]}, "musica": {"name": "Música", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Música faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Preferência", "title": "Que tipo de música mais chama sua atenção?", "subtitle": "Escolha o estilo que mais aparece na sua rotina.", "options": [["pop", "Pop", "🎵"], ["rap", "Rap / trap", "🎤"], ["funk", "Funk", "🔊"], ["rock", "Rock / alternativo", "🎸"], ["eletronica", "Eletrônica", "🎧"], ["variado", "Escuto de tudo", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra músicas novas?", "subtitle": "Pense no ambiente em que isso acontece com mais frequência.", "options": [["streaming", "Aplicativos de música", "🎧"], ["redes", "Redes sociais / vídeos", "📱"], ["amigos", "Amigos", "👥"], ["radio", "Rádio / TV", "◉"], ["shows", "Shows / eventos", "🎤"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Situação", "title": "Em qual situação você mais escuta música?", "subtitle": "Escolha a mais frequente.", "options": [["estudo", "Estudando", "📚"], ["treino", "Treinando", "🏃"], ["transporte", "No transporte", "🚌"], ["casa", "Em casa", "🏠"], ["amigos", "Com amigos", "👥"], ["sempre", "Em vários momentos", "↔"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais faz você prestar atenção em uma música nova?", "subtitle": "Escolha o fator mais forte.", "options": [["amigos", "Amigos indicando", "👥"], ["artista", "Artista que já conhece", "★"], ["viral", "Estar viralizando", "🔥"], ["playlist", "Entrar em uma playlist", "▶"], ["trecho", "Ouvir um trecho em vídeo", "📱"], ["outro", "Outro", "…"]]}, {"id": "q6", "type": "frequency", "dimension": "Descoberta", "title": "Com que frequência playlists ou recomendações apresentam músicas novas para você?", "subtitle": "Pense no que costuma acontecer.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma música chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["salvar", "Salvar / curtir", "♥"], ["buscar", "Pesquisar o artista", "⌕"], ["playlist", "Adicionar à playlist", "+"], ["compartilhar", "Compartilhar", "↗"], ["ouvir", "Ouvir novamente", "↻"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Experiência", "title": "O que mais faria você ir a um show ou evento musical?", "subtitle": "Escolha o fator principal.", "options": [["artista", "Artista favorito", "★"], ["amigos", "Ir com amigos", "👥"], ["local", "Local / viagem", "✈"], ["preco", "Preço do ingresso", "$"], ["festival", "Vários artistas", "🎤"], ["outro", "Outro", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Um conteúdo sobre música faz você pesquisar mais sobre artista, show ou lançamento com que frequência?", "subtitle": "Pense no seu comportamento habitual.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher um show, playlist ou lançamento, você compara opiniões ou recomendações?", "subtitle": "Considere comentários, listas ou sugestões.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de ouvir ou curtir uma música, você percebe músicas parecidas aparecendo?", "subtitle": "Pense em playlists, vídeos ou recomendações.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais pesa quando você decide ouvir algo novo?", "subtitle": "Escolha o dado mais importante.", "options": [["trecho", "Ouvir um trecho", "▶"], ["amigos", "Indicação de amigos", "👥"], ["popularidade", "Número de reproduções / popularidade", "◉"], ["artista", "Conhecer o artista", "★"], ["playlist", "Estar em uma playlist", "≡"], ["comentarios", "Comentários / avaliações", "💬"]]}]}, "futebol": {"name": "Futebol", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Futebol faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Relação", "title": "Qual é sua principal relação com o futebol?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["jogo", "Jogo futebol", "⚽"], ["assisto", "Assisto partidas", "📺"], ["acompanho", "Acompanho notícias", "📰"], ["torco", "Torço por um time", "★"], ["games", "Jogo games de futebol", "🎮"], ["pouco", "Quase não acompanho", "—"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra conteúdo sobre futebol?", "subtitle": "Pense no ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["tv", "TV / transmissões", "📺"], ["amigos", "Amigos / grupos", "👥"], ["sites", "Sites esportivos", "🌐"], ["games", "Games", "🎮"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Conteúdo", "title": "Que tipo de conteúdo de futebol mais chama sua atenção?", "subtitle": "Escolha o principal.", "options": [["jogos", "Jogos / melhores momentos", "▶"], ["noticias", "Notícias / mercado", "📰"], ["estatisticas", "Estatísticas", "📊"], ["bastidores", "Bastidores", "◉"], ["memes", "Memes / cortes", "😄"], ["outro", "Outro", "…"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais influencia sua atenção em um conteúdo de futebol?", "subtitle": "Escolha o fator mais forte.", "options": [["time", "Seu time", "★"], ["jogador", "Jogador conhecido", "⚽"], ["amigos", "Amigos comentando", "👥"], ["viral", "Estar em alta", "🔥"], ["resultado", "Resultado importante", "🏆"], ["outro", "Outro", "…"]]}, {"id": "q6", "type": "frequency", "dimension": "Estatísticas", "title": "Com que frequência você observa estatísticas de jogadores ou times?", "subtitle": "Considere gols, posse, aproveitamento e outros números.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma notícia ou lance chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["buscar", "Pesquisar mais", "⌕"], ["video", "Ver vídeos", "▶"], ["comentar", "Comentar com amigos", "💬"], ["estatisticas", "Ver estatísticas", "📊"], ["compartilhar", "Compartilhar", "↗"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Comparação esportiva", "title": "Qual informação é mais útil para comparar jogadores ou times?", "subtitle": "Escolha a mais importante.", "options": [["gols", "Gols / pontos", "⚽"], ["vitorias", "Vitórias", "🏆"], ["desempenho", "Desempenho recente", "📈"], ["estatisticas", "Conjunto de estatísticas", "📊"], ["opinioes", "Opiniões de especialistas", "💬"], ["outro", "Outro", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo de futebol faz você pesquisar mais com que frequência?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de formar uma opinião sobre jogador, time ou contratação, você compara informações?", "subtitle": "Considere notícias, números e comentários.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de interagir com conteúdo de futebol, você percebe conteúdos semelhantes aparecendo?", "subtitle": "Pense em vídeos, notícias ou anúncios.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Se você fosse escolher um produto ou evento ligado ao futebol, qual informação mais ajudaria?", "subtitle": "Escolha o dado principal.", "options": [["preco", "Preço", "$"], ["avaliacao", "Avaliação / opinião", "★"], ["time", "Ligação com seu time", "⚽"], ["qualidade", "Qualidade do produto", "✓"], ["amigos", "Indicação de amigos", "👥"], ["popularidade", "Popularidade", "◉"]]}]}, "esportes": {"name": "Esportes", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Esportes faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Modalidade", "title": "Qual modalidade mais chama sua atenção?", "subtitle": "Escolha a principal.", "options": [["volei", "Vôlei", "🏐"], ["basquete", "Basquete", "🏀"], ["corrida", "Corrida / atletismo", "🏃"], ["luta", "Lutas", "🥋"], ["natacao", "Natação", "🏊"], ["outras", "Outras modalidades", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra conteúdo esportivo?", "subtitle": "Pense no ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["tv", "TV / transmissões", "📺"], ["amigos", "Amigos / equipe", "👥"], ["academia", "Academia / treino", "🏋"], ["sites", "Sites / notícias", "🌐"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Relação", "title": "Qual é sua principal relação com esportes?", "subtitle": "Escolha a que mais combina com você.", "options": [["pratico", "Pratico regularmente", "🏃"], ["assisto", "Assisto competições", "📺"], ["acompanho", "Acompanho atletas", "★"], ["lazer", "Pratico por lazer", "🙂"], ["escola", "Principalmente na escola", "🏫"], ["pouco", "Quase não acompanho", "—"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais influencia você a experimentar uma atividade esportiva?", "subtitle": "Escolha o fator principal.", "options": [["amigos", "Amigos", "👥"], ["atleta", "Atletas / influenciadores", "★"], ["saude", "Bem-estar", "♥"], ["competicao", "Competição", "🏆"], ["diversao", "Diversão", "🙂"], ["outro", "Outro", "…"]]}, {"id": "q6", "type": "cards", "dimension": "Tecnologia", "title": "Que tecnologia você usaria para acompanhar seu desempenho?", "subtitle": "Escolha a mais interessante.", "options": [["relogio", "Relógio / pulseira", "⌚"], ["app", "Aplicativo", "📱"], ["sensor", "Sensor / equipamento", "⚙"], ["video", "Vídeo / análise", "▶"], ["nenhuma", "Nenhuma", "—"], ["outra", "Outra", "…"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um conteúdo esportivo chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar mais", "⌕"], ["assistir", "Assistir mais vídeos", "▶"], ["praticar", "Experimentar a atividade", "🏃"], ["comentar", "Conversar com alguém", "💬"], ["salvar", "Salvar o conteúdo", "♥"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Desempenho", "title": "Qual dado de desempenho você mais gostaria de acompanhar?", "subtitle": "Escolha um.", "options": [["tempo", "Tempo", "⏱"], ["distancia", "Distância", "↔"], ["frequencia", "Frequência de treino", "📅"], ["evolucao", "Evolução ao longo do tempo", "📈"], ["pontuacao", "Pontuação / resultado", "🏆"], ["outro", "Outro", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo esportivo faz você pesquisar mais com que frequência?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher uma atividade, equipamento ou treino, você compara informações?", "subtitle": "Considere opiniões, preço, desempenho ou avaliações.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de interagir com conteúdo esportivo, você percebe conteúdos semelhantes aparecendo?", "subtitle": "Pense em vídeos, produtos ou recomendações.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a escolher uma atividade esportiva ou equipamento?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["avaliacao", "Avaliações", "★"], ["desempenho", "Dados de desempenho", "📊"], ["amigos", "Indicação de amigos", "👥"], ["conforto", "Conforto / adaptação", "✓"], ["marca", "Marca / reputação", "◉"]]}]}, "redes": {"name": "Redes Sociais", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Redes Sociais faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Plataforma", "title": "Que tipo de rede você mais usa?", "subtitle": "Escolha o formato principal, não a marca.", "options": [["video_curto", "Vídeos curtos", "▶"], ["fotos", "Fotos / stories", "▣"], ["mensagens", "Mensagens / grupos", "💬"], ["video_longo", "Vídeos longos", "▰"], ["comunidades", "Comunidades / fóruns", "👥"], ["varias", "Uso vários formatos", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "O que mais aparece para você nas redes?", "subtitle": "Escolha o tipo mais frequente.", "options": [["humor", "Humor / memes", "😄"], ["musica", "Música", "🎵"], ["games", "Games", "🎮"], ["esportes", "Esportes", "🏆"], ["moda", "Moda / estilo", "✦"], ["variado", "Conteúdo variado", "↔"]]}, {"id": "q4", "type": "cards", "dimension": "Finalidade", "title": "Qual é seu principal objetivo ao usar redes sociais?", "subtitle": "Escolha o mais comum.", "options": [["entretenimento", "Entretenimento", "▶"], ["conversar", "Conversar", "💬"], ["informar", "Informar-se", "📰"], ["aprender", "Aprender algo", "📚"], ["postar", "Publicar conteúdo", "＋"], ["acompanhar", "Acompanhar pessoas", "👥"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais faz você parar em um conteúdo?", "subtitle": "Escolha o fator mais forte.", "options": [["imagem", "Imagem / visual", "✦"], ["titulo", "Título / chamada", "A"], ["pessoa", "Pessoa conhecida", "👤"], ["viral", "Estar viralizando", "🔥"], ["assunto", "Assunto de interesse", "★"], ["amigo", "Amigo compartilhou", "👥"]]}, {"id": "q6", "type": "cards", "dimension": "Retenção", "title": "O que mais faz você permanecer em um conteúdo?", "subtitle": "Escolha o principal.", "options": [["curto", "Ser rápido / direto", "⏱"], ["historia", "Ter uma história", "📖"], ["humor", "Ser engraçado", "😄"], ["util", "Ser útil", "✓"], ["surpresa", "Surpreender", "!"], ["comentarios", "Comentários / discussão", "💬"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um conteúdo chama sua atenção, o que você mais faz?", "subtitle": "Escolha a ação mais provável.", "options": [["curtir", "Curtir", "♥"], ["comentar", "Comentar", "💬"], ["salvar", "Salvar", "🔖"], ["compartilhar", "Compartilhar", "↗"], ["buscar", "Pesquisar mais", "⌕"], ["so_ver", "Só assistir / ler", "👁"]]}, {"id": "q8", "type": "cards", "dimension": "Conteúdo", "title": "Que tipo de conteúdo você mais compartilharia com alguém?", "subtitle": "Escolha o principal.", "options": [["engracado", "Engraçado", "😄"], ["util", "Útil", "✓"], ["surpreendente", "Surpreendente", "!"], ["opiniao", "Opinião", "💬"], ["noticia", "Notícia", "📰"], ["interesse", "Algo de interesse comum", "★"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Um conteúdo nas redes faz você pesquisar mais sobre o assunto com que frequência?", "subtitle": "Pense no seu comportamento habitual.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de acreditar ou decidir algo com base em uma postagem, você compara outras fontes?", "subtitle": "Pense em comentários, sites ou outras pessoas.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de curtir ou assistir a um conteúdo, você percebe conteúdos parecidos aparecendo?", "subtitle": "Pense no que o feed passa a mostrar.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual sinal mais influencia você a abrir um conteúdo recomendado?", "subtitle": "Escolha o principal.", "options": [["assunto", "Assunto de interesse", "★"], ["amigos", "Amigos interagiram", "👥"], ["visual", "Visual", "✦"], ["popularidade", "Muitas curtidas / visualizações", "◉"], ["criador", "Quem publicou", "👤"], ["titulo", "Título / chamada", "A"]]}]}, "ia": {"name": "Inteligência Artificial", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Inteligência Artificial faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "frequency", "dimension": "Uso", "title": "Com que frequência você usa ferramentas de IA?", "subtitle": "Considere estudo, criação, pesquisa ou outras tarefas.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra conteúdo sobre IA?", "subtitle": "Pense no ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["escola", "Escola / estudo", "📚"], ["videos", "Vídeos / tutoriais", "▶"], ["noticias", "Notícias / sites", "📰"], ["amigos", "Amigos", "👥"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Finalidade", "title": "Para que você mais usaria IA?", "subtitle": "Escolha a principal finalidade.", "options": [["estudo", "Estudar / explicar", "📚"], ["texto", "Criar textos", "A"], ["imagem", "Criar imagens", "✦"], ["ideias", "Gerar ideias", "💡"], ["codigo", "Programar / resolver problemas", "⌘"], ["outro", "Outro", "…"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais faria você experimentar uma ferramenta de IA?", "subtitle": "Escolha o principal fator.", "options": [["amigos", "Amigos indicando", "👥"], ["video", "Vídeo mostrando uso", "▶"], ["escola", "Uso na escola", "📚"], ["viral", "Estar em alta", "🔥"], ["utilidade", "Resolver algo útil", "✓"], ["curiosidade", "Curiosidade", "?"]]}, {"id": "q6", "type": "cards", "dimension": "Aplicação", "title": "Em qual situação a IA parece mais útil para você?", "subtitle": "Escolha uma.", "options": [["pesquisa", "Pesquisar / resumir", "⌕"], ["criacao", "Criar conteúdo", "✦"], ["organizacao", "Organizar tarefas", "✓"], ["aprender", "Aprender algo novo", "📚"], ["tecnologia", "Tecnologia / programação", "💻"], ["outro", "Outro", "…"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma resposta de IA chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["usar", "Uso a resposta", "✓"], ["verificar", "Verifico em outra fonte", "⌕"], ["perguntar", "Faço outra pergunta", "?"], ["editar", "Adapto / edito", "✎"], ["compartilhar", "Compartilho", "↗"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "frequency", "dimension": "Verificação", "title": "Com que frequência você verifica informações dadas por uma IA?", "subtitle": "Considere sites, livros, professores ou outras fontes.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo sobre IA faz você pesquisar mais sobre uma ferramenta ou assunto com que frequência?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher uma ferramenta de IA, você compara recursos ou opiniões?", "subtitle": "Considere vídeos, avaliações e recomendações.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar ou usar IA, você percebe mais conteúdos sobre IA aparecendo?", "subtitle": "Pense em vídeos, anúncios ou notícias.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a decidir se uma ferramenta de IA vale a pena?", "subtitle": "Escolha a principal.", "options": [["resultado", "Qualidade do resultado", "✓"], ["facilidade", "Facilidade de usar", "●"], ["gratuito", "Ser gratuita / ter teste", "$"], ["privacidade", "Privacidade", "🔒"], ["opiniao", "Opiniões de usuários", "★"], ["recursos", "Quantidade de recursos", "⚙"]]}]}, "filmes": {"name": "Filmes e Séries", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Filmes e Séries faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Gênero", "title": "Que gênero mais chama sua atenção?", "subtitle": "Escolha o principal.", "options": [["acao", "Ação / aventura", "⚡"], ["comedia", "Comédia", "😄"], ["terror", "Terror / suspense", "◐"], ["ficcao", "Ficção científica / fantasia", "✦"], ["drama", "Drama / romance", "♥"], ["variado", "Vários gêneros", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais descobre o que assistir?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["streaming", "Catálogo de streaming", "▶"], ["redes", "Redes sociais", "📱"], ["amigos", "Amigos", "👥"], ["criticas", "Sites / críticas", "★"], ["trailers", "Trailers", "🎬"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Plataforma", "title": "Onde você mais assiste a filmes e séries?", "subtitle": "Escolha o principal formato.", "options": [["tv", "TV / smart TV", "📺"], ["celular", "Celular", "📱"], ["pc", "Computador", "💻"], ["tablet", "Tablet", "▣"], ["cinema", "Cinema", "🎬"], ["varios", "Vários", "↔"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais influencia sua escolha do que assistir?", "subtitle": "Escolha o fator mais forte.", "options": [["amigos", "Indicação de amigos", "👥"], ["trailer", "Trailer", "▶"], ["comentarios", "Comentários / avaliações", "★"], ["viral", "Estar muito comentado", "🔥"], ["elenco", "Elenco / personagens", "👤"], ["genero", "Gênero", "🎬"]]}, {"id": "q6", "type": "frequency", "dimension": "Tendência", "title": "Com que frequência você assiste algo porque está em alta ou sendo muito recomendado?", "subtitle": "Pense no seu comportamento habitual.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma produção chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["trailer", "Ver trailer", "▶"], ["pesquisar", "Pesquisar mais", "⌕"], ["comentarios", "Ler comentários", "💬"], ["salvar", "Adicionar à lista", "+"], ["amigos", "Perguntar a amigos", "👥"], ["assistir", "Começar a assistir", "▶"]]}, {"id": "q8", "type": "cards", "dimension": "Escolha", "title": "Qual característica mais pesa para você começar uma série ou filme?", "subtitle": "Escolha a principal.", "options": [["historia", "História / sinopse", "📖"], ["genero", "Gênero", "🎬"], ["avaliacao", "Avaliação", "★"], ["duracao", "Duração", "⏱"], ["popularidade", "Popularidade", "◉"], ["recomendacao", "Recomendação", "👥"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo sobre filmes ou séries faz você pesquisar mais com que frequência?", "subtitle": "Pense em elenco, história, trailers ou avaliações.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher o que assistir, você compara avaliações ou opiniões?", "subtitle": "Considere notas, comentários ou recomendações.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de assistir ou pesquisar uma produção, você percebe conteúdos semelhantes aparecendo?", "subtitle": "Pense em recomendações ou trailers.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajuda você a decidir se vale a pena assistir?", "subtitle": "Escolha a principal.", "options": [["avaliacao", "Avaliação / nota", "★"], ["trailer", "Trailer", "▶"], ["amigos", "Indicação de amigos", "👥"], ["sinopse", "Sinopse", "📖"], ["popularidade", "Popularidade", "◉"], ["duracao", "Duração", "⏱"]]}]}, "tecnologia": {"name": "Tecnologia", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Tecnologia faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Área", "title": "Qual área de tecnologia mais chama sua atenção?", "subtitle": "Escolha a principal.", "options": [["celulares", "Celulares / gadgets", "📱"], ["computadores", "Computadores", "💻"], ["games", "Tecnologia para games", "🎮"], ["robotica", "Robótica", "🤖"], ["ia", "Inteligência Artificial", "✦"], ["outros", "Outros", "…"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra novidades de tecnologia?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["videos", "Vídeos / reviews", "▶"], ["sites", "Sites / notícias", "🌐"], ["amigos", "Amigos", "👥"], ["lojas", "Lojas / anúncios", "🏷"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Rotina", "title": "Qual tecnologia mais faz parte da sua rotina?", "subtitle": "Escolha a principal.", "options": [["celular", "Celular", "📱"], ["computador", "Computador", "💻"], ["console", "Console", "🎮"], ["relogio", "Smartwatch", "⌚"], ["casa", "Dispositivos inteligentes", "⌂"], ["varios", "Vários", "↔"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais faz você se interessar por um produto tecnológico?", "subtitle": "Escolha o fator principal.", "options": [["review", "Review / teste", "★"], ["amigos", "Amigos indicando", "👥"], ["novidade", "Ser novidade", "✦"], ["desempenho", "Desempenho", "⚡"], ["design", "Design", "◈"], ["preco", "Preço", "$"]]}, {"id": "q6", "type": "cards", "dimension": "Decisão técnica", "title": "Qual informação você mais compara antes de escolher um produto tecnológico?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["desempenho", "Desempenho", "⚡"], ["bateria", "Bateria", "◐"], ["memoria", "Memória / armazenamento", "▦"], ["avaliacao", "Avaliações", "★"], ["durabilidade", "Durabilidade", "✓"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma tecnologia chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar", "⌕"], ["review", "Assistir review", "▶"], ["comparar", "Comparar modelos", "↔"], ["amigos", "Perguntar a alguém", "👥"], ["loja", "Ver em uma loja", "🏷"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Experimentação", "title": "Qual tecnologia você mais gostaria de testar?", "subtitle": "Escolha uma.", "options": [["vr", "Realidade virtual", "◉"], ["robot", "Robô doméstico", "🤖"], ["ia", "IA avançada", "✦"], ["wearable", "Dispositivo vestível", "⌚"], ["smart", "Casa inteligente", "⌂"], ["outra", "Outra", "…"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo de tecnologia faz você pesquisar mais com que frequência?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher um produto tecnológico, você compara especificações e opiniões?", "subtitle": "Pense no que geralmente faz.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar um produto, você percebe anúncios ou conteúdos parecidos aparecendo?", "subtitle": "Pense em redes, sites ou vídeos.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual dado mais ajudaria você a decidir entre dois produtos tecnológicos?", "subtitle": "Escolha o principal.", "options": [["preco", "Preço", "$"], ["benchmark", "Teste de desempenho", "📊"], ["avaliacao", "Avaliação de usuários", "★"], ["garantia", "Garantia / suporte", "✓"], ["especificacoes", "Especificações", "⚙"], ["marca", "Reputação da marca", "◉"]]}]}, "viagens": {"name": "Viagens", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Viagens faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Tipo de viagem", "title": "Que tipo de viagem mais chama sua atenção?", "subtitle": "Escolha a principal.", "options": [["praia", "Praia", "☀"], ["natureza", "Natureza / aventura", "▲"], ["cidade", "Grandes cidades", "⌂"], ["cultural", "Cultural / histórica", "🏛"], ["parques", "Parques / atrações", "★"], ["variado", "Vários tipos", "↔"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra ideias de viagem?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["videos", "Vídeos", "▶"], ["amigos", "Amigos / família", "👥"], ["sites", "Sites de viagem", "🌐"], ["series", "Filmes / séries", "🎬"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Decisão de destino", "title": "O que mais pesa na escolha de um destino?", "subtitle": "Escolha o principal.", "options": [["preco", "Preço", "$"], ["paisagem", "Paisagem", "▲"], ["atividades", "O que fazer", "★"], ["seguranca", "Segurança", "✓"], ["clima", "Clima", "☀"], ["distancia", "Distância / tempo", "↔"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais aumenta sua vontade de conhecer um lugar?", "subtitle": "Escolha o fator mais forte.", "options": [["fotos", "Fotos / vídeos", "✦"], ["amigos", "Indicação de amigos", "👥"], ["viral", "Lugar em alta", "🔥"], ["musica", "Música / cultura", "🎵"], ["evento", "Evento / show", "🎤"], ["historia", "História do lugar", "📖"]]}, {"id": "q6", "type": "cards", "dimension": "Comparação", "title": "Que informação você mais compara entre destinos?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["hospedagem", "Hospedagem", "⌂"], ["avaliacoes", "Avaliações", "★"], ["distancia", "Distância", "↔"], ["atracoes", "Atrações", "★"], ["clima", "Clima", "☀"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um destino chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar", "⌕"], ["salvar", "Salvar", "🔖"], ["mapa", "Ver no mapa", "⌖"], ["precos", "Pesquisar preços", "$"], ["amigos", "Compartilhar com alguém", "↗"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "frequency", "dimension": "Desejo", "title": "Com que frequência um conteúdo na internet faz você querer conhecer um lugar?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo de viagem faz você pesquisar mais sobre o destino com que frequência?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de escolher um destino, você compara preços, avaliações ou opções?", "subtitle": "Considere diferentes sites e opiniões.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar um destino, você percebe mais conteúdos sobre ele aparecendo?", "subtitle": "Pense em anúncios, vídeos ou posts.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a decidir entre dois destinos?", "subtitle": "Escolha a principal.", "options": [["custo_total", "Custo total", "$"], ["avaliacao", "Avaliações", "★"], ["atracoes", "Atrações", "★"], ["seguranca", "Segurança", "✓"], ["tempo", "Tempo de viagem", "⏱"], ["clima", "Clima", "☀"]]}]}, "moda": {"name": "Moda e Estilo", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Moda e Estilo faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Influência", "title": "O que mais influencia seu estilo?", "subtitle": "Escolha o principal.", "options": [["gosto", "Meu próprio gosto", "★"], ["amigos", "Amigos", "👥"], ["redes", "Redes sociais", "📱"], ["artistas", "Artistas / criadores", "👤"], ["tendencias", "Tendências", "🔥"], ["familia", "Família", "⌂"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra referências de estilo?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["lojas", "Lojas", "🏷"], ["amigos", "Amigos", "👥"], ["videos", "Vídeos", "▶"], ["rua", "Pessoas / rua", "◉"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Compra", "title": "O que mais pesa quando você escolhe uma roupa ou acessório?", "subtitle": "Escolha o principal.", "options": [["preco", "Preço", "$"], ["conforto", "Conforto", "✓"], ["estilo", "Estilo / aparência", "✦"], ["qualidade", "Qualidade", "★"], ["marca", "Marca", "◉"], ["necessidade", "Necessidade", "●"]]}, {"id": "q5", "type": "cards", "dimension": "Influência digital", "title": "O que mais faz você prestar atenção em uma peça?", "subtitle": "Escolha o fator mais forte.", "options": [["visual", "Visual", "✦"], ["pessoa", "Quem está usando", "👤"], ["viral", "Estar em alta", "🔥"], ["promocao", "Promoção", "🏷"], ["combinacao", "Como foi combinada", "↔"], ["amigos", "Amigos indicando", "👥"]]}, {"id": "q6", "type": "cards", "dimension": "Comparação", "title": "Que informação você mais compara antes de comprar?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["tamanho", "Tamanho / medidas", "↔"], ["qualidade", "Qualidade", "★"], ["avaliacao", "Avaliação de clientes", "★"], ["material", "Material", "▦"], ["frete", "Frete / prazo", "⏱"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando uma peça chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["salvar", "Salvar", "🔖"], ["buscar", "Pesquisar", "⌕"], ["comparar", "Comparar preços", "↔"], ["amigos", "Mostrar para alguém", "↗"], ["comprar", "Comprar", "$"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "frequency", "dimension": "Exposição", "title": "Ver a mesma peça ou estilo várias vezes aumenta seu interesse?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo de moda faz você pesquisar mais sobre uma peça ou estilo com que frequência?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de comprar uma peça, você compara preços, avaliações ou lojas?", "subtitle": "Pense no que geralmente faz.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar uma peça ou estilo, você percebe conteúdos parecidos aparecendo?", "subtitle": "Pense em anúncios e recomendações.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a decidir entre duas peças semelhantes?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["qualidade", "Qualidade", "★"], ["avaliacao", "Avaliações", "★"], ["caimento", "Caimento / tamanho", "↔"], ["estilo", "Estilo", "✦"], ["durabilidade", "Durabilidade", "✓"]]}]}, "saude": {"name": "Saúde e Bem-estar", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Saúde e Bem-estar faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Área", "title": "Qual aspecto de bem-estar mais chama sua atenção?", "subtitle": "Escolha o principal.", "options": [["atividade", "Atividade física", "🏃"], ["sono", "Sono / descanso", "☾"], ["alimentacao", "Alimentação equilibrada", "●"], ["rotina", "Organização da rotina", "✓"], ["relaxamento", "Relaxamento / pausas", "◌"], ["outro", "Outro", "…"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra informações sobre bem-estar?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["familia", "Família", "⌂"], ["profissionais", "Profissionais / escola", "✓"], ["redes", "Redes sociais", "📱"], ["sites", "Sites confiáveis", "🌐"], ["amigos", "Amigos", "👥"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Tecnologia", "title": "Que tecnologia você usaria para acompanhar hábitos?", "subtitle": "Escolha a mais interessante.", "options": [["relogio", "Relógio / pulseira", "⌚"], ["app", "Aplicativo", "📱"], ["agenda", "Agenda / lembretes", "📅"], ["sensor", "Sensor", "⚙"], ["nenhuma", "Nenhuma", "—"], ["outra", "Outra", "…"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais ajuda você a prestar atenção em hábitos saudáveis?", "subtitle": "Escolha o principal.", "options": [["rotina", "Ter uma rotina", "✓"], ["amigos", "Fazer com amigos", "👥"], ["resultado", "Perceber evolução", "📈"], ["conteudo", "Conteúdo informativo", "📚"], ["tecnologia", "Tecnologia / app", "⌚"], ["outro", "Outro", "…"]]}, {"id": "q6", "type": "cards", "dimension": "Dado", "title": "Que dado você acharia mais útil acompanhar?", "subtitle": "Escolha um.", "options": [["sono", "Horas de sono", "☾"], ["atividade", "Tempo de atividade", "⏱"], ["passos", "Passos / distância", "↔"], ["agua", "Hidratação", "●"], ["rotina", "Frequência de hábitos", "📅"], ["outro", "Outro", "…"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um conteúdo de bem-estar chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar mais", "⌕"], ["testar", "Experimentar a dica", "✓"], ["salvar", "Salvar", "🔖"], ["perguntar", "Perguntar a alguém", "💬"], ["compartilhar", "Compartilhar", "↗"], ["nada", "Nada", "—"]]}, {"id": "q8", "type": "cards", "dimension": "Recuperação", "title": "O que mais ajuda você a se recuperar depois de atividade física?", "subtitle": "Escolha o principal.", "options": [["descanso", "Descanso", "☾"], ["alongar", "Alongamento", "↔"], ["agua", "Hidratação", "●"], ["alimentacao", "Alimentação", "●"], ["sono", "Sono", "☾"], ["nao_pratico", "Não pratico regularmente", "—"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Conteúdo sobre bem-estar faz você pesquisar mais com que frequência?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de seguir uma dica de bem-estar, você compara informações em outras fontes?", "subtitle": "Pense em pessoas, sites ou profissionais.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de interagir com conteúdo de bem-estar, você percebe conteúdos parecidos aparecendo?", "subtitle": "Pense em vídeos, dicas ou produtos.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual informação mais ajudaria você a escolher uma atividade ou recurso de bem-estar?", "subtitle": "Escolha a principal.", "options": [["confianca", "Fonte confiável", "✓"], ["resultado", "Resultados esperados", "📈"], ["facilidade", "Facilidade de manter", "●"], ["tempo", "Tempo necessário", "⏱"], ["custo", "Custo", "$"], ["amigos", "Indicação de alguém", "👥"]]}]}, "dinheiro": {"name": "Dinheiro e Consumo", "questions": [{"id": "q1", "type": "scale", "dimension": "Interesse", "title": "Quanto Dinheiro e Consumo faz parte do seu interesse?", "subtitle": "Escolha a opção que mais combina com você.", "options": [["1", "Quase nada"], ["2", "Pouco"], ["3", "Mais ou menos"], ["4", "Bastante"], ["5", "Muito"]]}, {"id": "q2", "type": "cards", "dimension": "Primeiro passo", "title": "Quando pensa em comprar algo, qual costuma ser seu primeiro passo?", "subtitle": "Escolha o mais comum.", "options": [["preco", "Pesquisar preço", "$"], ["reviews", "Ver avaliações", "★"], ["lojas", "Comparar lojas", "↔"], ["amigos", "Perguntar a alguém", "👥"], ["produto", "Ver detalhes do produto", "⌕"], ["impulso", "Às vezes compro sem pesquisar", "!"]]}, {"id": "q3", "type": "cards", "dimension": "Canal", "title": "Onde você mais encontra produtos ou ofertas?", "subtitle": "Escolha o ambiente mais frequente.", "options": [["redes", "Redes sociais", "📱"], ["sites", "Sites / lojas online", "🌐"], ["loja", "Loja física", "🏷"], ["amigos", "Amigos / família", "👥"], ["videos", "Vídeos / reviews", "▶"], ["outro", "Outro", "…"]]}, {"id": "q4", "type": "cards", "dimension": "Informação", "title": "Qual informação mais pesa na compra?", "subtitle": "Escolha a principal.", "options": [["preco", "Preço", "$"], ["qualidade", "Qualidade", "★"], ["avaliacao", "Avaliações", "★"], ["necessidade", "Necessidade", "●"], ["marca", "Marca", "◉"], ["prazo", "Prazo / entrega", "⏱"]]}, {"id": "q5", "type": "cards", "dimension": "Influência", "title": "O que mais desperta interesse em algo que você não estava pensando em comprar?", "subtitle": "Escolha o principal.", "options": [["anuncio", "Anúncio", "◉"], ["influenciador", "Criador / influenciador", "👤"], ["amigos", "Amigos", "👥"], ["promocao", "Promoção", "🏷"], ["recomendacao", "Recomendação automática", "✦"], ["viral", "Produto em alta", "🔥"]]}, {"id": "q6", "type": "frequency", "dimension": "Comparação de preço", "title": "Com que frequência você compara preços antes de comprar?", "subtitle": "Pense no que geralmente faz.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q7", "type": "cards", "dimension": "Ação", "title": "Quando um produto chama sua atenção, o que você faz primeiro?", "subtitle": "Escolha a ação mais provável.", "options": [["pesquisar", "Pesquisar mais", "⌕"], ["preco", "Comparar preços", "$"], ["avaliacoes", "Ler avaliações", "★"], ["salvar", "Salvar para depois", "🔖"], ["amigos", "Perguntar a alguém", "👥"], ["comprar", "Comprar", "$"]]}, {"id": "q8", "type": "frequency", "dimension": "Impulso", "title": "Com que frequência anúncios, influenciadores ou recomendações fazem você se interessar por algo que não estava procurando?", "subtitle": "Pense no seu comportamento.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q9", "type": "frequency", "dimension": "Pesquisa", "title": "Um produto visto na internet faz você pesquisar mais sobre ele com que frequência?", "subtitle": "Pense no que geralmente acontece.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q10", "type": "frequency", "dimension": "Comparação", "title": "Antes de comprar, você compara avaliações, preços ou lojas?", "subtitle": "Considere diferentes fontes.", "options": [["nunca", "Nunca"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q11", "type": "frequency", "dimension": "Recomendação", "title": "Depois de pesquisar um produto, você percebe anúncios ou produtos parecidos aparecendo?", "subtitle": "Pense em redes e sites.", "options": [["nunca", "Nunca reparei"], ["raramente", "Raramente"], ["as_vezes", "Às vezes"], ["frequente", "Frequentemente"], ["sempre", "Sempre"]]}, {"id": "q12", "type": "cards", "dimension": "Decisão", "title": "Qual dado mais ajudaria você a decidir entre dois produtos semelhantes?", "subtitle": "Escolha o principal.", "options": [["preco", "Preço", "$"], ["avaliacao", "Avaliação de clientes", "★"], ["qualidade", "Qualidade / durabilidade", "✓"], ["prazo", "Prazo de entrega", "⏱"], ["garantia", "Garantia", "✓"], ["frete", "Frete", "↔"]]}]}};
-
-</script>
-<script>
-// MISSÃO 9 — V10.0.1
-// Esta chave é uma barreira operacional para o piloto, não um segredo de produção.
-// Use o mesmo valor no SQL e neste arquivo.
-window.M9_PROFESSOR_CONFIG = {
-  professorControlKey: ''
-};
+// MISSÃO 9 — V10.0.2
+// O PIN do professor não fica gravado neste HTML.
+// Ele é validado no Supabase e mantido somente no sessionStorage da aba.
+window.M9_PROFESSOR_CONFIG = {};
 
 </script>
 <script>
@@ -1134,16 +956,34 @@ function getProfessorControlKey(){
   try{return sessionStorage.getItem('m9_professor_control_key')||''}catch(_){return ''}
 }
 function clearProfessorControlKey(){
-  try{sessionStorage.removeItem('m9_professor_control_key')}catch(_){}
+  try{
+    sessionStorage.removeItem('m9_professor_control_key');
+    sessionStorage.removeItem('m9_professor_authorized');
+  }catch(_){}
 }
-function ensureProfessorControlKey(){
-  let key=getProfessorControlKey();
-  if(key)return key;
-  key=(window.prompt('Digite a chave de controle do professor para esta sessão:')||'').trim();
-  if(key){
-    try{sessionStorage.setItem('m9_professor_control_key',key)}catch(_){}
+function setProfessorControlKey(pin){
+  try{
+    sessionStorage.setItem('m9_professor_control_key',pin);
+    sessionStorage.setItem('m9_professor_authorized','1');
+  }catch(_){}
+}
+function professorSessionAuthorized(){
+  try{return sessionStorage.getItem('m9_professor_authorized')==='1' && !!getProfessorControlKey()}catch(_){return false}
+}
+async function validateProfessorPin(pin){
+  if(!pin)return false;
+  if(remoteEnabled()){
+    const result=await sb('rpc/m9_validate_teacher_pin',{
+      method:'POST',
+      body:JSON.stringify({p_secret:pin})
+    });
+    return result===true;
   }
-  return key;
+  const enc=new TextEncoder().encode(pin);
+  if(!crypto?.subtle)return false;
+  const digest=await crypto.subtle.digest('SHA-256',enc);
+  const hex=[...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  return hex==='e72e270cffeae239b789ca902d449e49705df89c99ea6e2a32b88f721b9019a6';
 }
 
 const THEMES=window.M9_DATA.THEMES;
@@ -1228,7 +1068,7 @@ async function writeState(patch){
   if(remoteEnabled()){
     await sb('rpc/m9_set_state',{
       method:'POST',
-      body:JSON.stringify({p_secret:ensureProfessorControlKey(),p_patch:next})
+      body:JSON.stringify({p_secret:getProfessorControlKey(),p_patch:next})
     });
   }else ds('m9_state',next);
   refresh();
@@ -1352,7 +1192,7 @@ async function confirmFullReset(){
     if(remoteEnabled()){
       await sb('rpc/m9_reset_simulation',{
         method:'POST',
-        body:JSON.stringify({p_secret:ensureProfessorControlKey()})
+        body:JSON.stringify({p_secret:getProfessorControlKey()})
       });
     }else{
       const newState={
@@ -2065,6 +1905,56 @@ function initializeLocalRun(){
   if(!s.run_id) ds('m9_state',{...s,run_id:M9Engine.makeRunId(),updated_at:new Date().toISOString()});
 }
 
+
+async function unlockProfessorFromPin(pin){
+  const form=document.getElementById('profLoginForm');
+  const input=document.getElementById('profPin');
+  const error=document.getElementById('profLoginError');
+  const button=form?.querySelector('button[type="submit"]');
+  if(button){button.disabled=true;button.textContent='VERIFICANDO...'}
+  if(error)error.textContent='';
+  try{
+    const ok=await validateProfessorPin(pin);
+    if(!ok){
+      if(error)error.textContent='PIN inválido.';
+      if(input){input.value='';input.focus()}
+      return false;
+    }
+    setProfessorControlKey(pin);
+    document.body.classList.remove('prof-locked');
+    document.getElementById('profLoginOverlay')?.classList.add('hidden');
+    bootProfessorPanel();
+    return true;
+  }catch(e){
+    console.error('Falha ao validar PIN:',e);
+    if(error)error.textContent='Não foi possível validar o PIN.';
+    return false;
+  }finally{
+    if(button){button.disabled=false;button.textContent='ENTRAR'}
+  }
+}
+
+function bootProfessorAccess(){
+  const form=document.getElementById('profLoginForm');
+  const input=document.getElementById('profPin');
+
+  if(professorSessionAuthorized()){
+    document.body.classList.remove('prof-locked');
+    document.getElementById('profLoginOverlay')?.classList.add('hidden');
+    bootProfessorPanel();
+    return;
+  }
+
+  clearProfessorControlKey();
+  document.body.classList.add('prof-locked');
+  document.getElementById('profLoginOverlay')?.classList.remove('hidden');
+  form?.addEventListener('submit',e=>{
+    e.preventDefault();
+    unlockProfessorFromPin((input?.value||'').trim());
+  });
+  setTimeout(()=>input?.focus(),50);
+}
+
 function bootProfessorPanel(){
   if(panelBooted)return;
   panelBooted=true;
@@ -2121,9 +2011,9 @@ function bootProfessorPanel(){
 }
 
 if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',bootProfessorPanel,{once:true});
+  document.addEventListener('DOMContentLoaded',bootProfessorAccess,{once:true});
 }else{
-  bootProfessorPanel();
+  bootProfessorAccess();
 }
 
 </script>
