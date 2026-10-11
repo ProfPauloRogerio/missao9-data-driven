@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Missão 9 — V10.0.2 | Professor</title>
+<title>Missão 9 — V10.0.2.1 | Professor</title>
 <style>
 
 :root{
@@ -972,15 +972,10 @@ function professorSessionAuthorized(){
 }
 async function validateProfessorPin(pin){
   if(!pin)return false;
-  if(remoteEnabled()){
-    const result=await sb('rpc/m9_validate_teacher_pin',{
-      method:'POST',
-      body:JSON.stringify({p_secret:pin})
-    });
-    return result===true;
-  }
+  // V10.0.2.1: validação local para não depender de RPC/rede na abertura do painel.
+  // O valor abaixo é apenas o SHA-256 do PIN, não o PIN em texto claro.
   const enc=new TextEncoder().encode(pin);
-  if(!crypto?.subtle)return false;
+  if(!crypto?.subtle)throw new Error('Web Crypto indisponível');
   const digest=await crypto.subtle.digest('SHA-256',enc);
   const hex=[...new Uint8Array(digest)].map(b=>b.toString(16).padStart(2,'0')).join('');
   return hex==='e72e270cffeae239b789ca902d449e49705df89c99ea6e2a32b88f721b9019a6';
@@ -1911,7 +1906,7 @@ async function unlockProfessorFromPin(pin){
   const input=document.getElementById('profPin');
   const error=document.getElementById('profLoginError');
   const button=form?.querySelector('button[type="submit"]');
-  if(button){button.disabled=true;button.textContent='VERIFICANDO...'}
+  if(button){button.disabled=true;button.textContent='ENTRANDO...'}
   if(error)error.textContent='';
   try{
     const ok=await validateProfessorPin(pin);
