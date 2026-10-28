@@ -1198,7 +1198,9 @@ window.M9_DATA = {
       case 'closeFeed':
         return st==='feed_open' || st==='feed_paused';
       case 'startReveal':
-        return st==='feed_closed' && ready('reveal');
+        // Ao encerrar explicitamente o feed, o professor pode avançar mesmo com prontidão parcial.
+        // O indicador permanece amarelo quando houver sessões ainda não concluídas.
+        return st==='feed_closed' && (readiness.reveal==='ok' || readiness.reveal==='warn');
       case 'revealPrev':
       case 'revealNext':
         return st==='results_reveal';
